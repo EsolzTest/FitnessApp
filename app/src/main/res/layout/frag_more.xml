@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    android:id="@+id/more_container"
+    >
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+
+        <RelativeLayout
+            android:id="@+id/ll_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#ffffff" >
+
+            <LinearLayout
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="horizontal"
+                android:padding="5dp" >
+
+
+            </LinearLayout>
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="BENCH PRESS"
+                android:textColor="#22A7F0"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:id="@+id/hide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="vertical"
+                android:padding="3dp" >
+
+                <com.esolz.fitnessapp.customviews.TitilliumLight
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="Hide"
+                    android:textColor="#22A7F0"
+                    android:textSize="20sp"
+
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:paddingLeft="15dp"
+            >
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:id="@+id/title_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="DESCRIPTION"
+                android:textColor="#333333"
+                android:textSize="17sp" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+
+                <com.esolz.fitnessapp.customviews.TitilliumRegular
+                    android:id="@+id/detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:maxLines="20"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                    android:textColor="#333333"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                >
+
+                <com.esolz.fitnessapp.customviews.TitilliumRegular
+                    android:id="@+id/specifictext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/imageView1"
+                    android:singleLine="true"
+                    android:text="SPECIFIC FOR YOU"
+                    android:textColor="#333333"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:id="@+id/instruction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imageView12"
+                android:maxLines="20"
+                android:text="1914 translation by H. Rackham"
+                android:textColor="#333333"
+                android:textSize="17sp"
+                android:paddingTop="5dp"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+</LinearLayout>
+
+
+
+
+</LinearLayout>

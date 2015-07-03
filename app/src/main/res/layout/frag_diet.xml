@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/ll_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#22A7F0">
+
+        <LinearLayout
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/selector_default"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:layout_width="@dimen/appointment_back_width"
+                android:layout_height="@dimen/appointment_back_height"
+                android:background="@drawable/appback" />
+        </LinearLayout>
+
+        <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="DIET"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <!--             <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/selector_default"
+                        android:orientation="vertical"
+                        android:padding="3dp" >
+
+                        <com.esolz.customviews.TitilliumLight
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:text="More"
+                            android:textColor="#ffffff"
+                            android:textSize="20sp" />
+                    </LinearLayout> -->
+
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/diet_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"></ListView>
+
+
+    <ProgressBar
+        android:id="@+id/progbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+
+</LinearLayout>

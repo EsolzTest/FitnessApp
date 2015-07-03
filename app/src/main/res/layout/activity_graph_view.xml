@@ -1,0 +1,162 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:paddingTop="10dp"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/selector_default"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <ImageView
+            android:layout_width="@dimen/appointment_back_width"
+            android:layout_height="@dimen/appointment_back_height"
+            android:background="@drawable/back_b" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="2" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Body weight"
+                android:textColor="#333333"
+                android:textSize="20sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="(kilograms)"
+                android:textColor="#bdbdbd"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_measurement"
+            android:background="@drawable/selector_default"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:textColor="#bdbdbd"
+                android:textSize="20sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Add measurement"
+                android:textColor="#22A7F0"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="2" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Goal:"
+                android:textColor="#333333"
+                android:textSize="24sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:id="@+id/weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="80"
+                android:textColor="#22A7F0"
+                android:textSize="24sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="kg"
+                android:textColor="#333333"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deadline:"
+                android:textColor="#333333"
+                android:textSize="24sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:id="@+id/deadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="2015-12-31"
+                android:textColor="#22A7F0"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

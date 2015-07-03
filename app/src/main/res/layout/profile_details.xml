@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F8F9"
+    android:id="@+id/linear_profile"
+    android:orientation="vertical" >
+
+    <!--
+         <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
+    -->
+
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/ll_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#22A7F0" >
+
+            <LinearLayout
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="horizontal"
+                android:padding="5dp" >
+
+                <ImageView
+                    android:layout_width="@dimen/appointment_back_width"
+                    android:layout_height="@dimen/appointment_back_height"
+                    android:background="@drawable/appback"
+                    android:clickable="true" />
+            </LinearLayout>
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="PROFILE"
+                android:textColor="#ffffff"
+                android:textSize="20sp"
+                android:id="@+id/profilename" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_profile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appointment_profile_height"
+            android:background="@drawable/appprofilebg"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:id="@+id/img_pic1"
+                android:layout_width="@dimen/appointment_pic_width"
+                android:layout_height="@dimen/appointment_pic_height"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/apppic" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@+id/img_pic1"
+                android:orientation="vertical" >
+
+                <com.esolz.fitnessapp.customviews.TitilliumBold
+                    android:id="@+id/txt_name_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="JHONE CURTER"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/appointment_title_textsize" />
+
+                <com.esolz.fitnessapp.customviews.TitilliumBold
+                    android:id="@+id/txt_name_sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Some is lolem doller"
+                    android:textColor="#22A7F0"
+                    android:textSize="@dimen/appointment_title_sub_textsize" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <!-- <ImageView
+                    android:id="@+id/img_chat"
+                    android:layout_width="@dimen/appointment_chat_width"
+                    android:layout_height="@dimen/appointment_chat_height"
+                    android:background="@drawable/appchat" /> -->
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="10dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumLight
+                android:id="@+id/txt_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="It was popularisedm Ipsum passages,em Ipsum and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                android:textColor="#333333"
+                android:textSize="@dimen/appointment_desc_textsize" />
+        </RelativeLayout>
+
+        
+
+        <LinearLayout
+            android:id="@+id/ll_location"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="@drawable/appprofilebg"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="10dp" >
+
+            <com.esolz.fitnessapp.customviews.TitilliumBold
+                android:id="@+id/txt_location_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="2dp"
+                android:text="Location"
+                android:textColor="#000000"
+                android:textSize="@dimen/appointment_datetime_title_textsize" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumLight
+                android:id="@+id/txt_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="350 Fifth Avenue, 34th floor. New York. \nNY 10118-3299 USA"
+                android:textColor="#333333"
+                android:textSize="@dimen/appointment_datetime_textsize" />
+            <ProgressBar
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:id="@+id/progbar_profile"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="50dp"
+
+                />
+        </LinearLayout>
+
+        
+    </LinearLayout>
+    <!-- </ScrollView> -->
+
+</LinearLayout>

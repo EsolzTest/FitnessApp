@@ -1,0 +1,36 @@
+<head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1.1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable
+            ([['X', 'Y'],
+              [1, Android.getNum1()],
+              [2, Android.getNum2()],
+              [3, Android.getNum3()],
+              [4, Android.getNum4()],
+              [5, Android.getNum5()],
+              [6, Android.getNum6()],
+              [7, Android.getNum7()],
+              [8, Android.getNum8()],
+              [9, Android.getNum9()],
+              [10, Android.getNum10()]
+        ]);
+
+        var options = {
+          legend: 'none',
+          colors: ['#15A0C8'],
+          pointSize: 12,
+          pointShape: { type: 'coicle', rotation: 180 }
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 700px; height: 200px;"></div>
+  </body>
+</html>

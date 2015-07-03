@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#22A7F0"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="TODAY"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/show_cal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_default"
+            android:padding="5dp">
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calender"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <RelativeLayout
+            android:id="@+id/header1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6.5">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/calpicture"></ImageView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="12dp">
+
+                <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                    android:id="@+id/powerchest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Power Chest"
+                    android:textColor="#ffffff"
+                    android:textSize="22sp" />
+
+                <com.esolz.fitnessapp.customviews.HelveticaHeavy
+                    android:id="@+id/txt_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="top"
+                    android:text="14"
+                    android:textColor="#ffffff"
+                    android:textSize="100sp"
+                    android:textStyle="bold" />
+
+                <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                    android:id="@+id/txt_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  APRIL"
+                    android:textColor="#ffffff"
+                    android:textSize="24sp"></com.esolz.fitnessapp.customviews.TitilliumSemiBold>
+
+                <RelativeLayout
+                    android:id="@+id/appointment"
+                    android:layout_width="220dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/calbtnbg"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                        android:id="@+id/txt_appointment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="1 APPOINTMENT "
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp" />
+
+                    <ProgressBar
+                        android:id="@+id/prg_appointent"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/remindme"
+                    android:layout_width="150dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/calbtnbg1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.esolz.fitnessapp.customviews.TitilliumLight
+                        android:id="@+id/txt_remindme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Remind me"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3.5"
+            android:paddingTop="5dp"
+            android:weightSum="3">
+
+            <ProgressBar
+                android:id="@+id/prg_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"></ProgressBar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_centerInParent="true">
+
+                <LinearLayout
+                    android:id="@+id/rl_training"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_default"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    android:paddingTop="5dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp">
+
+                        <com.esolz.fitnessapp.customviews.TitilliumBold
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:text="Training"
+                            android:textColor="#282828"
+                            android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumBold>
+
+                        <com.esolz.fitnessapp.customviews.TitilliumLight
+                            android:id="@+id/txt_training_done"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="15dp"
+                            android:layout_toLeftOf="@+id/tra_arr"
+                            android:singleLine="true"
+                            android:text="3/6 exercises done"
+                            android:textColor="#282828"
+                            android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumLight>
+
+                        <ImageView
+                            android:id="@+id/tra_arr"
+                            android:layout_width="8dp"
+                            android:layout_height="13dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/arrow"></ImageView>
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E9F3F9"></LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rl_diet"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_default"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    android:paddingTop="5dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp">
+
+                        <com.esolz.fitnessapp.customviews.TitilliumBold
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:text="Diet"
+                            android:textColor="#282828"
+                            android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumBold>
+
+                        <com.esolz.fitnessapp.customviews.TitilliumLight
+                            android:id="@+id/txt_diet"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="15dp"
+                            android:layout_toLeftOf="@+id/diet_arr"
+                            android:singleLine="true"
+                            android:text="1 meal"
+                            android:textColor="#282828"
+                            android:textSize="17sp" />
+
+                        <ImageView
+                            android:id="@+id/diet_arr"
+                            android:layout_width="8dp"
+                            android:layout_height="13dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/arrow"></ImageView>
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E9F3F9"></LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rl_diary"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_default"
+                    android:orientation="vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    android:paddingTop="5dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp">
+
+                        <com.esolz.fitnessapp.customviews.TitilliumBold
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:text="Diary"
+                            android:textColor="#282828"
+                            android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumBold>
+
+                        <com.esolz.fitnessapp.customviews.TitilliumLight
+                            android:id="@+id/txt_diary"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="15dp"
+                            android:layout_toLeftOf="@+id/diary_arr"
+                            android:singleLine="true"
+                            android:gravity="right|center"
+                            android:text="Hear"
+                            android:textColor="#282828"
+                            android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumLight>
+
+                        <ImageView
+                            android:id="@+id/diary_arr"
+                            android:layout_width="8dp"
+                            android:layout_height="13dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/arrow"></ImageView>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

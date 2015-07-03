@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:weightSum="3" >
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="Benchpress"
+            android:id="@+id/type_progrss_2"
+            android:textColor="#282828"
+            android:textSize="17sp" >
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:id="@+id/goal_progress_2"
+                android:textColor="#22A7F0"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBold>
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" kg"
+                android:id="@+id/goal_progress_measure_2"
+                android:textColor="#282828"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="10dp" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:id="@+id/goal_progress_date2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="2015-12-31"
+                android:textColor="#22A7F0"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="13dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow" >
+            </ImageView>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E9F3F9" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:weightSum="3" >
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="Plank"
+            android:id="@+id/type_progrss_3"
+            android:textColor="#282828"
+            android:textSize="17sp" >
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:textColor="#22A7F0"
+                android:id="@+id/goal_progress_3"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBold>
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="kg"
+                android:id="@+id/goal_progress_measure_3"
+                android:textColor="#282828"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="10dp" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:id="@+id/goal_progress_date3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="N/A"
+                android:textColor="#22A7F0"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="13dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow" >
+            </ImageView>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E9F3F9" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:weightSum="3" >
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="Run 10 km"
+            android:textColor="#282828"
+            android:textSize="17sp" >
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="40"
+                android:textColor="#22A7F0"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBold>
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" min"
+                android:textColor="#282828"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="10dp" >
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:id="@+id/textview4w"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="2015-03-31"
+                android:textColor="#22A7F0"
+                android:textSize="17sp" >
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="13dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow" >
+            </ImageView>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/msg_hstry"
+    >
+
+    <RelativeLayout
+        android:id="@+id/ll_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="#22A7F0" >
+
+        <LinearLayout
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/selector_default"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="25dp"
+                android:background="@drawable/back_message" />
+        </LinearLayout>
+        <!--  -->
+
+        <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:id="@+id/title_chat_details"/>
+
+        <LinearLayout
+            android:id="@+id/ll_viewdetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/selector_default"
+            android:orientation="vertical"
+            android:padding="3dp" >
+
+            <!--  -->
+
+            <com.esolz.fitnessapp.customviews.TitilliumLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="View Profile"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/chat_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_footer"
+        android:background="#E9F3F9"
+        android:orientation="horizontal"
+        android:layout_below="@+id/ll_header"
+        >
+
+
+        <ListView
+            android:id="@+id/listviewchat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="0dp"
+            android:divider="@drawable/list_view_divider"
+           android:background="@color/primary_text_default_material_dark"
+            >
+        </ListView>
+
+
+
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_footer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:padding="5dp" >
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/chat_footer"
+            android:orientation="horizontal"
+            android:weightSum="10" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/penicon" >
+                </ImageView>
+            </LinearLayout>
+
+
+
+            <EditText
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:background="#FFFFFF"
+                android:hint="Write a message..."
+                android:inputType="none"
+                android:maxLines="2"
+                android:textColorHint="#C7C7CC"
+                android:textSize="18sp"
+                android:id="@+id/et_send_msg"/>
+
+
+
+
+        </LinearLayout>
+
+
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:background="@drawable/images"
+            android:layout_marginLeft="310dp"
+
+
+            android:id="@+id/send_msg"/>
+
+        <ProgressBar
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:id="@+id/progbar1"
+            android:layout_marginLeft="150dp"
+            android:layout_marginBottom="20sp"
+
+            />
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

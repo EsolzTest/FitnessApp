@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/ll_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#22A7F0" >
+
+            <LinearLayout
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="horizontal"
+                android:padding="5dp" >
+
+                <ImageView
+                    android:layout_width="@dimen/appointment_back_width"
+                    android:layout_height="@dimen/appointment_back_height"
+                    android:background="@drawable/appback" />
+            </LinearLayout>
+
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="BENCH PRESS"
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:id="@+id/more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/selector_default"
+                android:orientation="vertical"
+                android:padding="3dp" >
+
+                <com.esolz.fitnessapp.customviews.TitilliumLight
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="More"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10" >
+
+            <ProgressBar
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:id="@+id/prog_training"
+                android:layout_centerInParent="true"
+                />
+
+            <FrameLayout
+                android:id="@+id/ll_topbody"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical" >
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_midbody"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/ll_botmbody"
+                android:layout_below="@+id/ll_topbody"
+                android:orientation="vertical" >
+
+
+
+
+
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:weightSum="5" >
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/selector_default"
+                        android:padding="5dp" >
+
+                        <ImageView
+                            android:id="@+id/imageView12"
+                            android:layout_width="8dp"
+                            android:layout_height="13dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/arrow2" >
+                        </ImageView>
+
+                        <com.esolz.fitnessapp.customviews.TitilliumRegular
+                            android:id="@+id/textview4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/imageView12"
+                            android:singleLine="true"
+                            android:text="Seated Dips"
+                            android:textColor="#333333"
+                            android:textSize="17sp" />
+                    </RelativeLayout>
+
+                    <com.esolz.fitnessapp.customviews.TitilliumRegular
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="3 of 6"
+                        android:textColor="#22A7F0"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:padding="5dp" >
+
+                        <ImageView
+                            android:id="@+id/imageView1"
+                            android:layout_width="8dp"
+                            android:layout_height="13dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+                            android:background="@drawable/arrow" />
+
+                        <com.esolz.fitnessapp.customviews.TitilliumRegular
+                            android:id="@+id/textview41"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/imageView1"
+                            android:singleLine="true"
+                            android:text="Dumbbell Press"
+                            android:textColor="#333333"
+                            android:textSize="17sp" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/list_trn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:scrollbars="none"
+
+                    >
+                </ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_botmbody"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:paddingBottom="6dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:paddingTop="6dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/finish_button"
+                    android:clickable="true"
+                    android:gravity="center" >
+
+                    <com.esolz.fitnessapp.customviews.TitilliumRegular
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Finished Exercise"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

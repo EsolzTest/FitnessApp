@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#22A7F0" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+
+            <ImageView
+                android:layout_width="@dimen/activitylogin_logo_width"
+                android:layout_height="@dimen/activitylogin_logo_height"
+                android:layout_marginBottom="@dimen/activitylogin_logo_marginbottom"
+                android:background="@drawable/logo" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumBold
+                android:id="@+id/txt_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="Error"
+                android:textColor="#FF0000"
+                android:textSize="@dimen/activitylogin_checkbox_textsize" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumLightEdit
+                android:id="@+id/et_email"
+                android:layout_width="@dimen/activitylogin_et_email_width"
+                android:layout_height="@dimen/activitylogin_et_email_height"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/inputfield"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:padding="8dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="20sp" />
+
+            <com.esolz.fitnessapp.customviews.TitilliumLightEdit
+                android:id="@+id/et_pass"
+                android:layout_width="@dimen/activitylogin_et_pass_width"
+                android:layout_height="@dimen/activitylogin_et_pass_height"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/inputfield"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:padding="8dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="@dimen/activitylogin_et_pass_width"
+                android:layout_height="@dimen/activitylogin_et_pass_height"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/ll_remember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_default"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="3dp" >
+
+                    <ImageView
+                        android:id="@+id/img_chkbox"
+                        android:layout_width="@dimen/activitylogin_checkbox_width"
+                        android:layout_height="@dimen/activitylogin_checkbox_height"
+                        android:background="@drawable/uncheck"
+                        android:clickable="false" />
+
+                    <com.esolz.fitnessapp.customviews.TitilliumLight
+                        android:id="@+id/txt_remember"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:clickable="false"
+                        android:text="Remember me"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activitylogin_checkbox_textsize" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="@dimen/activitylogin_loginbtn_width"
+                android:layout_height="@dimen/activitylogin_loginbtn_height"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/login" />
+
+            <RelativeLayout
+                android:id="@+id/rl_forgot"
+                android:layout_width="@dimen/activitylogin_et_pass_width"
+                android:layout_height="wrap_content"
+                android:padding="5dp" >
+
+                <LinearLayout
+                    android:id="@+id/ll_forgot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/selector_default"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="3dp" >
+
+                    <com.esolz.fitnessapp.customviews.TitilliumLight
+                        android:id="@+id/txt_forgot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:text="Forgot Password"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activitylogin_forgot_textsize" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/prgbar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/linearLayout1"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+</LinearLayout>
