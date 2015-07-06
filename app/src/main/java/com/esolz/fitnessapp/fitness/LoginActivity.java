@@ -200,7 +200,7 @@ public class LoginActivity extends Activity {
                             editor.putString("Password", etPass.getText()
                                     .toString().trim());
                             editor.commit();
-                            AppConfig.loginDataType = new LoginDataType(siteUserId,etEmail.getText().toString().trim(),etPass.getText().toString().trim());
+                            AppConfig.loginDatatype = new LoginDataType(siteUserId,etEmail.getText().toString().trim(),etPass.getText().toString().trim());
 
                         } else {
                             Editor editor = loginPreferences.edit();

@@ -116,7 +116,7 @@ public class DietFragment extends Fragment {
                     urlResponse = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
                     HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/date_respective_client_meal?logged_in_user="+
-                            AppConfig.loginDataType.getSiteUserId()+"&date_val=" + date);
+                            AppConfig.loginDatatype.getSiteUserId()+"&date_val=" + date);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();

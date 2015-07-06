@@ -48,7 +48,7 @@ public class SplashActivity extends Activity {
 						if (loginPreferences.getString("Remember", "").equals(
 								"remember")) {
 
-							AppConfig.loginDataType = new LoginDataType(loginPreferences.getString("UserId", ""),
+							AppConfig.loginDatatype = new LoginDataType(loginPreferences.getString("UserId", ""),
 									loginPreferences.getString("Username", ""), loginPreferences.getString("Password", ""));
 							Intent intent = new Intent(SplashActivity.this,
 									LandScreenActivity.class);

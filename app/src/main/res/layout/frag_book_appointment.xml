@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/header"
@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:background="#22A7F0"
         android:paddingLeft="8dp"
-        android:paddingRight="10dp" >
+        android:paddingRight="10dp">
 
         <LinearLayout
             android:id="@+id/show_cal"
@@ -18,39 +18,38 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:padding="5dp" >
+            android:background="@drawable/selector_default"
+            android:padding="5dp">
 
             <com.esolz.fitnessapp.customviews.TitilliumRegular
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Show Calender"
+                android:text="Calender"
                 android:textColor="#ffffff"
-                android:textSize="16sp" />
+                android:textSize="18sp"/>
         </LinearLayout>
 
         <com.esolz.fitnessapp.customviews.TitilliumSemiBold
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/show_cal"
+            android:layout_centerInParent="true"
             android:text="APPOINTMENTS"
             android:textColor="#ffffff"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="5" >
+        android:weightSum="5">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
             android:orientation="vertical"
-            android:weightSum="5" >
+            android:weightSum="5">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,15 +57,14 @@
                 android:layout_weight="3"
                 android:background="@drawable/pic"
                 android:orientation="horizontal"
-                android:weightSum="6" >
+                android:weightSum="6">
 
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:orientation="vertical"
-                    android:weightSum="2"
-                    android:id="@+id/prev_date">
+                    android:weightSum="2">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -74,7 +72,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
-                        android:padding="5dp" >
+                        android:padding="5dp">
 
                         <com.esolz.fitnessapp.customviews.TitilliumRegular
                             android:id="@+id/textView1"
@@ -82,17 +80,26 @@
                             android:layout_height="wrap_content"
                             android:text="CHOOSE DATE"
                             android:textColor="#ffffff"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
+                    <RelativeLayout
+                        android:id="@+id/prev_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
-                        android:background="@drawable/arrow21"
-                        android:clickable="false" />
+                        android:background="@drawable/selector_default"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/arrow21"
+                            android:clickable="false"/>
+                    </RelativeLayout>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -100,7 +107,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:orientation="vertical"
-                    android:weightSum="2" >
+                    android:weightSum="2">
 
                     <com.esolz.fitnessapp.customviews.HelveticaHeavy
                         android:id="@+id/tv_number"
@@ -110,9 +117,10 @@
                         android:text="14"
                         android:textColor="#ffffff"
                         android:textSize="65sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
 
                     <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                        android:id="@+id/tv_month"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_number"
@@ -120,18 +128,17 @@
                         android:gravity="center"
                         android:text=" APRIL"
                         android:textColor="#ffffff"
-                        android:textSize="20sp"
-                        android:id="@+id/tv_month" />
+                        android:textSize="22sp"/>
 
                     <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                        android:id="@+id/tv_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/tv_number"
                         android:layout_centerHorizontal="true"
                         android:text=" FRIDAY"
                         android:textColor="#ffffff"
-                        android:textSize="20sp"
-                        android:id="@+id/tv_day" />
+                        android:textSize="20sp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -139,212 +146,146 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:orientation="vertical"
-                    android:weightSum="2"
-                    android:id="@+id/next_date">
+                    android:weightSum="2">
 
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
+                    <RelativeLayout
+                        android:id="@+id/next_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="10dp"
-                        android:background="@drawable/arrow12"
-                        android:clickable="false" />
+                        android:background="@drawable/selector_default"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/arrow12"
+                            android:clickable="false"/>
+                    </RelativeLayout>
                 </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
                 android:layout_gravity="center"
+                android:layout_weight="2"
                 android:orientation="vertical"
-                android:weightSum="8" >
+                android:weightSum="8">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_weight="2"
-                    >
+                    android:layout_weight="2">
 
                     <com.esolz.fitnessapp.customviews.TitilliumRegular
                         android:id="@+id/textView14"
-                        android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:text="CHOOSE PT"
                         android:textColor="#B2C4CF"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"/>
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="6"
-                    android:orientation="horizontal"
                     android:layout_gravity="center"
-                  >
+                    android:layout_weight="6"
+                    android:orientation="horizontal">
 
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="50dp"-->
-                        <!--android:layout_height="50dp"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_centerVertical="true"-->
-                        <!--android:layout_alignParentLeft="true"-->
-                        <!--android:id="@+id/vp_back">-->
+                    <ProgressBar
+                        android:id="@+id/viewpager_pbar"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"/>
 
-                        <!--<ImageView-->
-                            <!--android:layout_width="26dp"-->
-                            <!--android:layout_height="26dp"-->
-                            <!--android:layout_alignParentLeft="true"-->
-                            <!--android:layout_centerVertical="true"-->
-                            <!--android:layout_marginLeft="10dp"-->
-                            <!--android:background="@drawable/arrow4"-->
-                            <!--android:clickable="false"-->
-                            <!--android:id="@+id/vp_back_img" />-->
-                    <!--</LinearLayout>-->
-
-                    <!--<RelativeLayout-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_weight="6"-->
-                        <!--android:orientation="vertical" >-->
-
-
-
-
-                        <android.support.v4.view.ViewPager
-
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-
-                            android:id="@+id/trainer_viewpager">
-
-                        </android.support.v4.view.ViewPager>
-
-                        <!--<LinearLayout-->
-                            <!--android:id="@+id/up"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_alignParentTop="true"-->
-                            <!--android:orientation="horizontal"-->
-                            <!--android:padding="5dp"-->
-                            <!--android:weightSum="2" >-->
-
-                            <!--<ImageView-->
-                                <!--android:layout_width="60dp"-->
-                                <!--android:layout_height="60dp"-->
-                                <!--android:background="@drawable/pic4"-->
-                                <!--android:clickable="false" />-->
-
-                            <!--<LinearLayout-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="match_parent"-->
-                                <!--android:layout_marginLeft="15dp"-->
-                                <!--android:gravity="center_vertical"-->
-                                <!--android:orientation="vertical"-->
-                                <!--android:weightSum="2" >-->
-
-                                <!--<com.esolz.fitness.customviews.TitilliumBold-->
-                                    <!--android:layout_width="wrap_content"-->
-                                    <!--android:layout_height="wrap_content"-->
-                                    <!--android:text="Petra Stark"-->
-                                    <!--android:textColor="#333333"-->
-                                    <!--android:textSize="18sp" />-->
-
-                                <!--<com.esolz.fitness.customviews.TitilliumRegular-->
-                                    <!--android:layout_width="wrap_content"-->
-                                    <!--android:layout_height="wrap_content"-->
-                                    <!--android:layout_marginTop="2dp"-->
-                                    <!--android:text="Friskis &amp; Scettis"-->
-                                    <!--android:textColor="#22A7F0"-->
-                                    <!--android:textSize="16sp" />-->
-                            <!--</LinearLayout>-->
-                        <!--</LinearLayout>-->
-
-                        <!--<LinearLayout-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_below="@+id/up"-->
-                            <!--android:orientation="vertical"-->
-                            <!--android:padding="5dp" >-->
-
-                            <!--<com.esolz.fitness.customviews.TitilliumRegular-->
-                                <!--android:layout_width="wrap_content"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:text="May 18, 2011 condition should always divisible by"-->
-                                <!--android:textColor="#333333"-->
-                                <!--android:textSize="16sp" />-->
-                        <!--</LinearLayout>-->
-                    <!--</RelativeLayout>-->
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/trainer_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone">
+                    </android.support.v4.view.ViewPager>
 
                     <LinearLayout
+                        android:id="@+id/vp_back"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:gravity="center"
                         android:orientation="vertical"
-                        android:weightSum="2"
-                        android:id="@+id/vp_back">
+                        android:weightSum="2">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
-                          android:layout_gravity="center"
                             android:background="@drawable/arrow21"
-                            android:clickable="false" />
+                            android:clickable="false"/>
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/vp_next"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:gravity="center"
                         android:orientation="vertical"
-                        android:weightSum="2"
-                        android:id="@+id/vp_next">
+                        android:weightSum="2">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
-
-                            android:layout_gravity="center"
-
                             android:background="@drawable/arrow12"
-                            android:clickable="false" />
+                            android:clickable="false"/>
                     </LinearLayout>
-
-
                 </RelativeLayout>
-
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:orientation="vertical"
-            android:background="#22A7F0"></LinearLayout>
-
+            android:background="#22A7F0"
+            android:orientation="vertical">
+        </LinearLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
             android:orientation="vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:weightSum="4" >
+            android:weightSum="4">
+
+            <ProgressBar
+                android:id="@+id/pbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
 
             <ListView
                 android:id="@+id/book_app_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@drawable/line"
-                android:scrollbars="none" >
+                android:scrollbars="none">
             </ListView>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

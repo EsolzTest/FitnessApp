@@ -153,6 +153,7 @@
                 android:layout_centerInParent="true"></ProgressBar>
 
             <LinearLayout
+                android:id="@+id/ll_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -194,7 +195,7 @@
                             android:layout_marginRight="15dp"
                             android:layout_toLeftOf="@+id/tra_arr"
                             android:singleLine="true"
-                            android:text="3/6 exercises done"
+                            android:text=""
                             android:textColor="#282828"
                             android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumLight>
 
@@ -249,7 +250,7 @@
                             android:layout_marginRight="15dp"
                             android:layout_toLeftOf="@+id/diet_arr"
                             android:singleLine="true"
-                            android:text="1 meal"
+                            android:text=""
                             android:textColor="#282828"
                             android:textSize="17sp" />
 
@@ -305,7 +306,7 @@
                             android:layout_toLeftOf="@+id/diary_arr"
                             android:singleLine="true"
                             android:gravity="right|center"
-                            android:text="Hear"
+                            android:text=""
                             android:textColor="#282828"
                             android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumLight>
 

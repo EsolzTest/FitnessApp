@@ -1,56 +1,47 @@
 package com.esolz.fitnessapp.adapter;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.media.Image;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.internal.widget.TintImageView;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.TitilliumBold;
 import com.esolz.fitnessapp.customviews.TitilliumRegular;
-import com.esolz.fitnessapp.datatype.Alltriner_Setter_Gette;
+import com.esolz.fitnessapp.datatype.AltrainerDataType;
 import com.squareup.picasso.Picasso;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by su on 18/6/15.
  */
-public class Trainer_Adapter extends PagerAdapter {
+public class AllTrainerAdapter extends PagerAdapter {
 
 
-    Context ctx;
-    LinkedList<Alltriner_Setter_Gette> tariner;
+    Context context;
+    ArrayList<AltrainerDataType> altrainerDataTypeArrayList;
     LayoutInflater inflater;
     int Size;
-    Alltriner_Setter_Gette cust_data;
+    AltrainerDataType cust_data;
     View itemview;
 
 
-    public Trainer_Adapter(Context context, int i, LinkedList<Alltriner_Setter_Gette> all_trainer_list) {
+    public AllTrainerAdapter(Context context, int i, ArrayList<AltrainerDataType> altrainerDataTypeArrayList) {
 
-        this.ctx = context;
-        this.tariner = all_trainer_list;
-        inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = context;
+        this.altrainerDataTypeArrayList = altrainerDataTypeArrayList;
+        inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
         //Size=tariner.size();
-        return tariner.size();
+        return altrainerDataTypeArrayList.size();
     }
 
     @Override
@@ -66,19 +57,18 @@ public class Trainer_Adapter extends PagerAdapter {
         TitilliumRegular t_address;
 
 
-
         itemview = inflater.inflate(R.layout.k_triner_viewpager, container, false);
 
 
         t_name = (TitilliumBold) itemview.findViewById(R.id.tv_trainer_name);
         t_address = (TitilliumRegular) itemview.findViewById(R.id.tv_trainer_address);
-        ImageView pic=(ImageView)itemview.findViewById(R.id.imgv_trainer);
-        cust_data = tariner.get(position);
+        ImageView pic = (ImageView) itemview.findViewById(R.id.imgv_trainer);
+        cust_data = altrainerDataTypeArrayList.get(position);
 
         t_name.setText(cust_data.getPt_name());
         t_address.setText(cust_data.getWorking_address());
 
-       Picasso.with(ctx).load(cust_data.getPt_image()).transform(new Trns()).fit().placeholder(R.drawable.placeholdericon).error(R.drawable.placeholdericon).into(pic);
+        Picasso.with(context).load(cust_data.getPt_image()).transform(new Trns()).fit().error(R.drawable.placeholdericon).into(pic);
 
         // Add viewpager_item.xml to ViewPager
 
@@ -92,8 +82,6 @@ public class Trainer_Adapter extends PagerAdapter {
         ((ViewPager) container).removeView((View) object);
 
     }
-
-
 
 
 }

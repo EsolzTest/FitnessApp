@@ -3,11 +3,15 @@ package com.esolz.fitnessapp.datatype;
 /**
  * Created by su on 18/6/15.
  */
-public class Alltriner_Setter_Gette {
-    String pt_id;
-    String pt_name;
-    String pt_image;
-    String working_address;
+public class AltrainerDataType {
+    String pt_id, pt_name, pt_image, working_address;
+
+    public AltrainerDataType(String pt_id, String pt_name, String pt_image, String working_address) {
+        this.pt_id = pt_id;
+        this.pt_name = pt_name;
+        this.pt_image = pt_image;
+        this.working_address = working_address;
+    }
 
     public String getPt_id() {
         return pt_id;

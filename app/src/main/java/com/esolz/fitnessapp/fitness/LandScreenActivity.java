@@ -175,14 +175,6 @@ public class LandScreenActivity extends FragmentActivity {
 
 			}
 		});
-
-
-
-
-
-
-
-
 		llBlockAppoinmentButton.setOnClickListener(new OnClickListener() {
 
 			@Override

@@ -21,7 +21,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -30,27 +29,19 @@ import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.HelveticaHeavy;
-import com.esolz.fitnessapp.customviews.TitilliumBold;
 import com.esolz.fitnessapp.customviews.TitilliumLight;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.AllEventsDatatype;
-import com.esolz.fitnessapp.datatype.CalenderFragmentDatatype;
-import com.esolz.fitnessapp.datatype.CalenderFrgmentAllexercises;
-import com.esolz.fitnessapp.datatype.CalenderPageExSets;
-import com.esolz.fitnessapp.datatype.LoginDataType;
-import com.esolz.fitnessapp.datatype.Trainerbookings;
 import com.esolz.fitnessapp.dialog.ShowCalendarPopUp;
 import com.esolz.fitnessapp.fitness.CustomCalendarView;
-import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
+import com.esolz.fitnessapp.helper.ReturnCalendarDetails;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -59,14 +50,13 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Locale;
 
 
 @SuppressLint("NewApi")
 public class CalenderFragment extends Fragment {
 
-    LinearLayout rlTraining, rlDiet, rlDiary, showCalender;
+    LinearLayout rlTraining, rlDiet, rlDiary, showCalender, llList;
     LinearLayout llCalenderButton, llBlockAppoinmentButton, llProgressButton;
     RelativeLayout llMessagebutton, appointment, rlContent;
     Dialog dialog;
@@ -80,6 +70,7 @@ public class CalenderFragment extends Fragment {
     LinearLayout dialogRemindme;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
+    Bundle bundle;
     SharedPreferences sharedPreferences;
     ShowCalendarPopUp showCalPopup;
 
@@ -87,7 +78,10 @@ public class CalenderFragment extends Fragment {
     Calendar calendar;
     int currentYear, currentMonth, currentDay, currentDate, firstDayPosition;
     SimpleDateFormat dayFormat, monthFormat, dateFormat;
+    Date dateChange;
     String date = "";
+    String[] positionPre = {};
+    int previousDayPosition;
 
     TitilliumSemiBold txtMonth, txtAppointment;
     HelveticaHeavy txtDay;
@@ -127,6 +121,9 @@ public class CalenderFragment extends Fragment {
         txtDiet = (TitilliumLight) fView.findViewById(R.id.txt_diet);
         txtDiary = (TitilliumLight) fView.findViewById(R.id.txt_diary);
 
+        llList = (LinearLayout) fView.findViewById(R.id.ll_list);
+        llList.setVisibility(View.VISIBLE);
+
         prg_appointment = (ProgressBar) fView.findViewById(R.id.prg_appointent);
         prg_appointment.setVisibility(View.GONE);
         prg_content = (ProgressBar) fView.findViewById(R.id.prg_content);
@@ -137,26 +134,17 @@ public class CalenderFragment extends Fragment {
         calendar = Calendar.getInstance(Locale.getDefault());
         currentDate = calendar.get(Calendar.DATE);
         currentDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
-        currentMonth = (calendar.get(Calendar.MONTH) + 1);
+        currentMonth = (calendar.get(Calendar.MONTH));
         currentYear = calendar.get(Calendar.YEAR);
         firstDayPosition = calendar.get(Calendar.DAY_OF_WEEK);
+
 
         dayFormat = new SimpleDateFormat("dd");
         monthFormat = new SimpleDateFormat("EEEE");
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        txtDay.setText("" + dayFormat.format(calendar.getTime()));
-        txtMonth.setText("" + monthFormat.format(calendar.getTime()));
-
-        date = "" + dateFormat.format(calendar.getTime());
-        if (connectionDetector.isConnectingToInternet()) {
-            getAllEvents(date);
-        } else {
-            Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_LONG).show();
-        }
-
         // -- Show Calendar
-        showCalPopup = new ShowCalendarPopUp(getActivity());
+        showCalPopup = new ShowCalendarPopUp(getActivity(), "program");
 
         showCalender.setOnClickListener(new OnClickListener() {
 
@@ -165,13 +153,53 @@ public class CalenderFragment extends Fragment {
                 // TODO Auto-generated method stub
 
                 showCalPopup.getLayouts();
-                showCalPopup.getCalendar(currentMonth, currentDay, currentYear);
+
+                Calendar pre = (Calendar) calendar.clone();
+                pre.set(Calendar.MONTH, currentMonth);
+                pre.set(Calendar.YEAR, currentYear);
+                pre.set(Calendar.DATE, 1);
+
+                positionPre = pre.getTime().toString().split(" ");
+                previousDayPosition = ReturnCalendarDetails
+                        .getPosition(positionPre[0]);
+                showCalPopup.getCalendar(ReturnCalendarDetails.getCurrentMonth(positionPre[1]),
+                        ReturnCalendarDetails.getPosition(positionPre[0]),
+                        Integer.parseInt(positionPre[5]));
                 showCalPopup.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0,
                         -20);
 
             }
             //------getting date
         });
+
+        if (connectionDetector.isConnectingToInternet()) {
+            try {
+                dateChange = dateFormat.parse(getArguments().getString("DateChange"));
+
+                Log.d("DAY==", getArguments().getString("DateChange"));
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dateFormat.parse(getArguments().getString("DateChange")));
+                calendar = cal;
+
+                getAllEvents(getArguments().getString("DateChange"));
+
+                txtDay.setText("" + dayFormat.format(calendar.getTime()));
+                txtMonth.setText("" + monthFormat.format(dateChange));
+                Log.d("DAY=+++=", "" + monthFormat.format(dateChange));
+
+            } catch (Exception e) {
+                Log.d("Date Exception : ", e.toString());
+
+                txtDay.setText("" + dayFormat.format(calendar.getTime()));
+                txtMonth.setText("" + monthFormat.format(calendar.getTime()));
+                date = "" + dateFormat.format(calendar.getTime());
+
+                getAllEvents(date);
+            }
+        } else {
+            Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_LONG).show();
+        }
 
         // -- Shared Preference
         sharedPreferences = getActivity().getSharedPreferences("DateTime",
@@ -219,12 +247,12 @@ public class CalenderFragment extends Fragment {
                         mHour = timePicker.getCurrentHour();
                         mMinute = timePicker.getCurrentMinute();
 
-                        if(mDay < 10) {
+                        if (mDay < 10) {
                             day = "0" + mDay;
                         } else {
                             day = "" + mDay;
                         }
-                        if(mMonth < 10) {
+                        if (mMonth < 10) {
                             month = "0" + mMonth;
                         } else {
                             month = "" + mMonth;
@@ -238,7 +266,7 @@ public class CalenderFragment extends Fragment {
                             type = "am";
                         }
 
-                        String dateAndTime = day + "/" + month+ "  " + hour + ":" + mMinute + " " + type;
+                        String dateAndTime = day + "/" + month + "  " + hour + ":" + mMinute + " " + type;
 
                         txtRemindme.setText("" + dateAndTime);
 
@@ -262,6 +290,38 @@ public class CalenderFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
+            }
+        });
+
+        appointment.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                bundle = new Bundle();
+                try {
+                    bundle.putString("DateChange", getArguments().getString("DateChange"));
+                } catch (Exception e) {
+                    bundle.putString("DateChange", date);
+                }
+
+                if (Integer.parseInt(allEventsDatatype.getTotal_appointment()) > 0
+                        && Integer.parseInt(allEventsDatatype.getTotal_appointment()) < 2) {
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    AppointmantFragment app_fragment = new AppointmantFragment();
+                    app_fragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.fragment_container,
+                            app_fragment);
+                    fragmentTransaction.commit();
+                } else if (Integer.parseInt(allEventsDatatype.getTotal_appointment()) > 1) {
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    AppointmentListFragment app_list_fragment = new AppointmentListFragment();
+                    app_list_fragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.fragment_container,
+                            app_list_fragment);
+                    fragmentTransaction.commit();
+                } else {
+
+                }
+
             }
         });
 
@@ -333,6 +393,7 @@ public class CalenderFragment extends Fragment {
                 prg_content.setVisibility(View.VISIBLE);
                 txtAppointment.setVisibility(View.GONE);
                 rlContent.setVisibility(View.GONE);
+                llList.setVisibility(View.GONE);
             }
 
             @Override
@@ -343,8 +404,8 @@ public class CalenderFragment extends Fragment {
                     urlResponse = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
                     HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/get_all_events_for_date/?" +
-                            "client_id="+AppConfig.loginDataType.getSiteUserId()+
-                            "&date_val="+date);
+                            "client_id=" + AppConfig.loginDatatype.getSiteUserId() +
+                            "&date_val=" + date);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();
@@ -373,6 +434,10 @@ public class CalenderFragment extends Fragment {
                 } catch (Exception e) {
                     exception = e.toString();
                 }
+
+                Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/get_all_events_for_date/?" +
+                        "client_id=" + AppConfig.loginDatatype.getSiteUserId() +
+                        "&date_val=" + date);
                 return null;
             }
 
@@ -386,15 +451,16 @@ public class CalenderFragment extends Fragment {
                     prg_content.setVisibility(View.GONE);
                     txtAppointment.setVisibility(View.VISIBLE);
                     rlContent.setVisibility(View.VISIBLE);
+                    llList.setVisibility(View.VISIBLE);
 
                     if (Integer.parseInt(allEventsDatatype.getTotal_appointment()) == 0
-                    || Integer.parseInt(allEventsDatatype.getTotal_appointment()) == 1) {
+                            || Integer.parseInt(allEventsDatatype.getTotal_appointment()) == 1) {
                         txtAppointment.setText(allEventsDatatype.getTotal_appointment() + " " + "Appointment");
                     } else {
                         txtAppointment.setText(allEventsDatatype.getTotal_appointment() + " " + "Appointments");
                     }
                     txtTrainingDone.setText(allEventsDatatype.getTotal_training_exercise_finished() +
-                    "/" + allEventsDatatype.getTotal_training_exercises() + "  exercises done");
+                            "/" + allEventsDatatype.getTotal_training_exercises() + "  exercises done");
                     txtDiet.setText(allEventsDatatype.getTotal_meal() + " meal");
                     txtDiary.setText(allEventsDatatype.getDiary_text());
 
