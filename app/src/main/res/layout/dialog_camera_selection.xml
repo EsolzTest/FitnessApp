@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="210dp"
+    android:background="#22A7F0"
+    android:padding="10dp">
+
+    <com.esolz.fitnessapp.customviews.TitilliumBold
+        android:id="@+id/selecttion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Select your options"
+        android:textColor="#ffffff"
+        android:textSize="18sp"/>
+
+    <LinearLayout
+        android:id="@+id/ll_gallery"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selecttion"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/chat_footer"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GALLERY"
+            android:textColor="#22A7F0"
+            android:textSize="20sp">
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_camera"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_gallery"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/chat_footer"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CAMERA"
+            android:textColor="#22A7F0"
+            android:textSize="20sp">
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_cancel"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_camera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/chat_footer"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CANCEL"
+            android:textColor="#22A7F0"
+            android:textSize="20sp">
+        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+    </LinearLayout>
+
+</RelativeLayout>

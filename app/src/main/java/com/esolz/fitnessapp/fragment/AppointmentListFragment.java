@@ -96,8 +96,8 @@ public class AppointmentListFragment extends Fragment {
                 R.id.progressbutton);
         llMessagebutton = (RelativeLayout)
                 getActivity().findViewById(R.id.messagebutton);
-        llCalenderButton.setClickable(true);
-        llBlockAppoinmentButton.setClickable(false);
+        llCalenderButton.setClickable(false);
+        llBlockAppoinmentButton.setClickable(true);
         llProgressButton.setClickable(true);
         llMessagebutton.setClickable(true);
 

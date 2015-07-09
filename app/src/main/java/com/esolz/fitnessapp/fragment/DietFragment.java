@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -14,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +30,13 @@ import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.DietAdapter;
+import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.AllEventsDatatype;
 import com.esolz.fitnessapp.datatype.DietDataType;
+import com.esolz.fitnessapp.dialog.ShowCalendarPopUp;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
+import com.esolz.fitnessapp.helper.ReturnCalendarDetails;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -42,43 +50,106 @@ import org.json.JSONObject;
 public class DietFragment extends Fragment {
 
     public ListView dietList;
-    LinearLayout back;
+    LinearLayout back, showCalendar;
+    TitilliumSemiBold txtError;
     ConnectionDetector cd;
     LinkedList<DietDataType> dietDataTypeLinkedList;
     DietAdapter dietAdapter;
     View fView;
-    String url;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     ConnectionDetector connectionDetector;
     ProgressBar pBar;
-    String exception = "", urlResponse = "";
+    String exception = "", exceptionError = "", urlResponse = "";
+
+    // -- Calendar Instance
+    Calendar calendar;
+    int currentYear, currentMonth, currentDay, currentDate, firstDayPosition;
+    SimpleDateFormat dayFormat, monthFormat, dateFormat;
+    Date dateChange;
+    String date = "";
+    String[] positionPre = {};
+    int previousDayPosition;
+
+    ShowCalendarPopUp showCalPopup;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-
         fView = inflater.inflate(R.layout.frag_diet, container, false);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+        connectionDetector = new ConnectionDetector(getActivity());
 
         pBar = (ProgressBar) fView.findViewById(R.id.progbar);
         pBar.setVisibility(View.GONE);
-        fragmentManager = getActivity().getSupportFragmentManager();
-
         back = (LinearLayout) fView.findViewById(R.id.back);
+        showCalendar = (LinearLayout) fView.findViewById(R.id.show_cal);
         dietList = (ListView) fView.findViewById(R.id.diet_list);
         dietList.setDivider(null);
+        txtError = (TitilliumSemiBold) fView.findViewById(R.id.txt_error);
 
-        connectionDetector = new ConnectionDetector(getActivity());
-        url = "http://esolz.co.in/lab6/ptplanner/app_control/date_respective_client_meal?logged_in_user=15&date_val=2015-05-31";
+        calendar = Calendar.getInstance(Locale.getDefault());
+        currentDate = calendar.get(Calendar.DATE);
+        currentDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+        currentMonth = (calendar.get(Calendar.MONTH));
+        currentYear = calendar.get(Calendar.YEAR);
+        firstDayPosition = calendar.get(Calendar.DAY_OF_WEEK);
 
+        dayFormat = new SimpleDateFormat("dd");
+        monthFormat = new SimpleDateFormat("EEEE");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        // -- Show Calendar
+        showCalPopup = new ShowCalendarPopUp(getActivity(), "diet");
+
+        showCalendar.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // TODO Auto-generated method stub
+
+                showCalPopup.getLayouts();
+
+                Calendar pre = (Calendar) calendar.clone();
+                pre.set(Calendar.MONTH, currentMonth);
+                pre.set(Calendar.YEAR, currentYear);
+                pre.set(Calendar.DATE, 1);
+
+                positionPre = pre.getTime().toString().split(" ");
+                previousDayPosition = ReturnCalendarDetails
+                        .getPosition(positionPre[0]);
+                showCalPopup.getCalendar(ReturnCalendarDetails.getCurrentMonth(positionPre[1]),
+                        ReturnCalendarDetails.getPosition(positionPre[0]),
+                        Integer.parseInt(positionPre[5]));
+                showCalPopup.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0,
+                        -20);
+
+            }
+            //------getting date
+        });
 
         if (connectionDetector.isConnectingToInternet()) {
-            getDietList("2015-07-03");
+            try {
+                dateChange = dateFormat.parse(getArguments().getString("DateChange"));
+
+                Log.d("DAY==", getArguments().getString("DateChange"));
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dateFormat.parse(getArguments().getString("DateChange")));
+                calendar = cal;
+
+                getDietList(getArguments().getString("DateChange"));
+
+            } catch (Exception e) {
+                Log.d("Date Exception : ", e.toString());
+                date = "" + dateFormat.format(calendar.getTime());
+                getDietList(date);
+            }
+            //getDietList("2015-07-03");
         } else {
             Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_LONG).show();
         }
-
 
         back.setOnClickListener(new OnClickListener() {
 
@@ -106,6 +177,7 @@ public class DietFragment extends Fragment {
                 super.onPreExecute();
                 pBar.setVisibility(View.VISIBLE);
                 dietList.setVisibility(View.GONE);
+                txtError.setVisibility(View.GONE);
             }
 
             @Override
@@ -113,10 +185,11 @@ public class DietFragment extends Fragment {
                 // TODO Auto-generated method stub
                 try {
                     exception = "";
+                    exceptionError = "";
                     urlResponse = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
-                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/date_respective_client_meal?logged_in_user="+
-                            AppConfig.loginDatatype.getSiteUserId()+"&date_val=" + date);
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/date_respective_client_meal?logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() + "&date_val=" + date);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();
@@ -130,20 +203,28 @@ public class DietFragment extends Fragment {
                     }
                     is.close();
                     urlResponse = sb.toString();
-                    JSONObject jOBJ = new JSONObject(urlResponse);
-                    JSONArray jsonArray = jOBJ.getJSONArray("meal");
-                    dietDataTypeLinkedList = new LinkedList<DietDataType>();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        DietDataType dietDataType = new DietDataType(jsonObject.getString("meal_id"),
-                                jsonObject.getString("custom_meal_id"),
-                                jsonObject.getString("meal_title"),
-                                jsonObject.getString("meal_description"),
-                                jsonObject.getString("meal_image"));
-                        dietDataTypeLinkedList.add(dietDataType);
+
+                    try {
+                        JSONObject jOBJ = new JSONObject(urlResponse);
+                        JSONArray jsonArray = jOBJ.getJSONArray("meal");
+                        dietDataTypeLinkedList = new LinkedList<DietDataType>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            DietDataType dietDataType = new DietDataType(
+                                    jsonObject.getString("meal_id"),
+                                    jsonObject.getString("meal_image"),
+                                    jsonObject.getString("meal_description"),
+                                    jsonObject.getString("meal_title"),
+                                    jsonObject.getString("custom_meal_id"));
+                            dietDataTypeLinkedList.add(dietDataType);
+                        }
+                    } catch (Exception ex) {
+                        exceptionError = ex.toString();
                     }
 
-                    Log.d("RESPONSE", jOBJ.toString());
+
+                    Log.d("Diet URL : ", "http://esolz.co.in/lab6/ptplanner/app_control/date_respective_client_meal?logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() + "&date_val=" + date);
 
                 } catch (Exception e) {
                     exception = e.toString();
@@ -155,12 +236,15 @@ public class DietFragment extends Fragment {
             protected void onPostExecute(Void result) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(result);
-
+                pBar.setVisibility(View.GONE);
                 if (exception.equals("")) {
-                    pBar.setVisibility(View.GONE);
-                    dietList.setVisibility(View.VISIBLE);
-                    dietAdapter = new DietAdapter(getActivity(), 0, dietDataTypeLinkedList);
-                    dietList.setAdapter(dietAdapter);
+                    if (exceptionError.equals("")) {
+                        dietList.setVisibility(View.VISIBLE);
+                        dietAdapter = new DietAdapter(getActivity(), 0, dietDataTypeLinkedList);
+                        dietList.setAdapter(dietAdapter);
+                    } else {
+                        txtError.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();
                 }

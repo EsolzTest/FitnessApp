@@ -43,9 +43,12 @@ import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.AllTrainerAdapter;
+import com.esolz.fitnessapp.adapter.BookAppointAdapter;
 import com.esolz.fitnessapp.customviews.HelveticaHeavy;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.AltrainerDataType;
+import com.esolz.fitnessapp.datatype.TimeSlotsDataType;
+import com.esolz.fitnessapp.datatype.TrainerBookingDetailsDataType;
 import com.esolz.fitnessapp.dialog.ShowCalendarPopUp;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ReturnCalendarDetails;
@@ -78,18 +81,18 @@ public class BookAppointmentFragment extends Fragment {
 
     ArrayList<AltrainerDataType> altrainerDataTypeArrayList;
     AltrainerDataType altrainerDataType;
-
-    public LinkedList<AltrainerDataType> all_trainer_list;
     ViewPager trinerPageviewer;
     LinearLayout vp_next;
     LinearLayout vp_prev;
     Date date;
-    AltrainerDataType all_triner_obj;
-    ProgressBar pbarList;
+    public int viewPagerItemNo;
+    String exception = "", urlResponse = "", exceptionTrainer = "", urlResponseTrainer = "";
+    ProgressBar viewpagerPbar, pbarList;
 
-    public int viewpageritemno, viewPagerItemNo;
-    String exception = "", urlResponse = "";
-    ProgressBar viewpagerPbar;
+    TimeSlotsDataType timeSlotsDataType;
+    TrainerBookingDetailsDataType trainerBookingDetailsDataType;
+    ArrayList<TrainerBookingDetailsDataType> trainerBookingDetailsDataTypeArrayList;
+    ArrayList<TimeSlotsDataType> timeSlotsDataTypeArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,7 +167,6 @@ public class BookAppointmentFragment extends Fragment {
         });
 
         // -- Set Current Date --
-
         sdfDate = new SimpleDateFormat("yyyy-MM-dd");
         sdfDay = new SimpleDateFormat("EEEE");
         sdfNo = new SimpleDateFormat("dd");
@@ -192,7 +194,6 @@ public class BookAppointmentFragment extends Fragment {
             tvNumber.setText("" + sdfNo.format(calendar.getTime()));
             tvMonth.setText("" + sdfMonth.format(calendar.getTime()));
         }
-
         // -- End
 
         prevDate.setOnClickListener(new OnClickListener() {
@@ -207,6 +208,9 @@ public class BookAppointmentFragment extends Fragment {
 
                 dateCurrent = sdfDate.format(calendar.getTime());
                 getAllTrainer(dateCurrent);
+
+                bookApptList.setVisibility(View.GONE);
+                trinerPageviewer.setVisibility(View.GONE);
             }
         });
         nextDate.setOnClickListener(new OnClickListener() {
@@ -221,19 +225,20 @@ public class BookAppointmentFragment extends Fragment {
 
                 dateCurrent = sdfDate.format(calendar.getTime());
                 getAllTrainer(dateCurrent);
+
+                bookApptList.setVisibility(View.GONE);
+                trinerPageviewer.setVisibility(View.GONE);
             }
         });
 
         vp_next.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (trinerPageviewer.getCurrentItem() == all_trainer_list
-                        .size() - 1) {
+                if (trinerPageviewer.getCurrentItem() == (altrainerDataTypeArrayList.size() - 1)) {
                     trinerPageviewer.setCurrentItem(0, false);
 
                 } else {
-                    trinerPageviewer.setCurrentItem(
-                            trinerPageviewer.getCurrentItem() + 1, false);
+                    trinerPageviewer.setCurrentItem(trinerPageviewer.getCurrentItem() + 1, false);
                 }
             }
         });
@@ -242,13 +247,10 @@ public class BookAppointmentFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (trinerPageviewer.getCurrentItem() == 0) {
-                    trinerPageviewer.setCurrentItem(all_trainer_list.size(),
-                            false);
+                    trinerPageviewer.setCurrentItem(altrainerDataTypeArrayList.size(), false);
                 } else {
-                    trinerPageviewer.setCurrentItem(
-                            trinerPageviewer.getCurrentItem() - 1, false);
+                    trinerPageviewer.setCurrentItem((trinerPageviewer.getCurrentItem() - 1), false);
                 }
-                // loadmore(all_triner_obj.getPt_id(), dateCurrent);
             }
         });
 
@@ -257,19 +259,17 @@ public class BookAppointmentFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 // TODO Auto-generated method stub
-                //loadmore(all_trainer_list.get(position).getPt_id(), dateCurrent);
+                getTrainerBookingDetails(dateCurrent, altrainerDataTypeArrayList.get(position).getPt_id());
             }
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
                 // TODO Auto-generated method stub
-
             }
 
             @Override
             public void onPageScrollStateChanged(int arg0) {
                 // TODO Auto-generated method stub
-                // loadmore(all_triner_obj.getPt_id(), dateCurrent);
             }
         });
 
@@ -376,6 +376,9 @@ public class BookAppointmentFragment extends Fragment {
                         vp_next.setVisibility(View.GONE);
                         vp_prev.setVisibility(View.GONE);
                     }
+
+                    getTrainerBookingDetails(date, altrainerDataTypeArrayList.get(0).getPt_id());
+
                 } else {
                     Toast.makeText(getActivity(),
                             "Server not responding....", Toast.LENGTH_LONG)
@@ -388,6 +391,97 @@ public class BookAppointmentFragment extends Fragment {
 
     }
 
+    public void getTrainerBookingDetails(final String date, final String trainerId) {
+
+        AsyncTask<Void, Void, Void> trainerBookingDetails = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+                pbarList.setVisibility(View.VISIBLE);
+                bookApptList.setVisibility(View.GONE);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exceptionTrainer = "";
+                    urlResponseTrainer = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/trainer_booking_details?trainer_id="
+                            + trainerId + "&date_val=" + date);
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponseTrainer = sb.toString();
+
+                    JSONObject jsonObject = new JSONObject(urlResponseTrainer);
+                    JSONArray jsonArray = jsonObject.getJSONArray("time_slots");
+                    timeSlotsDataTypeArrayList = new ArrayList<TimeSlotsDataType>();
+                    if (jsonArray.length() > 0) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jOBJ = jsonArray.getJSONObject(i);
+                            if (jOBJ.getString("status").equals("NB")) {
+                                timeSlotsDataType = new TimeSlotsDataType(
+                                        jOBJ.getString("slot_start"), jOBJ.getString("slot_end"),
+                                        jOBJ.getString("counter"), jOBJ.getString("booking_id"),
+                                        jOBJ.getString("status"), "NB", jsonObject.getString("trainer_id"),
+                                        jsonObject.getString("booking_date"));
+                            } else if (jOBJ.getString("status").equals("Ex")) {
+                                timeSlotsDataType = new TimeSlotsDataType(
+                                        jOBJ.getString("slot_start"), jOBJ.getString("slot_end"),
+                                        jOBJ.getString("counter"), jOBJ.getString("booking_id"),
+                                        jOBJ.getString("status"), "Ex", jsonObject.getString("trainer_id"),
+                                        jsonObject.getString("booking_date"));
+                            } else {
+                                timeSlotsDataType = new TimeSlotsDataType(
+                                        jOBJ.getString("slot_start"), jOBJ.getString("slot_end"),
+                                        jOBJ.getString("counter"), jOBJ.getString("booking_id"),
+                                        jOBJ.getString("status"), "B", jsonObject.getString("trainer_id"),
+                                        jsonObject.getString("booking_date"));
+                            }
+                            timeSlotsDataTypeArrayList.add(timeSlotsDataType);
+                        }
+                    }
+
+                    Log.d("RESPONSE", urlResponseTrainer);
+                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/trainer_booking_details?trainer_id="
+                            + trainerId + "&date_val=" + date);
+                } catch (Exception e) {
+                    exceptionTrainer = e.toString();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                pbarList.setVisibility(View.GONE);
+                if (exceptionTrainer.equals("")) {
+                    bookApptList.setVisibility(View.VISIBLE);
+                    BookAppointAdapter bookAppointAdapter = new BookAppointAdapter(getActivity(), 0, timeSlotsDataTypeArrayList);
+                    bookApptList.setAdapter(bookAppointAdapter);
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Server not responding....", Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+
+        };
+        trainerBookingDetails.execute();
+    }
+
 }
-//"http://esolz.co.in/lab6/ptplanner/app_control/trainer_booking_details?trainer_id="
-//        + trainer_id + "&date_val=" + date_val

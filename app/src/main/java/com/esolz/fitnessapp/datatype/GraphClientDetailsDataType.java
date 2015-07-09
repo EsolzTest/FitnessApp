@@ -3,7 +3,7 @@ package com.esolz.fitnessapp.datatype;
 /**
  * Created by su on 18/6/15.
  */
-public class Graph_client_details {
+public class GraphClientDetailsDataType {
     String id;
     String user_type;
     String name;
@@ -18,9 +18,12 @@ public class Graph_client_details {
     String date_of_birth;
     String height;
     String weight;
+    String fat;
 
 
-    public Graph_client_details(String id, String user_type, String name, String image, String email, String address, String company, String work_address, String billing_address, String phone, String about, String date_of_birth, String weight, String height) {
+    public GraphClientDetailsDataType(String id, String user_type, String name, String image, String email,
+                                      String address, String company, String work_address, String billing_address,
+                                      String phone, String about, String date_of_birth, String weight, String height, String fat) {
         this.id = id;
         this.user_type = user_type;
         this.name = name;
@@ -35,6 +38,15 @@ public class Graph_client_details {
         this.date_of_birth = date_of_birth;
         this.weight = weight;
         this.height = height;
+        this.fat = fat;
+    }
+
+    public String getFat() {
+        return fat;
+    }
+
+    public void setFat(String fat) {
+        this.fat = fat;
     }
 
     public String getId() {

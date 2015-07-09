@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,9 +62,13 @@ public class AppointmentListAdapter extends ArrayAdapter<AppointmentListDataType
             holder.txtDate = (TitilliumLight) convertView.findViewById(R.id.txt_date);
             holder.txtTo = (TitilliumLight) convertView.findViewById(R.id.txt_to);
             holder.txtFrom = (TitilliumLight) convertView.findViewById(R.id.txt_from);
+
+            convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        Log.d("Adapter Size", "" + appointmentListDataTypeArrayList.size());
 
         holder.txtTitle.setText(appointmentListDataTypeArrayList.get(position).getTrainer_name());
         holder.txtTo.setText(appointmentListDataTypeArrayList.get(position).getBooking_time_start());

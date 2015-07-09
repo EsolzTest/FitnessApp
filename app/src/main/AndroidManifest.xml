@@ -1,56 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.esolz.fitnessapp" >
+<manifest
+    package="com.esolz.fitnessapp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">>
         <activity
             android:name="com.esolz.fitnessapp.fitness.SplashActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name="com.esolz.fitnessapp.fitness.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden">
         </activity>
         <activity
             android:name="com.esolz.fitnessapp.fitness.LandScreenActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden">
         </activity>
         <activity
             android:name="com.esolz.fitnessapp.fitness.CustomCalendarView"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden">
         </activity>
         <activity
             android:name="com.esolz.fitnessapp.fitness.ProgressGraphView"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden">
         </activity>
         <activity
             android:name="com.esolz.fitnessapp.fragment.ChatDetailsFragment"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustResize" >
+            android:windowSoftInputMode="adjustPan|adjustResize">
         </activity>
-
 
     </application>
 

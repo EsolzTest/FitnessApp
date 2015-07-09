@@ -137,8 +137,8 @@ public class AppointmantFragment extends Fragment {
                 R.id.progressbutton);
         llMessagebutton = (RelativeLayout)
                 getActivity().findViewById(R.id.messagebutton);
-        llCalenderButton.setClickable(true);
-        llBlockAppoinmentButton.setClickable(false);
+        llCalenderButton.setClickable(false);
+        llBlockAppoinmentButton.setClickable(true);
         llProgressButton.setClickable(true);
         llMessagebutton.setClickable(true);
 
@@ -465,7 +465,7 @@ public class AppointmantFragment extends Fragment {
                     JSONObject jOBJ = new JSONObject(urlResponse);
 
                     Log.d("RESPONSE", jOBJ.toString());
-
+                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/cancel_booking?booking_id=" + booking_id);
                 } catch (Exception e) {
                     exception = e.toString();
                 }

@@ -1,36 +1,42 @@
 package com.esolz.fitnessapp.fragment;
 
-
-
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
-
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.HelveticaSemiBold;
 import com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight;
-import com.esolz.fitnessapp.datatype.Graph_Client_Images;
-import com.esolz.fitnessapp.datatype.Graph_client_Goal_Images;
-import com.esolz.fitnessapp.datatype.Graph_client_allGraphs;
-import com.esolz.fitnessapp.datatype.Graph_client_details;
+import com.esolz.fitnessapp.datatype.GraphClientAllDataType;
+import com.esolz.fitnessapp.datatype.GraphClientDetailsDataType;
+import com.esolz.fitnessapp.datatype.GraphClientGoalImages;
+import com.esolz.fitnessapp.datatype.GraphClientImagesDataType;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.fitness.ProgressGraphView;
+import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.ConnectionDetector;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -38,11 +44,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -50,86 +54,122 @@ import java.util.Calendar;
 import java.util.LinkedList;
 
 public class ProgressFragment extends Fragment {
-
+    View fView;
     LinearLayout llCalenderButton, llBlockAppoinmentButton, llProgressButton, llGrphdetailsList;
     RelativeLayout llMessagebutton;
     LinearLayout allGraph;
-    String execption = "";
 
-    //18th june - code changed by Bodhidipta Bhattacharjee
-    FragmentManager fmanage;
-    ImageView profile_pic_thumb;
-    ImageView current_pic;
-    ImageView goal_pic;
-
-
-    HelveticaSemiBoldLight current_pic_date;
+    ImageView imgThumb, currentPicture, goalPicture;
     HelveticaSemiBold first_name;
-    HelveticaSemiBoldLight second_name;
-    HelveticaSemiBoldLight age_in_years;
-    HelveticaSemiBoldLight height_of_client;
-    HelveticaSemiBoldLight weight_of_client;
-    public boolean isloading_client_details = false;
-    final String url_client_details = "http://esolz.co.in/lab6/ptplanner/app_control/get_client_details?client_id=13";
-    final String url_client_Images = "http://esolz.co.in/lab6/ptplanner/app_control/get_client_images?client_id=13";
-    final String url_client_det_graph = "http://esolz.co.in/lab6/ptplanner/app_control/all_graphs?client_id=13";
+    HelveticaSemiBoldLight last_name, current_picture_date, age_years, height_of_client, weight_of_client;
+    ProgressBar progBar;
+    ScrollView scrollView;
 
-    Graph_client_details client_details;
-    Graph_client_Goal_Images client_goal_image;
+    RelativeLayout uploadCurrentImg, uploadGoalImg;
 
-    Graph_client_allGraphs client_all_graph;
-    LinkedList<Graph_Client_Images> client_current_image_list = new LinkedList<Graph_Client_Images>();
-    LinkedList<Graph_client_allGraphs> client_all_graphs_list = new LinkedList<Graph_client_allGraphs>();
+    String exception = "", urlResponse = "", exceptionImg = "", urlResponseImg = "", exceptionGraph = "", urlResponseGraph = "";
+    GraphClientDetailsDataType graphClientDetailsDataType;
+    GraphClientImagesDataType graphClientImagesDataType;
+    GraphClientGoalImages graphClientGoalImages;
+    LinkedList<GraphClientImagesDataType> graphClientImagesDataTypeLinkedList;
+    GraphClientAllDataType graphClientAllDataType;
+    LinkedList<GraphClientAllDataType> graphClientAllDataTypeLinkedList;
 
-
+    ConnectionDetector connectionDetector;
     LayoutInflater inflator;
 
-    ProgressBar progressBar;
-//22jun -changes have been done in frag_progress.xml page
-//frag_progress has dynamic view in the linear layout under the type-goal-deadline  tag..
-//new xml holding textviews named as-->prgress_graph_det_list
-    //backup views are saved on back_up_progress_graph_details.xml
-    //---------changes made by bodhidipta bhattacharjee
+    Dialog dialogChooser;
+    LinearLayout llGallery, llCamera, llCancel;
 
+    // --- For Camera and Gallery ---
+    String URL = "", Current_PATH = "", statingProfileImageURL = "", exceptionC = "";
+    private static final int ACTION_TAKE_PHOTO_B = 1;
+    private static final int ACTION_TAKE_GALLERY = 2;
+    // --- End ---
 
-    //code end-changes done by bodhidipta bhattacharjee
-
-
-    View fView;
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         fView = inflater.inflate(R.layout.frag_progress, container, false);
-        fView.setVisibility(View.INVISIBLE);
-        allGraph = (LinearLayout) fView.findViewById(R.id.all_graph);
-//22jun changes done by- bodhidipta bhattacharjee
+        connectionDetector = new ConnectionDetector(getActivity());
         inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        //************************************infalting progress bar
-        ViewGroup layout = (ViewGroup) getActivity().findViewById(android.R.id.content).getRootView();
+        allGraph = (LinearLayout) fView.findViewById(R.id.all_graph);
 
-        progressBar = new ProgressBar(getActivity(),null);
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
+        progBar = (ProgressBar) fView.findViewById(R.id.prog_bar);
+        scrollView = (ScrollView) fView.findViewById(R.id.scrl_body);
+        progBar.setVisibility(View.GONE);
+        scrollView.setVisibility(View.GONE);
 
-        RelativeLayout.LayoutParams params = new
-                RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+        imgThumb = (ImageView) fView.findViewById(R.id.image_thumb);
+        first_name = (HelveticaSemiBold) fView.findViewById(R.id.first_name);
+        last_name = (HelveticaSemiBoldLight) fView.findViewById(R.id.last_name);
+        age_years = (HelveticaSemiBoldLight) fView.findViewById(R.id.age_years);
+        height_of_client = (HelveticaSemiBoldLight) fView.findViewById(R.id.height_of_client);
+        weight_of_client = (HelveticaSemiBoldLight) fView.findViewById(R.id.weight_of_client);
 
-        RelativeLayout rl = new RelativeLayout(getActivity());
+        currentPicture = (ImageView) fView.findViewById(R.id.current_picture);
+        goalPicture = (ImageView) fView.findViewById(R.id.goal_picture);
+        current_picture_date = (HelveticaSemiBoldLight) fView.findViewById(R.id.current_picture_date);
 
-        rl.setGravity(Gravity.CENTER);
-        rl.addView(progressBar);
+        llGrphdetailsList = (LinearLayout) fView.findViewById(R.id.Grph_list_details);
 
-        layout.addView(rl,params);
-        //************************************
+        uploadCurrentImg = (RelativeLayout) fView.findViewById(R.id.upload_current_img);
+        uploadGoalImg = (RelativeLayout) fView.findViewById(R.id.upload_goal_img);
 
+        dialogChooser = new Dialog(getActivity(), R.style.DialogSlideAnim);
+        dialogChooser.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogChooser.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialogChooser.getWindow().setGravity(Gravity.BOTTOM);
+        dialogChooser.setContentView(R.layout.dialog_camera_selection);
+        dialogChooser.setCanceledOnTouchOutside(false);
 
-        //end here
+        llGallery = (LinearLayout) dialogChooser.findViewById(R.id.ll_gallery);
+        llCamera = (LinearLayout) dialogChooser.findViewById(R.id.ll_camera);
+        llCancel = (LinearLayout) dialogChooser.findViewById(R.id.ll_cancel);
 
-        fmanage = getFragmentManager();
+        uploadCurrentImg.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogChooser.show();
+            }
+        });
+        uploadGoalImg.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogChooser.show();
+            }
+        });
+
+        llGallery.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(
+                        Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, ACTION_TAKE_GALLERY);
+
+                dialogChooser.dismiss();
+            }
+        });
+
+        llCamera.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent jh = new Intent(getActivity(), EsolzCamera.class);
+//                startActivityForResult(jh, ACTION_TAKE_PHOTO_B);
+
+                dialogChooser.dismiss();
+            }
+        });
+
+        llCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogChooser.dismiss();
+            }
+        });
+
         allGraph.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -140,23 +180,34 @@ public class ProgressFragment extends Fragment {
             }
         });
 
+        currentPicture.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-        //18th june - code changed by Bodhidipta Bhattacharjee
-        //layout id has been changed by id
-        profile_pic_thumb = (ImageView) fView.findViewById(R.id.image_thumb);
-        first_name = (HelveticaSemiBold) fView.findViewById(R.id.first_name);
-        second_name = (HelveticaSemiBoldLight) fView.findViewById(R.id.last_name);
-        age_in_years = (HelveticaSemiBoldLight) fView.findViewById(R.id.age_years);
-        height_of_client = (HelveticaSemiBoldLight) fView.findViewById(R.id.height_of_client);
-        weight_of_client = (HelveticaSemiBoldLight) fView.findViewById(R.id.weight_of_client);
-        current_pic = (ImageView) fView.findViewById(R.id.current_picture);
-        current_pic_date = (HelveticaSemiBoldLight) fView.findViewById(R.id.current_picture_date);
-        goal_pic = (ImageView) fView.findViewById(R.id.goal_picture);
+                LandScreenActivity land = (LandScreenActivity) getActivity();
+                ArrayList<String> list = new ArrayList<String>();
+                for (int i = 0; i < graphClientImagesDataTypeLinkedList.size(); i++) {
+                    list.add(graphClientImagesDataTypeLinkedList.get(i).getImage_link());
+                }
+                land.Show_FullScreen_ViewPager(land, list);
+            }
+        });
 
-        llGrphdetailsList = (LinearLayout) fView.findViewById(R.id.Grph_list_details);
+        goalPicture.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LandScreenActivity land = (LandScreenActivity) getActivity();
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(graphClientGoalImages.getImage());
+                land.Show_FullScreen_ViewPager(land, list);
+            }
+        });
 
-        //code end
-
+        if (connectionDetector.isConnectingToInternet()) {
+            getClientDetails();
+        } else {
+            Toast.makeText(getActivity(), "No internet connection", Toast.LENGTH_SHORT).show();
+        }
 
         llCalenderButton = (LinearLayout) getActivity().findViewById(
                 R.id.calenderbutton);
@@ -171,372 +222,352 @@ public class ProgressFragment extends Fragment {
         llProgressButton.setClickable(false);
         llMessagebutton.setClickable(true);
 
-        load_client_details();
-
-        current_pic.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                LandScreenActivity land = (LandScreenActivity) getActivity();
-                ArrayList<String> list = new ArrayList<String>();
-                for (int i = 0; i < client_current_image_list.size(); i++) {
-                    list.add(client_current_image_list.get(i).getImage_link());
-                }
-                land.Show_FullScreen_ViewPager(land, list);
-
-
-
-            }
-        });
-
-        goal_pic.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LandScreenActivity land = (LandScreenActivity) getActivity();
-                ArrayList<String> list = new ArrayList<String>();
-                list.add(client_goal_image.getImage());
-                land.Show_FullScreen_ViewPager(land, list);
-            }
-        });
-
         return fView;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        // super.onActivityResult(requestCode, resultCode, data);
 
-    //18th june - code changed by Bodhidipta Bhattacharjee
-    //corresponding id modified changed
-    //graph is not list view , inflating data on static layout
+        if (requestCode == ACTION_TAKE_PHOTO_B) {
 
-    public void load_client_details() {
+            if (resultCode == 6000) {
 
-        new AsyncTask<Void, Void, Void>() {
-            InputStream is;
-            String json;
-            JSONObject all_graph_list_object;
+                Current_PATH = data.getStringExtra("Path");
+            }
+        } else if (requestCode == ACTION_TAKE_GALLERY) {
+            if (resultCode == getActivity().RESULT_OK) {
+
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                // Get the cursor
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                Current_PATH = cursor.getString(columnIndex);
+                cursor.close();
+                Toast.makeText(getActivity(), "hanle..." + Current_PATH, Toast.LENGTH_SHORT).show();
+
+
+            } else {
+                Toast.makeText(getActivity(), "Canceled by user",
+                        Toast.LENGTH_SHORT).show();
+                Current_PATH = "";
+            }
+        }
+    }
+
+    // *******************
+
+    public void getClientDetails() {
+
+        AsyncTask<Void, Void, Void> clientDetails = new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected void onPreExecute() {
-                //super.onPreExecute();
-
-
-                getActivity().findViewById(R.id.calenderbutton).setClickable(false);
-                getActivity().findViewById(R.id.blockappoinmentbutton).setClickable(false);
-                getActivity().findViewById(R.id.progressbutton).setClickable(false);
-                getActivity().findViewById(R.id.messagebutton).setClickable(false);
-
-                //Toast.makeText(getActivity(),"Loading user details",Toast.LENGTH_SHORT).show();
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+                progBar.setVisibility(View.VISIBLE);
+                scrollView.setVisibility(View.GONE);
             }
 
             @Override
-            protected Void doInBackground(Void... voids) {
-
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
                 try {
-                    isloading_client_details = true;
-
-
-                    DefaultHttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpGet = new HttpGet(url_client_details);
-                    HttpResponse response = httpClient.execute(httpGet);
-                    HttpEntity entity = response.getEntity();
-                    is = entity.getContent();
+                    exception = "";
+                    urlResponse = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/get_client_details?client_id=" +
+                            AppConfig.loginDatatype.getSiteUserId());
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
                     BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(is));
+                            new InputStreamReader(is, "iso-8859-1"), 8);
                     StringBuilder sb = new StringBuilder();
                     String line = null;
                     while ((line = reader.readLine()) != null) {
                         sb.append(line + "\n");
                     }
                     is.close();
-                    json = sb.toString();
+                    urlResponse = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponse);
 
+                    graphClientDetailsDataType = new GraphClientDetailsDataType(
+                            jOBJ.getString("id"), jOBJ.getString("user_type"), jOBJ.getString("name"),
+                            jOBJ.getString("image"), jOBJ.getString("email"), jOBJ.getString("address"),
+                            jOBJ.getString("company"), jOBJ.getString("work_address"), jOBJ.getString("billing_address"),
+                            jOBJ.getString("phone"), jOBJ.getString("about"), jOBJ.getString("date_of_birth"),
+                            jOBJ.getString("height"), jOBJ.getString("weight"), jOBJ.getString("fat")
+                    );
 
-                    all_graph_list_object = new JSONObject(json);
-
-
-                    //get data from client details url
-                    String id = all_graph_list_object.getString("id");
-                    String user_type = all_graph_list_object.getString("user_type");
-                    String name = all_graph_list_object.getString("name");
-                    String image = all_graph_list_object.getString("image");
-                    String email = all_graph_list_object.getString("email");
-                    String address = all_graph_list_object.getString("address");
-                    String company = all_graph_list_object.getString("company");
-                    String work_address = all_graph_list_object.getString("work_address");
-                    String billing_address = all_graph_list_object.getString("billing_address");
-                    String phone = all_graph_list_object.getString("phone");
-                    String about = all_graph_list_object.getString("about");
-                    String date_of_birth = all_graph_list_object.getString("date_of_birth");
-                    String height = all_graph_list_object.getString("height");
-                    String weight = all_graph_list_object.getString("weight");
-
-                    client_details = new Graph_client_details(id, user_type, name, image, email, address, company, work_address, billing_address, phone, about, date_of_birth, height, weight);
-
-
-                } catch (JSONException e) {
-                    execption = e.toString();
-                } catch (IOException e) {
-                    execption = e.toString();
+                    Log.d("RESPONSE", jOBJ.toString());
+                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/get_client_details?client_id=" + AppConfig.loginDatatype.getSiteUserId());
+                } catch (Exception e) {
+                    exception = e.toString();
                 }
-
-
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                //super.onPostExecute(aVoid);
-                if (!execption.isEmpty()) {
-                    Toast.makeText(getActivity(), "Exception Occured..", Toast.LENGTH_SHORT).show();
-                } else {
-// cirle crop class is on com.esolz.fitness.customviews named as image_transformation-bodhidipta bhattacharjee
-                    Picasso.with(getActivity()).load(client_details.getImage()).transform(new Trns()).fit().centerCrop().into(profile_pic_thumb);
-                    int space_pos = 0;
-
-                    for (int i = 0; i < client_details.getName().length(); i++) {
-                        if (client_details.getName().charAt(i) == ' ') {
-                            space_pos = i;
-                        }
-                    }
-
-                    String first = client_details.getName().substring(0, space_pos);
-                    String last = client_details.getName().substring(space_pos, client_details.getName().length());
-                    first_name.setText(first);
-                    second_name.setText(last);
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                if (exception.equals("")) {
+                    Picasso.with(getActivity()).load(graphClientDetailsDataType.getImage()).
+                            transform(new Trns()).fit().centerCrop().into(imgThumb);
+                    String[] name = graphClientDetailsDataType.getName().split(" ");
+                    first_name.setText(name[0]);
+                    last_name.setText(name[1]);
 
                     Calendar c = Calendar.getInstance();
                     int year = c.get(Calendar.YEAR);
-                    String Birth_day = client_details.getDate_of_birth();
+                    String Birth_day = graphClientDetailsDataType.getDate_of_birth();
                     String BirthYear = Birth_day.substring(0, 4);
                     int dob = Integer.parseInt(BirthYear);
                     int diff = year - dob;
-                    age_in_years.setText(String.valueOf(diff));
+                    age_years.setText(String.valueOf(diff));
 
-                    height_of_client.setText(client_details.getHeight());
-                    weight_of_client.setText(client_details.getWeight());
+                    height_of_client.setText(graphClientDetailsDataType.getHeight());
+                    weight_of_client.setText(graphClientDetailsDataType.getWeight());
 
-                    new AsyncTask<Void, Void, Void>() {
-
-                        @Override
-                        protected void onPreExecute() {
-                            super.onPreExecute();
-                        }
-
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            isloading_client_details = true;
-
-                            try {
-                                DefaultHttpClient httpClient = new DefaultHttpClient();
-                                HttpGet httpGet = new HttpGet(url_client_Images);
-                                HttpResponse response = httpClient.execute(httpGet);
-                                HttpEntity entity = response.getEntity();
-                                is = entity.getContent();
-                                BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(is));
-                                StringBuilder sb = new StringBuilder();
-                                String line = null;
-                                while ((line = reader.readLine()) != null) {
-                                    sb.append(line + "\n");
-                                }
-                                is.close();
-                                json = sb.toString();
-
-                                all_graph_list_object = new JSONObject(json);
-//getting  target array
-                                JSONArray current_image = all_graph_list_object.getJSONArray("current_images");
-                                for (int i = 0; i < current_image.length(); i++) {
-                                    JSONObject obj = current_image.getJSONObject(i);
-
-                                    String id = obj.getString("id");
-                                    String image = obj.getString("image");
-                                    String image_thumbnail = obj.getString("image_thumbnail");
-                                    String uploaded_date = obj.getString("uploaded_date");
-                                    Graph_Client_Images client_target_image = new Graph_Client_Images(uploaded_date, image_thumbnail, image, id);
-                                    client_current_image_list.add(client_target_image);
-                                }
-
-//getting goal array
-                                current_image = all_graph_list_object.getJSONArray("goal_image");
-
-                                JSONObject obj = current_image.getJSONObject(0);
-
-                                String id_goal = obj.getString("id");
-                                String image_goal = obj.getString("image");
-                                String image_thumbnail_goal = obj.getString("image_thumbnail");
-                                String uploaded_date_goal = obj.getString("uploaded_date");
-
-                                client_goal_image = new Graph_client_Goal_Images(id_goal, uploaded_date_goal, image_thumbnail_goal, image_goal);
-
-
-                            } catch (Exception e) {
-                                execption = e.toString();
-                            }
-
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            if (!execption.isEmpty()) {
-                                Toast.makeText(getActivity(), "Exception Occured..", Toast.LENGTH_SHORT).show();
-
-
-                            } else {
-                                Picasso.with(getActivity()).load(client_current_image_list.get(0).getImage_link().toString()).fit().centerCrop().into(current_pic);
-
-
-                                Picasso.with(getActivity()).load(client_goal_image.getImage()).fit().centerCrop().into(goal_pic);
-                                String current_show_month = client_current_image_list.get(0).getUploaded_date().substring(5, 7);
-                                String current_show_date = client_current_image_list.get(0).getUploaded_date().substring(8, 10);
-
-                                switch (current_show_month) {
-                                    case "01":
-                                        current_show_month = "jan";
-                                        break;
-                                    case "02":
-                                        current_show_month = "feb";
-                                        break;
-                                    case "03":
-                                        current_show_month = "mar";
-                                        break;
-                                    case "04":
-                                        current_show_month = "apr";
-                                        break;
-                                    case "05":
-                                        current_show_month = "may";
-                                        break;
-                                    case "06":
-                                        current_show_month = "jun";
-                                        break;
-                                    case "07":
-                                        current_show_month = "july";
-                                        break;
-                                    case "08":
-                                        current_show_month = "aug";
-                                        break;
-                                    case "09":
-                                        current_show_month = "sept";
-                                        break;
-                                    case "10":
-                                        current_show_month = "oct";
-                                        break;
-                                    case "11":
-                                        current_show_month = "nov";
-                                        break;
-                                    case "12":
-                                        current_show_month = "dec";
-                                        break;
-
-
-                                }
-                                current_pic_date.setText("Current," + " " + current_show_date + " " + current_show_month);
-//getting goal data
-                                new AsyncTask<Void, Void, Void>() {
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                    }
-
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
-                                        try {
-                                            DefaultHttpClient httpClient = new DefaultHttpClient();
-                                            HttpGet httpGet = new HttpGet(url_client_det_graph);
-                                            HttpResponse response = httpClient.execute(httpGet);
-                                            HttpEntity entity = response.getEntity();
-                                            is = entity.getContent();
-                                            BufferedReader reader = new BufferedReader(
-                                                    new InputStreamReader(is));
-                                            StringBuilder sb = new StringBuilder();
-                                            String line = null;
-                                            while ((line = reader.readLine()) != null) {
-                                                sb.append(line + "\n");
-                                            }
-                                            is.close();
-                                            json = sb.toString();
-
-                                            all_graph_list_object = new JSONObject(json);
-                                            JSONArray all_garphs_array = all_graph_list_object.getJSONArray("all_graphs");
-                                            for (int i = 0; i < all_garphs_array.length(); i++) {
-                                                JSONObject all_graphs_objects = all_garphs_array.getJSONObject(i);
-                                                String id = all_graphs_objects.getString("id");
-                                                String graph_type = all_graphs_objects.getString("graph_type");
-                                                String graph_for = all_graphs_objects.getString("graph_for");
-                                                String measure_unit = all_graphs_objects.getString("measure_unit");
-
-                                                JSONArray points = all_graphs_objects.getJSONArray("points");
-                                                String x_axis_point = points.getJSONObject(0).getString("x_axis_point");
-                                                String y_axis_point = points.getJSONObject(0).getString("y_axis_point");
-
-                                                client_all_graph = new Graph_client_allGraphs(id, y_axis_point, x_axis_point, measure_unit, graph_for, graph_type);
-                                                client_all_graphs_list.add(client_all_graph);
-
-                                            }
-
-                                        } catch (Exception e) {
-                                            execption = e.toString();
-                                        }
-                                        return null;
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
-
-//                                       change made on 22nd jun-bodhidipta bhattacharjee
-                                        for (int i = 0; i < client_all_graphs_list.size(); i++) {
-
-                                            Graph_client_allGraphs temp_one = client_all_graphs_list.get(i);
-                                            View vw = inflator.inflate(R.layout.prgrs_grph_det_list, null);
-                                            HelveticaSemiBoldLight text_type=(HelveticaSemiBoldLight)vw.findViewById(R.id.type_progrss_1);
-                                            HelveticaSemiBold goal_progress=(HelveticaSemiBold)vw.findViewById(R.id.goal_progress_1);
-                                            HelveticaSemiBoldLight goal_progress_measure=(HelveticaSemiBoldLight)vw.findViewById(R.id.goal_progress_measure_1);
-                                            HelveticaSemiBoldLight goal_progress_date=(HelveticaSemiBoldLight)vw.findViewById(R.id.goal_progress_date1);
-                                            text_type.setText(temp_one.getGraph_for());
-                                            int pos = 0;
-                                        String w8 = temp_one.getY_axis_point();
-                                             for (int j = 0; j < w8.length(); j++) {
-                                                    if (w8.charAt(j) == '.') {
-                                                     pos = j;
-                                                                            }
-                                                                                    }
-
-                                            String wt1 = w8.substring(0, pos);
-                                            goal_progress.setText(wt1);
-                                            goal_progress_measure.setText(" " + temp_one.getMeasure_unit());
-                                            goal_progress_date.setText(temp_one.getX_axis_point());
-
-                                            llGrphdetailsList.addView(vw);
-                                        }
-
-                                        fView.setVisibility(View.VISIBLE);
-                                        progressBar.setVisibility(View.GONE);
-                                        getActivity().findViewById(R.id.calenderbutton).setClickable(true);
-                                        getActivity().findViewById(R.id.blockappoinmentbutton).setClickable(true);
-                                        getActivity().findViewById(R.id.progressbutton).setClickable(false);
-                                        getActivity().findViewById(R.id.messagebutton).setClickable(true);
-                                        isloading_client_details = false;
-
-
-
-
-
-
-
-                                    }
-                                }.execute();
-                            }
-                        }
-                    }.execute();
+                    getClientImg();
+                } else {
+                    Log.d("Exception : ", exception);
+                    Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();
                 }
-
-
             }
-        }.execute();
 
+        };
+        clientDetails.execute();
 
     }
-    //code end
-    // coded by bodhidipta bhattacharjee
-    //on 18th jun
 
+    public void getClientImg() {
+
+        AsyncTask<Void, Void, Void> clientImg = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exceptionImg = "";
+                    urlResponseImg = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/get_client_images?client_id=" +
+                            AppConfig.loginDatatype.getSiteUserId());
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponseImg = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponseImg);
+                    JSONArray jsonArrayCurrentImg = jOBJ.getJSONArray("current_images");
+                    JSONArray jsonArrayGoalImg = jOBJ.getJSONArray("goal_image");
+                    graphClientImagesDataTypeLinkedList = new LinkedList<GraphClientImagesDataType>();
+                    for (int i = 0; i < jsonArrayCurrentImg.length(); i++) {
+                        JSONObject jsonObject = jsonArrayCurrentImg.getJSONObject(i);
+                        graphClientImagesDataType = new GraphClientImagesDataType(
+                                jsonObject.getString("uploaded_date"),
+                                jsonObject.getString("image_thumbnail"),
+                                jsonObject.getString("image"),
+                                jsonObject.getString("id"));
+                        graphClientImagesDataTypeLinkedList.add(graphClientImagesDataType);
+                    }
+
+                    JSONObject jsonObj = jsonArrayGoalImg.getJSONObject(0);
+                    graphClientGoalImages = new GraphClientGoalImages(
+                            jsonObj.getString("id"),
+                            jsonObj.getString("uploaded_date"),
+                            jsonObj.getString("image_thumbnail"),
+                            jsonObj.getString("image"));
+
+                    Log.d("RESPONSE", jOBJ.toString());
+                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/get_client_images?client_id=" + AppConfig.loginDatatype.getSiteUserId());
+                } catch (Exception e) {
+                    exceptionImg = e.toString();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+
+                if (exceptionImg.equals("")) {
+                    Picasso.with(getActivity()).load(graphClientImagesDataTypeLinkedList.get(0).getImage_link().toString()).
+                            fit().centerCrop().into(currentPicture);
+                    Picasso.with(getActivity()).load(graphClientGoalImages.getImage()).fit().centerCrop().into(goalPicture);
+                    String current_show_month = graphClientImagesDataTypeLinkedList.get(0).getUploaded_date().substring(5, 7);
+                    String current_show_date = graphClientImagesDataTypeLinkedList.get(0).getUploaded_date().substring(8, 10);
+                    switch (current_show_month) {
+                        case "01":
+                            current_show_month = "jan";
+                            break;
+                        case "02":
+                            current_show_month = "feb";
+                            break;
+                        case "03":
+                            current_show_month = "mar";
+                            break;
+                        case "04":
+                            current_show_month = "apr";
+                            break;
+                        case "05":
+                            current_show_month = "may";
+                            break;
+                        case "06":
+                            current_show_month = "jun";
+                            break;
+                        case "07":
+                            current_show_month = "july";
+                            break;
+                        case "08":
+                            current_show_month = "aug";
+                            break;
+                        case "09":
+                            current_show_month = "sept";
+                            break;
+                        case "10":
+                            current_show_month = "oct";
+                            break;
+                        case "11":
+                            current_show_month = "nov";
+                            break;
+                        case "12":
+                            current_show_month = "dec";
+                            break;
+                    }
+                    current_picture_date.setText("Current," + " " + current_show_date + " " + current_show_month);
+                    getClientGraph();
+                } else {
+                    Log.d("Exception : ", exceptionImg);
+                    Toast.makeText(getActivity(), "Server not responding for image...." + exceptionImg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        };
+        clientImg.execute();
+
+    }
+
+    public void getClientGraph() {
+
+        AsyncTask<Void, Void, Void> clientGraph = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exceptionGraph = "";
+                    urlResponseGraph = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/all_graphs?client_id=" +
+                            AppConfig.loginDatatype.getSiteUserId());
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponseGraph = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponseGraph);
+                    JSONArray jsonArray = jOBJ.getJSONArray("all_graphs");
+                    graphClientAllDataTypeLinkedList = new LinkedList<GraphClientAllDataType>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObj = jsonArray.getJSONObject(i);
+                        JSONArray points = jsonObj.getJSONArray("points");
+                        graphClientAllDataType = new GraphClientAllDataType(
+                                jsonObj.getString("id"),
+                                points.getJSONObject(0).getString("y_axis_point"),
+                                points.getJSONObject(0).getString("x_axis_point"),
+                                jsonObj.getString("measure_unit"),
+                                jsonObj.getString("graph_for"),
+                                jsonObj.getString("graph_type"));
+                        graphClientAllDataTypeLinkedList.add(graphClientAllDataType);
+
+                    }
+
+                    Log.d("RESPONSE", jOBJ.toString());
+                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/all_graphs?client_id=" + AppConfig.loginDatatype.getSiteUserId());
+                } catch (Exception e) {
+                    exceptionGraph = e.toString();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                progBar.setVisibility(View.GONE);
+                scrollView.setVisibility(View.VISIBLE);
+                if (exceptionGraph.equals("")) {
+                    for (int i = 0; i < graphClientAllDataTypeLinkedList.size(); i++) {
+
+                        GraphClientAllDataType temp_one = graphClientAllDataTypeLinkedList.get(i);
+                        View view = inflator.inflate(R.layout.prgrs_grph_det_list, null);
+                        HelveticaSemiBoldLight text_type = (HelveticaSemiBoldLight) view.findViewById(R.id.type_progrss_1);
+                        HelveticaSemiBold goal_progress = (HelveticaSemiBold) view.findViewById(R.id.goal_progress_1);
+                        HelveticaSemiBoldLight goal_progress_measure = (HelveticaSemiBoldLight) view.findViewById(R.id.goal_progress_measure_1);
+                        HelveticaSemiBoldLight goal_progress_date = (HelveticaSemiBoldLight) view.findViewById(R.id.goal_progress_date1);
+                        text_type.setText(temp_one.getGraph_for());
+                        int pos = 0;
+                        String w8 = temp_one.getY_axis_point();
+                        for (int j = 0; j < w8.length(); j++) {
+                            if (w8.charAt(j) == '.') {
+                                pos = j;
+                            }
+                        }
+                        String wt1 = w8.substring(0, pos);
+                        goal_progress.setText(wt1);
+                        goal_progress_measure.setText(" " + temp_one.getMeasure_unit());
+                        goal_progress_date.setText(temp_one.getX_axis_point());
+
+                        llGrphdetailsList.addView(view);
+                    }
+                } else {
+                    Log.d("Exception : ", exceptionGraph);
+                    Toast.makeText(getActivity(), "Server not responding for graph...." + exceptionGraph, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        };
+        clientGraph.execute();
+
+    }
 }

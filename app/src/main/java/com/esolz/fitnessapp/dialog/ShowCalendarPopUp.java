@@ -45,6 +45,7 @@ import com.esolz.fitnessapp.datatype.MealDateDataType;
 import com.esolz.fitnessapp.datatype.ProgramDateDataType;
 import com.esolz.fitnessapp.fragment.BookAppointmentFragment;
 import com.esolz.fitnessapp.fragment.CalenderFragment;
+import com.esolz.fitnessapp.fragment.DietFragment;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ReturnCalendarDetails;
 
@@ -588,6 +589,13 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
             fragmentTransaction.replace(R.id.fragment_container,
                     bookapp_fragment);
             fragmentTransaction.commit();
+        } else {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            DietFragment dietFragment = new DietFragment();
+            dietFragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.fragment_container,
+                    dietFragment);
+            fragmentTransaction.commit();
         }
 
         dismiss();
@@ -664,8 +672,9 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
             }
         }
 
-        for (int i = 0; i < arrDay.size(); i++) {
-            for (int j = 0; j < textViewArray.length; j++) {
+
+        for (int j = 0; j < textViewArray.length; j++) {
+            for (int i = 0; i < arrDay.size(); i++) {
                 if (textViewArray[j].getText().toString()
                         .equals(arrDay.get(i).getMarkedDay())) {
 

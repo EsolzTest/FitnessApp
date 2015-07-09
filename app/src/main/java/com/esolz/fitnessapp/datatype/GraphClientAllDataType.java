@@ -3,15 +3,17 @@ package com.esolz.fitnessapp.datatype;
 /**
  * Created by su on 18/6/15.
  */
-public class Graph_client_allGraphs {
+public class GraphClientAllDataType {
     String graph_id;
     String graph_type;
     String graph_for;
     String measure_unit;
     String x_axis_point;
     String y_axis_point;
+    String point;
 
-    public Graph_client_allGraphs(String graph_id, String y_axis_point, String x_axis_point, String measure_unit, String graph_for, String graph_type) {
+    public GraphClientAllDataType(String graph_id, String y_axis_point, String x_axis_point,
+                                  String measure_unit, String graph_for, String graph_type) {
         this.graph_id = graph_id;
         this.y_axis_point = y_axis_point;
         this.x_axis_point = x_axis_point;

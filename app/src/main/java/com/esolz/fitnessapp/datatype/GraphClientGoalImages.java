@@ -3,13 +3,13 @@ package com.esolz.fitnessapp.datatype;
 /**
  * Created by su on 18/6/15.
  */
-public class Graph_client_Goal_Images {
+public class GraphClientGoalImages {
     String id;
     String image;
     String image_thumbnail;
     String uploaded_date;
 
-    public Graph_client_Goal_Images(String id, String uploaded_date, String image_thumbnail, String image) {
+    public GraphClientGoalImages(String id, String uploaded_date, String image_thumbnail, String image) {
         this.id = id;
         this.uploaded_date = uploaded_date;
         this.image_thumbnail = image_thumbnail;

@@ -19,13 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
+import com.esolz.fitnessapp.customviews.TitilliumBold;
+import com.esolz.fitnessapp.customviews.TitilliumRegular;
+import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
+import com.esolz.fitnessapp.datatype.TimeSlotsDataType;
 import com.esolz.fitnessapp.datatype.TrainerBookingDate;
+import com.esolz.fitnessapp.datatype.TrainerBookingDetailsDataType;
 import com.esolz.fitnessapp.datatype.TrainerDetails;
+import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.ConnectionDetector;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,282 +44,158 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class BookAppointAdapter extends ArrayAdapter<TrainerDetails> {
-
-	Context con;
-
-	//ArrayList<HashMap<String, String>> data;
-	LayoutInflater lf;
-	ViewHolder holder;
-	RelativeLayout listitemContainer;
-	LinkedList<TrainerDetails> all_feed_list;
-	LinkedList<TrainerBookingDate>all_feed_list2;
-	//FragmentTransaction fragmentTransaction;
-	//FragmentManager fragmentManager;
-	TrainerDetails obj;
-	//int position;
-	boolean[] state;
-	public BookAppointAdapter(Context context, int resource,LinkedList<TrainerDetails> objects)
-	{
-		super(context, resource,objects);
-		con = context;
-		all_feed_list=objects;
-		lf=(LayoutInflater)con.getSystemService(con.LAYOUT_INFLATER_SERVICE);
-		state=new boolean[all_feed_list.size()];
-		for(int i=0;i<all_feed_list.size();i++)
-		{
-			String status=all_feed_list.get(i).getStatus();
-			if(status.equals("NB"))
-			{
-				state[i]=true;
-
-			}else
-			{
-				state[i]=false;//for Ex
-			}
-
-		}
-
-
-	}
-
-
-	@Override
-	public int getCount()
-
-	{
-		return all_feed_list.size();
-	}
-
-	public View getView(  final  int position, View convertView, ViewGroup parent) {
-
-
-		View row = convertView;
-	final int	  pos=position;
-		holder = new ViewHolder();
-		//final int pos=position;
-		//LayoutInflater lf=(LayoutInflater)con.getSystemService(con.LAYOUT_INFLATER_SERVICE);
-
-		if (row == null)
-
-		{
-
-			LayoutInflater lf = (LayoutInflater) con.getSystemService(con.LAYOUT_INFLATER_SERVICE);
-
-			row = lf.inflate(R.layout.book_app_list, parent, false);
-
-			holder.timing1 = (TextView) row.findViewById(R.id.timing);
-			holder.apt1 = (TextView) row.findViewById(R.id.apt);
-			holder.status23 = (Button) row.findViewById(R.id.status);
-
-			row.setTag(holder);
-
-		}
-		else {
-
-			holder = (ViewHolder) row.getTag();
-
-
-		}
-
-
-		obj = all_feed_list.get(pos);
-		holder.timing1.setText(obj.getSlotstart() + "-" + obj.getSlotend());
-		holder.apt1.setText(obj.getCounter());
-		holder.status23.setText(obj.getStatus());
-		String a = obj.getStatus();
-		if (state[pos] == true) {
-
-			holder.status23.setText("Book");
-
-
-
-			holder.status23.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View view) {
-					try {
-						//new GetData().execute();
-						new AsyncTask<Void, Void, Void>() {
-							//String except = "";
-							InputStream is;
-							String json;
-							JSONObject all_news_list_object;
-							ProgressDialog dialog;
-							JSONArray json_arr;
-							String id = "4";
-							String date23 = "2015-06-30";
-							String slots;
-							String slotend;
-							String counter;
-							String bookingid;
-							String status;
-							String trainerid;
-							String bookingd;
-
-							protected void onPreExecute() {
-
-
-								dialog = new ProgressDialog(getContext());
-								dialog.setMessage("Loading please wait...");
-								dialog.show();
-								super.onPreExecute();
-
-
-							}
-
-							protected Void doInBackground(Void... params) {
-								//loading = true;
-
-								try {
-									DefaultHttpClient httClient = new DefaultHttpClient();
-									HttpGet http_post = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/trainer_booking_details?trainer_id=" + id + "&date_val=" + date23);
-									HttpResponse response = httClient.execute(http_post);
-									HttpEntity httpEntity = response.getEntity();
-									is = httpEntity.getContent();
-
-
-								} catch (UnsupportedEncodingException e) {
-									e.printStackTrace();
-								} catch (ClientProtocolException e) {
-									e.printStackTrace();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-								try {
-
-									BufferedReader reader = new BufferedReader(
-											new InputStreamReader(is));
-
-									StringBuilder sb = new StringBuilder();
-
-									String line;
-
-									while ((line = reader.readLine()) != null) {
-
-										sb.append(line + "\n");
-									}
-
-									is.close();
-
-									json = sb.toString();
-									Log.e("@@", "@@" + json);
-								} catch (Exception e) {
-									Log.e("Buffer Error", "Error converting result " + e.toString());
-								}
-
-
-								try {
-
-
-									all_news_list_object = new JSONObject(json);
-
-								} catch (JSONException e) {
-									Log.e("JSON Parser", "Error parsing data " + e.toString());
-								}
-
-								try {
-
-									json_arr = all_news_list_object.getJSONArray("time_slots");
-									//ArrayList<TrainerDetails> arrSearchResult = new ArrayList<TrainerDetails>();
-									for (int i = 0; i < json_arr.length(); i++) {
-										JSONObject Json_Obj_temp;
-
-										//setting custom data type objects
-
-										Json_Obj_temp = json_arr.getJSONObject(i);
-
-										TrainerDetails ob = new TrainerDetails(slots, slotend, counter, bookingid, status);
-										slots = Json_Obj_temp.getString("slot_start");
-										slotend = Json_Obj_temp.getString("slot_end");
-										counter = Json_Obj_temp.getString("counter");
-										bookingid = Json_Obj_temp.getString("booking_id");
-										status = Json_Obj_temp.getString("status");
-
-
-										all_feed_list.add(ob);
-										//Toast.makeText(getContext(), "" + slots + "" + slotend + "" + counter + "" + bookingid + "" + status, Toast.LENGTH_LONG).show();
-									}
-									//trainerid = all_news_list_object.getString("trainer_id");
-									//bookingd = all_news_list_object.getString("booking_date");
-
-									//TrainerBookingDate ob1 = new TrainerBookingDate(trainerid, bookingd);
-									//all_feed_list2.add(ob1);
-
-
-								} catch (Exception e) {
-									//except = e.toString();
-
-									e.printStackTrace();
-
-								}
-								return null;
-
-
-							}
-
-							protected void onPostExecute(Void aVoid) {
-								dialog.dismiss();
-
-								//holder.status23.setBackgroundColor(Color.WHITE);
-								Toast.makeText(getContext(), "" + slots + "" + slotend + "" + counter + "" + bookingid + "" + status, Toast.LENGTH_SHORT).show();
-								//holder.status23.setTextColor(Color.parseColor("#22A7F0"));
-
-
-								//holder.status23.setClickable(false);
-								holder.status23.setText("Booked");
-								//holder.status23.setClickable(false);
-								state[pos] = false;
-								notifyDataSetChanged();
-
-							}
-
-
-						}.execute();
-					} catch (Exception e) {
-
-					}
-				}
-
-			});
-
-		}
-
-		else if (a.equals("Ex")) {
-			holder.status23.setVisibility(View.GONE);
-
-
-		}
-
-		else  {
-
-			holder.status23.setText("Booked");
-			holder.status23.setClickable(false);
-		}
-
-
-
-		return row;
-	}
-
-
-
-
-
-	protected class ViewHolder
-	{
-
-
-		TextView timing1;
-		TextView apt1;
-		Button status23;
-
-	}
-
-
-
+public class BookAppointAdapter extends ArrayAdapter<TimeSlotsDataType> {
+
+    Context context;
+    LayoutInflater layoutInflater;
+    ViewHolder holder;
+    ArrayList<TimeSlotsDataType> trainerBookingDetailsDataTypeArrayList;
+    ArrayList<TimeSlotsDataType> timeSlotsDataTypeArrayList;
+    ConnectionDetector connectionDetector;
+    String exception = "", urlResponse = "";
+    ProgressDialog progressDialog;
+
+    public BookAppointAdapter(Context context, int resource, ArrayList<TimeSlotsDataType> timeSlotsDataTypeArrayList) {
+        super(context, resource, timeSlotsDataTypeArrayList);
+        this.context = context;
+        this.timeSlotsDataTypeArrayList = timeSlotsDataTypeArrayList;
+        layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        connectionDetector = new ConnectionDetector(context);
+    }
+
+    public View getView(final int position, View convertView, ViewGroup parent) {
+
+        if (convertView == null)
+
+        {
+            holder = new ViewHolder();
+            convertView = layoutInflater.inflate(R.layout.book_app_list, parent, false);
+
+            holder.llBookingStatus = (LinearLayout) convertView.findViewById(R.id.ll_booking_status);
+            holder.txtTimeing = (TitilliumRegular) convertView.findViewById(R.id.txt_timeing);
+            holder.txtApt = (TitilliumBold) convertView.findViewById(R.id.txt_apt);
+            holder.txtStatus = (TitilliumSemiBold) convertView.findViewById(R.id.txt_status);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.txtTimeing.setText(timeSlotsDataTypeArrayList.get(position).getSlot_start()
+                + " - " + timeSlotsDataTypeArrayList.get(position).getSlot_end());
+        holder.txtApt.setText(timeSlotsDataTypeArrayList.get(position).getCounter());
+
+        if (timeSlotsDataTypeArrayList.get(position).getStatusDependent().equals("NB")) {
+            holder.llBookingStatus.setVisibility(View.VISIBLE);
+            holder.llBookingStatus.setBackgroundResource(R.drawable.book_button);
+            holder.txtStatus.setText("BOOK");
+            holder.txtStatus.setTextColor(Color.parseColor("#FFFFFF"));
+        } else if (timeSlotsDataTypeArrayList.get(position).getStatusDependent().equals("Ex")) {
+            holder.llBookingStatus.setVisibility(View.GONE);
+        } else {
+            holder.llBookingStatus.setVisibility(View.VISIBLE);
+            holder.llBookingStatus.setBackgroundResource(R.drawable.booked_button);
+            holder.txtStatus.setText("BOOKED");
+            holder.txtStatus.setTextColor(Color.parseColor("#22A7F0"));
+        }
+
+        holder.llBookingStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (connectionDetector.isConnectingToInternet()) {
+                    addBooking(timeSlotsDataTypeArrayList.get(position).getTrainer_id(),
+                            timeSlotsDataTypeArrayList.get(position).getBooking_date(),
+                            timeSlotsDataTypeArrayList.get(position).getSlot_start(),
+                            timeSlotsDataTypeArrayList.get(position).getSlot_end(),
+                            position);
+                } else {
+                    Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        return convertView;
+    }
+
+
+    public class ViewHolder {
+        TitilliumRegular txtTimeing;
+        TitilliumBold txtApt;
+        TitilliumSemiBold txtStatus;
+        LinearLayout llBookingStatus;
+    }
+
+    public void addBooking(final String trainerId, final String date, final String slotStart, final String slotEnd, final int position) {
+
+        AsyncTask<Void, Void, Void> booking = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(context);
+                progressDialog.setMessage("Please wait");
+                progressDialog.show();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exception = "";
+                    urlResponse = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/add_booking?trainer_id=" + trainerId
+                            + "&client_id=" + AppConfig.loginDatatype.getSiteUserId()
+                            + "&booking_date=" + date
+                            + "&slot_start=" + slotStart
+                            + "&slot_end=" + slotEnd);
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponse = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponse);
+
+
+                    Log.d("RESPONSE", jOBJ.toString());
+
+                } catch (Exception e) {
+                    exception = e.toString();
+                }
+
+                Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/add_booking?trainer_id=" + trainerId
+                        + "&client_id=" + AppConfig.loginDatatype.getSiteUserId()
+                        + "&booking_date=" + date
+                        + "&slot_start=" + slotStart
+                        + "&slot_end=" + slotEnd);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                if (exception.equals("")) {
+                    timeSlotsDataTypeArrayList.get(position).setStatusDependent("B");
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "Server not responding....", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        };
+        booking.execute();
+
+    }
 
 }
-
-
-

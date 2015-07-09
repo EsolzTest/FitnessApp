@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -155,10 +156,9 @@ public class LoginActivity extends Activity {
                     urlResponse = "";
                     message = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
-                    HttpGet httpget = new HttpGet(
-                            "http://esolz.co.in/lab6/ptplanner/login/verify_app_login?email="
-                                    + email + "&password=" + password
-                                    + "&remember_me=" + remember);
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/login/verify_app_login?email="
+                            + email + "&password=" + password
+                            + "&remember_me=" + remember);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();
@@ -180,6 +180,9 @@ public class LoginActivity extends Activity {
                 } catch (Exception e) {
                     exception = e.toString();
                 }
+                Log.d("LOGIN", "http://esolz.co.in/lab6/ptplanner/login/verify_app_login?email="
+                        + email + "&password=" + password
+                        + "&remember_me=" + remember);
                 return null;
             }
 
@@ -200,16 +203,17 @@ public class LoginActivity extends Activity {
                             editor.putString("Password", etPass.getText()
                                     .toString().trim());
                             editor.commit();
-                            AppConfig.loginDatatype = new LoginDataType(siteUserId,etEmail.getText().toString().trim(),etPass.getText().toString().trim());
+                            AppConfig.loginDatatype = new LoginDataType(siteUserId, etEmail.getText().toString().trim(), etPass.getText().toString().trim());
 
+                            Intent intent = new Intent(LoginActivity.this, LandScreenActivity.class);
+                            startActivity(intent);
                         } else {
                             Editor editor = loginPreferences.edit();
                             editor.clear();
                             editor.commit();
+                            Intent intent = new Intent(LoginActivity.this, LandScreenActivity.class);
+                            startActivity(intent);
                         }
-                        Intent intent = new Intent(LoginActivity.this,
-                                LandScreenActivity.class);
-                        startActivity(intent);
                     } else if (responseMSG.equals("Error")) {
                         txtErrorMSG.setVisibility(View.VISIBLE);
                         txtErrorMSG.setText(message);

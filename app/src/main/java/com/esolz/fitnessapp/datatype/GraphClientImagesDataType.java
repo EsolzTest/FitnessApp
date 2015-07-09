@@ -3,13 +3,13 @@ package com.esolz.fitnessapp.datatype;
 /**
  * Created by su on 18/6/15.
  */
-public class Graph_Client_Images {
+public class GraphClientImagesDataType {
     String img_id;
     String image_link;
     String image_thumbnail;
     String uploaded_date;
 
-    public Graph_Client_Images(String uploaded_date, String image_thumbnail, String image_link, String img_id) {
+    public GraphClientImagesDataType(String uploaded_date, String image_thumbnail, String image_link, String img_id) {
         this.uploaded_date = uploaded_date;
         this.image_thumbnail = image_thumbnail;
         this.image_link = image_link;
