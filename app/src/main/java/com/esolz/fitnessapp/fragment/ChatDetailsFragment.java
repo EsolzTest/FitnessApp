@@ -1,6 +1,5 @@
 package com.esolz.fitnessapp.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,14 +12,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.MessageChatAdapter;
@@ -29,12 +26,12 @@ import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.ChatDataType;
 import com.esolz.fitnessapp.datatype.SendDataType;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
+import com.esolz.fitnessapp.helper.AppConfig;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,16 +65,12 @@ public class ChatDetailsFragment extends FragmentActivity {
 
     ImageView ed;
     String id, name;
-
-    TitilliumSemiBold text;
-
+    TitilliumSemiBold titleChatDetails;
     SendDataType send_data;
-
-    //String user_name;
-
-
     EditText etSendMsg;
     String text_data;
+
+    String msgUserName = "", msgUserId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,24 +79,15 @@ public class ChatDetailsFragment extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         setContentView(R.layout.msg_history);
-        text = (TitilliumSemiBold) findViewById(R.id.title_chat_details);
+        titleChatDetails = (TitilliumSemiBold) findViewById(R.id.title_chat_details);
         Rel = (RelativeLayout) findViewById(R.id.msg_hstry);
         Rel.setVisibility(View.VISIBLE);
         chat_history = (ListView) findViewById(R.id.listviewchat);
         pbar1 = (ProgressBar) findViewById(R.id.progbar1);
         pbar1.setVisibility(View.GONE);
-
-        //*****************set a name and id
-
-        name = getIntent().getExtras().getString("name");
-        id = getIntent().getExtras().getString("id");
-
-        text.setText(name);
-
-        loadMore(0);
-
 
         llViewDetails = (LinearLayout) findViewById(R.id.ll_viewdetails);
         back = (LinearLayout) findViewById(R.id.back);
@@ -111,57 +95,63 @@ public class ChatDetailsFragment extends FragmentActivity {
         etSendMsg = (EditText) findViewById(R.id.et_send_msg);
 
         ed = (ImageView) findViewById(R.id.send_msg);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         fragmentManager = getSupportFragmentManager();
+
+        try {
+            msgUserName = getIntent().getExtras().getString("msgUserName");
+            msgUserId = getIntent().getExtras().getString("msgUserId");
+            AppConfig.PT_ID = msgUserId;
+            AppConfig.PT_NAME = msgUserName;
+            titleChatDetails.setText(msgUserName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         llViewDetails.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 // TODO Auto-generated method stub
-                Intent intent = new Intent(ChatDetailsFragment.this,
-                        LandScreenActivity.class);
+                Intent intent = new Intent(ChatDetailsFragment.this, LandScreenActivity.class);
                 intent.putExtra("MSG", "ChatDetailsFragment");
                 startActivity(intent);
             }
         });
+
         back.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 // TODO Auto-generated method stub
-                Intent intent = new Intent(ChatDetailsFragment.this,
-                        LandScreenActivity.class);
+                Intent intent = new Intent(ChatDetailsFragment.this, LandScreenActivity.class);
                 intent.putExtra("MSG", "MSGFragment");
                 startActivity(intent);
-
-
             }
         });
 
 
-        ed.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(ChatDetailsFragment.this, etSendMsg.getText().toString(), Toast.LENGTH_LONG).show();
-
-                //sendMessageToServer(utils.getSendMessageJSON(etSendMsg.getText()
-                //.toString()));
-
-
-                // Clearing the input filed once message was sent
-                //text_data.setText("");
-                text_data = etSendMsg.getText().toString();
-
-                //method
-
-                //chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
-
-                new GetData().execute();
-            }
-        });
+//        ed.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                //Toast.makeText(ChatDetailsFragment.this, etSendMsg.getText().toString(), Toast.LENGTH_LONG).show();
+//
+//                //sendMessageToServer(utils.getSendMessageJSON(etSendMsg.getText()
+//                //.toString()));
+//
+//
+//                // Clearing the input filed once message was sent
+//                //text_data.setText("");
+//                text_data = etSendMsg.getText().toString();
+//
+//                //method
+//
+//                //chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
+//
+//                new GetData().execute();
+//            }
+//        });
 
 
     }
@@ -186,7 +176,8 @@ public class ChatDetailsFragment extends FragmentActivity {
                 DefaultHttpClient httClient = new DefaultHttpClient();
                 // HttpClient client = HttpClientBuilder.create().build();
 
-                HttpGet http_get = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=1&sent_by=14&message=loremipsum%20dolor%20sitamet" + text_data);
+                HttpGet http_get = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?" +
+                        "sent_to=1&sent_by=14&message=loremipsum%20dolor%20sitamet" + text_data);
 
                 HttpResponse response = httClient.execute(http_get);
 
@@ -390,7 +381,6 @@ public class ChatDetailsFragment extends FragmentActivity {
 
                     chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
                 } else {
-
 
 
                     new MessageChatAdapter(con, 0, all_user_data).notifyDataSetChanged();

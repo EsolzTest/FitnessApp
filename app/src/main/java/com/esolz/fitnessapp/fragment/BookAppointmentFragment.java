@@ -86,7 +86,7 @@ public class BookAppointmentFragment extends Fragment {
     LinearLayout vp_prev;
     Date date;
     public int viewPagerItemNo;
-    String exception = "", urlResponse = "", exceptionTrainer = "", urlResponseTrainer = "";
+    String exception = "", exceptionJSON = "", urlResponse = "", exceptionTrainer = "", urlResponseTrainer = "";
     ProgressBar viewpagerPbar, pbarList;
 
     TimeSlotsDataType timeSlotsDataType;
@@ -310,6 +310,7 @@ public class BookAppointmentFragment extends Fragment {
                 try {
                     exception = "";
                     urlResponse = "";
+                    exceptionJSON = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
                     HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/trainer_by_date?client_id="
                             + AppConfig.loginDatatype.getSiteUserId()
@@ -343,8 +344,8 @@ public class BookAppointmentFragment extends Fragment {
 
                         Log.d("RESPONSE", jOBJ.toString());
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        JSONArray jArr = new JSONArray("");
+                        exceptionJSON = e.toString();
+                        //JSONArray jArr = new JSONArray("");
                     }
 
                 } catch (Exception e) {
@@ -366,23 +367,25 @@ public class BookAppointmentFragment extends Fragment {
                 viewpagerPbar.setVisibility(View.GONE);
                 trinerPageviewer.setVisibility(View.VISIBLE);
                 if (exception.equals("")) {
-                    AllTrainerAdapter trainerAdapter = new AllTrainerAdapter(getActivity(), 0, altrainerDataTypeArrayList);
-                    trinerPageviewer.setAdapter(trainerAdapter);
+                    if (exceptionJSON.equals("")) {
+                        AllTrainerAdapter trainerAdapter = new AllTrainerAdapter(getActivity(), 0, altrainerDataTypeArrayList);
+                        trinerPageviewer.setAdapter(trainerAdapter);
 
-                    if (altrainerDataTypeArrayList.size() > 1) {
-                        vp_next.setVisibility(View.VISIBLE);
-                        vp_prev.setVisibility(View.VISIBLE);
+                        if (altrainerDataTypeArrayList.size() > 1) {
+                            vp_next.setVisibility(View.VISIBLE);
+                            vp_prev.setVisibility(View.VISIBLE);
+                        } else {
+                            vp_next.setVisibility(View.GONE);
+                            vp_prev.setVisibility(View.GONE);
+                        }
+
+                        getTrainerBookingDetails(date, altrainerDataTypeArrayList.get(0).getPt_id());
                     } else {
-                        vp_next.setVisibility(View.GONE);
-                        vp_prev.setVisibility(View.GONE);
+                        Toast.makeText(getActivity(), "No record found....", Toast.LENGTH_LONG).show();
                     }
 
-                    getTrainerBookingDetails(date, altrainerDataTypeArrayList.get(0).getPt_id());
-
                 } else {
-                    Toast.makeText(getActivity(),
-                            "Server not responding....", Toast.LENGTH_LONG)
-                            .show();
+                    Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();
                 }
             }
 

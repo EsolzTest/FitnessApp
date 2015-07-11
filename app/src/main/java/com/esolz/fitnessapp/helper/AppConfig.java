@@ -27,4 +27,7 @@ public class AppConfig {
     public static ArrayList<MealDateDataType> mealArrayList = new ArrayList<MealDateDataType>();
     public static ArrayList<DiaryDataType> diaryArrayList = new ArrayList<DiaryDataType>();
 
+    public static  String PT_NAME = "";
+    public static  String PT_ID = "";
+
 }

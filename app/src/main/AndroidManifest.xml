@@ -54,6 +54,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize">
         </activity>
+        <activity
+            android:name="com.esolz.fitnessapp.fitness.EsolzCamera"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.esolz.fitnessapp.fitness.PreviewUploadImageActivity"
+            android:label="@string/app_name"></activity>
 
     </application>
 

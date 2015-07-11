@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape
-    android:shape="line"
+    xmlns:android="http://schemas.android.com/apk/res/android"
 
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-<size
-    android:height="1dp" android:width="@dimen/abc_text_size_display_1_material"
-    />
+    android:shape="line">
+    <size
+        android:width="@dimen/abc_text_size_display_1_material"
+        android:height="1dp"
+        />
     <stroke
         android:color="@android:color/transparent"></stroke>
-
 
 
 </shape>

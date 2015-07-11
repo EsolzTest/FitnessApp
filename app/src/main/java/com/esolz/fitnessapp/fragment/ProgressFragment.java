@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.HelveticaSemiBold;
@@ -33,7 +34,9 @@ import com.esolz.fitnessapp.datatype.GraphClientAllDataType;
 import com.esolz.fitnessapp.datatype.GraphClientDetailsDataType;
 import com.esolz.fitnessapp.datatype.GraphClientGoalImages;
 import com.esolz.fitnessapp.datatype.GraphClientImagesDataType;
+import com.esolz.fitnessapp.fitness.EsolzCamera;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
+import com.esolz.fitnessapp.fitness.PreviewUploadImageActivity;
 import com.esolz.fitnessapp.fitness.ProgressGraphView;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
@@ -82,7 +85,7 @@ public class ProgressFragment extends Fragment {
     LinearLayout llGallery, llCamera, llCancel;
 
     // --- For Camera and Gallery ---
-    String URL = "", Current_PATH = "", statingProfileImageURL = "", exceptionC = "";
+    String Current_PATH = "", imgTYPE = "";
     private static final int ACTION_TAKE_PHOTO_B = 1;
     private static final int ACTION_TAKE_GALLERY = 2;
     // --- End ---
@@ -122,7 +125,7 @@ public class ProgressFragment extends Fragment {
         dialogChooser.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialogChooser.getWindow().setGravity(Gravity.BOTTOM);
         dialogChooser.setContentView(R.layout.dialog_camera_selection);
-        dialogChooser.setCanceledOnTouchOutside(false);
+        dialogChooser.setCanceledOnTouchOutside(true);
 
         llGallery = (LinearLayout) dialogChooser.findViewById(R.id.ll_gallery);
         llCamera = (LinearLayout) dialogChooser.findViewById(R.id.ll_camera);
@@ -132,12 +135,14 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dialogChooser.show();
+                imgTYPE = "currentImg";
             }
         });
         uploadGoalImg.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogChooser.show();
+                imgTYPE = "goalImg";
             }
         });
 
@@ -156,10 +161,11 @@ public class ProgressFragment extends Fragment {
         llCamera.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent jh = new Intent(getActivity(), EsolzCamera.class);
-//                startActivityForResult(jh, ACTION_TAKE_PHOTO_B);
 
                 dialogChooser.dismiss();
+
+                Intent jh = new Intent(getActivity(), EsolzCamera.class);
+                startActivityForResult(jh, ACTION_TAKE_PHOTO_B);
             }
         });
 
@@ -167,6 +173,7 @@ public class ProgressFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dialogChooser.dismiss();
+                imgTYPE = "";
             }
         });
 
@@ -235,6 +242,13 @@ public class ProgressFragment extends Fragment {
             if (resultCode == 6000) {
 
                 Current_PATH = data.getStringExtra("Path");
+                Log.d("CAMERA IMAGE", Current_PATH);
+                Toast.makeText(getActivity(), "CAMERA..." + Current_PATH, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getActivity(), PreviewUploadImageActivity.class);
+                intent.putExtra("IMG", Current_PATH);
+                intent.putExtra("imgType", imgTYPE);
+                startActivity(intent);
             }
         } else if (requestCode == ACTION_TAKE_GALLERY) {
             if (resultCode == getActivity().RESULT_OK) {
@@ -251,9 +265,14 @@ public class ProgressFragment extends Fragment {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 Current_PATH = cursor.getString(columnIndex);
                 cursor.close();
-                Toast.makeText(getActivity(), "hanle..." + Current_PATH, Toast.LENGTH_SHORT).show();
 
+                Log.d("GALLERY IMAGE", Current_PATH);
+                Toast.makeText(getActivity(), "Gallery..." + Current_PATH, Toast.LENGTH_SHORT).show();
 
+                Intent intent = new Intent(getActivity(), PreviewUploadImageActivity.class);
+                intent.putExtra("IMG", Current_PATH);
+                intent.putExtra("imgType", imgTYPE);
+                startActivity(intent);
             } else {
                 Toast.makeText(getActivity(), "Canceled by user",
                         Toast.LENGTH_SHORT).show();
