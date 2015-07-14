@@ -1,58 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/receiver_relative"
+<RelativeLayout
+    android:id="@+id/rl_msg_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent">
 
 
+    <ProgressBar
+        android:id="@+id/pbar_load_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"/>
+
+
     <RelativeLayout
-        android:id="@+id/receiver"
+        android:id="@+id/rl_sender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-
-        >
-
+        android:visibility="visible">
 
         <ImageView
-            android:id="@+id/chat_profile_pic_send"
+            android:id="@+id/img_sender"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignBottom="@+id/Chat_send_txtarea"
+            android:layout_alignBottom="@+id/chat_send_txtarea"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/pic5" />
-
+            android:layout_marginTop="10dp"/>
 
         <RelativeLayout
-            android:id="@+id/Chat_send_txtarea"
+            android:id="@+id/chat_send_txtarea"
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginRight="80dp"
             android:layout_marginTop="15dp"
-            android:layout_toRightOf="@+id/chat_profile_pic_send"
+            android:layout_toRightOf="@+id/img_sender"
             android:background="@drawable/chat_recvr">
 
-
-            <TextView
-
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
                 android:id="@+id/chat_send_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:layout_weight="2"
-                android:paddingBottom="10dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="40dp"
-                android:paddingTop="20dp"
-                android:text=""
+                android:padding="10dp"
                 android:textColor="@android:color/black"
-                android:textSize="15dp"
-
-
-                />
+                android:textSize="16sp"/>
 
         </RelativeLayout>
 
@@ -60,16 +53,13 @@
 
 
     <RelativeLayout
+        android:id="@+id/rl_receiver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/receiver"
-
-        >
-
+        android:layout_below="@+id/rl_sender">
 
         <RelativeLayout
-
-            android:id="@+id/Chat_send_txtarea1"
+            android:id="@+id/chat_receive_txtarea"
             android:layout_width="380dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -79,35 +69,24 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/chat_sender">
 
-
-            <TextView
-                android:id="@+id/chat_send_msg1"
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:id="@+id/chat_receive_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-
-
-                android:paddingBottom="15dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="8dp"
-                android:paddingTop="10dp"
+                android:padding="10dp"
                 android:textColor="#3D1F00"
-                android:textSize="15dp" />
-
-
+                android:textSize="16sp"/>
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/chat_profile_pic_send1"
+            android:id="@+id/img_receiver"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignBottom="@+id/Chat_send_txtarea1"
+            android:layout_alignBottom="@+id/chat_receive_txtarea"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/pic5" />
-
-
+            android:layout_marginTop="15dp"/>
     </RelativeLayout>
 
 

@@ -1,154 +1,242 @@
 package com.esolz.fitnessapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
+import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.datatype.ChatDataType;
-import com.esolz.fitnessapp.fragment.ChatDetailsFragment;
+import com.esolz.fitnessapp.datatype.UserRespectiveMSGDatatype;
+import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.ConnectionDetector;
 import com.squareup.picasso.Picasso;
 
-import java.util.Calendar;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.Locale;
 
 /**
  * Created by su on 18/6/15.
  */
-public class MessageChatAdapter extends ArrayAdapter<ChatDataType> {
+public class MessageChatAdapter extends ArrayAdapter<UserRespectiveMSGDatatype> {
 
     Context context;
-    LinkedList<ChatDataType> data_chat;
-    LayoutInflater inf;
-    RelativeLayout Container;
-    String sent_by;
-    FragmentTransaction fragmentTransaction;
+    LinkedList<UserRespectiveMSGDatatype> userRespectiveMSGDatatypes, userRespectiveMSGDatatypesLazy;
+    UserRespectiveMSGDatatype userRespectiveMSGDatatype;
+    LayoutInflater inflater;
     FragmentManager fragmentManager;
-    ChatDataType obj;
-    //EditText ed;
-    //String total_d;
-    ListView listView;
+    ViewHolder holder;
+    String exception = "", urlResponse = "";
+    ConnectionDetector cd;
 
-
-    protected class ViewHolder {
-        TextView message;
-        //TextView sender;
-        // TextView receiver;
-        ImageView sender_image;
-        ImageView receiver_image;
-        // TextView send_time;
-
-    }
-
-
-    public MessageChatAdapter(Context context, int resource, LinkedList<ChatDataType> data) {
-        super(context, resource, data);
+    public MessageChatAdapter(Context context, int resource, LinkedList<UserRespectiveMSGDatatype> userRespectiveMSGDatatypes) {
+        super(context, resource, userRespectiveMSGDatatypes);
 
         this.context = context;
-        this.data_chat = data;
-
-
-        //inflator = ((Activity) this.context).getLayoutInflater();
+        this.userRespectiveMSGDatatypes = userRespectiveMSGDatatypes;
         fragmentManager = ((FragmentActivity) this.context).getSupportFragmentManager();
-        inf = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        cd = new ConnectionDetector(context);
     }
-
 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
 
-        final ChatDetailsFragment cd = (ChatDetailsFragment) context;
-        int pos = position;
-
-
-        obj = data_chat.get(position);
-        sent_by = obj.getSend_by();
-        final ViewHolder holder;
-
         if (convertView == null) {
-
+            convertView = inflater.inflate(R.layout.msg_receiver, parent, false);
             holder = new ViewHolder();
 
+            holder.rlMSGContainer = (RelativeLayout) convertView.findViewById(R.id.rl_msg_container);
 
-            if (sent_by.equals("15")) {
+            holder.chatSendMsg = (TitilliumRegular) convertView.findViewById(R.id.chat_send_msg);
+            holder.chatReceiveMsg = (TitilliumRegular) convertView.findViewById(R.id.chat_receive_msg);
 
-                convertView = inf.inflate(R.layout.msg_receiver, parent, false);
-                Container = (RelativeLayout) convertView.findViewById(R.id.receiver_relative);
-                holder.message = (TextView) convertView.findViewById(R.id.chat_send_msg1);
-                holder.sender_image = (ImageView) convertView.findViewById(R.id.chat_profile_pic_send1);
-                convertView.setTag(holder);
-                holder.message.setText(obj.getMessage());
-                Picasso.with(context).load(obj.getSender_image()).transform(new Trns()).resize(400, 400).centerInside().placeholder(R.drawable.abc_dialog_material_background_dark).error(R.drawable.abc_dialog_material_background_light).into(holder.sender_image);
+            holder.llReceiver = (RelativeLayout) convertView.findViewById(R.id.rl_receiver);
+            holder.rlSender = (RelativeLayout) convertView.findViewById(R.id.rl_sender);
+            holder.chatSendTxtarea = (RelativeLayout) convertView.findViewById(R.id.chat_send_txtarea);
+            holder.chatReceiveTxtarea = (RelativeLayout) convertView.findViewById(R.id.chat_receive_txtarea);
 
-                Container.setVisibility(View.VISIBLE);
+            holder.imgSender = (ImageView) convertView.findViewById(R.id.img_sender);
+            holder.imgReceiver = (ImageView) convertView.findViewById(R.id.img_receiver);
 
+            holder.pbarLoadMore = (ProgressBar) convertView.findViewById(R.id.pbar_load_more);
+            holder.pbarLoadMore.setVisibility(View.GONE);
 
-            } else {
-
-                convertView = inf.inflate(R.layout.msg_receiver, parent, false);
-                Container = (RelativeLayout) convertView.findViewById(R.id.receiver_relative);
-                holder.message = (TextView) convertView.findViewById(R.id.chat_send_msg);
-
-                holder.receiver_image = (ImageView) convertView.findViewById(R.id.chat_profile_pic_send);
-
-
-                convertView.setTag(holder);
-                obj = data_chat.get(position);
-                holder.message.setText(obj.getMessage());
-
-                Picasso.with(context).load(obj.getReceiver_image()).transform(new Trns()).resize(400, 400).centerInside().placeholder(R.drawable.abc_dialog_material_background_dark).error(R.drawable.abc_dialog_material_background_light).into(holder.receiver_image);
-
-
-                //Container.setVisibility(View.VISIBLE);
-
-            }
+            convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        //obj=data_chat.get(position);
-        //TextView receiver=(TextView)convertView.findViewById(R.id.actionbar);
-        //receiver.setText(obj.getReceiver());
 
-         int total_d=data_chat.size();
-
-
-//        if (position == (data_chat.size() - 10) && cd.loading == false && data_chat.size() <= total_d) {
-//            cd.loadMore(position + 10);
-//
-//
-//        }
-        if(position<total_d)
-        {
-            cd.loadMore(position + 10);
-
-
-            cd.loading=false;
+        if (userRespectiveMSGDatatypes.get(position).getSent_by().equals(AppConfig.loginDatatype.getSiteUserId())) {
+            userRespectiveMSGDatatypes.get(position).setIsSender(false);
+        } else {
+            userRespectiveMSGDatatypes.get(position).setIsSender(true);
         }
 
+        if (userRespectiveMSGDatatypes.get(position).getIsSender()) {
+            holder.llReceiver.setVisibility(View.GONE);
+            holder.rlSender.setVisibility(View.VISIBLE);
 
+            holder.chatSendMsg.setText(userRespectiveMSGDatatypes.get(position).getMessage());
 
-            return convertView;
+            Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getSender_image())
+                    .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgSender);
+
+            Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getReceiver_image())
+                    .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgReceiver);
+
+        } else {
+            holder.llReceiver.setVisibility(View.VISIBLE);
+            holder.rlSender.setVisibility(View.GONE);
+
+            holder.chatReceiveMsg.setText(userRespectiveMSGDatatypes.get(position).getMessage());
+
+            Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getReceiver_image())
+                    .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgSender);
+
+            Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getSender_image())
+                    .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgReceiver);
+
+        }
+        int pageCount = 1;
+        if (position == 0) {
+            if (cd.isConnectingToInternet()) {
+                //if (userRespectiveMSGDatatypes.get(position).getStartPosition() >= 0)
+                getAllMessage(pageCount);
+                pageCount++;
+            } else {
+                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show();
+            }
         }
 
+        return convertView;
+    }
 
+    protected class ViewHolder {
+        TitilliumRegular chatSendMsg, chatReceiveMsg;
+        RelativeLayout llReceiver, rlSender, chatSendTxtarea, chatReceiveTxtarea, rlMSGContainer;
+        ImageView imgSender, imgReceiver;
+        ProgressBar pbarLoadMore;
+    }
+
+    public void getAllMessage(final int position) {
+
+        AsyncTask<Void, Void, Void> allMSG = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+                holder.pbarLoadMore.setVisibility(View.VISIBLE);
+                holder.llReceiver.setVisibility(View.GONE);
+                holder.rlSender.setVisibility(View.GONE);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exception = "";
+                    urlResponse = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" +
+                            position + "&logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() +
+                            "&start=" + position);
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponse = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponse);
+                    try {
+                        userRespectiveMSGDatatypesLazy = new LinkedList<UserRespectiveMSGDatatype>();
+                        JSONArray jsonArray = jOBJ.getJSONArray("all_message");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                                    true,
+                                    jsonObject.getString("id"),
+                                    jsonObject.getString("sent_to"),
+                                    jsonObject.getString("sent_by"),
+                                    jsonObject.getString("message"),
+                                    jsonObject.getString("read_status"),
+                                    jsonObject.getString("send_time"),
+                                    jsonObject.getString("sender"),
+                                    jsonObject.getString("receiver"),
+                                    jsonObject.getString("sender_image"),
+                                    jsonObject.getString("receiver_image"),
+                                    jsonObject.getString("status"),
+                                    jOBJ.getInt("next_start")
+                            );
+                            userRespectiveMSGDatatypesLazy.add(userRespectiveMSGDatatype);
+                        }
+                    } catch (Exception ex) {
+                    }
+                    Log.i("RESPONSE", jOBJ.toString());
+                    Log.i("URL", "http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" +
+                            AppConfig.PT_ID + "&logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() +
+                            "&start=" + position);
+                } catch (Exception e) {
+                    exception = e.toString();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                holder.pbarLoadMore.setVisibility(View.GONE);
+                if (exception.equals("")) {
+                    holder.llReceiver.setVisibility(View.VISIBLE);
+                    holder.rlSender.setVisibility(View.VISIBLE);
+                    userRespectiveMSGDatatypes.addAll(0, userRespectiveMSGDatatypesLazy);
+                    notifyDataSetChanged();
+                } else {
+                    Log.d("Exception : ", exception);
+                    Toast.makeText(context, "Server not responding....", Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+
+        };
+        allMSG.execute();
+
+    }
 
 }

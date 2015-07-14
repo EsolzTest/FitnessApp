@@ -1,6 +1,5 @@
 package com.esolz.fitnessapp.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,31 +16,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.MessageChatAdapter;
-import com.esolz.fitnessapp.adapter.SendAdapter;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
-import com.esolz.fitnessapp.datatype.ChatDataType;
-import com.esolz.fitnessapp.datatype.SendDataType;
+import com.esolz.fitnessapp.datatype.UserRespectiveMSGDatatype;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.ConnectionDetector;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
 public class ChatDetailsFragment extends FragmentActivity {
@@ -49,28 +43,20 @@ public class ChatDetailsFragment extends FragmentActivity {
     LinearLayout llViewDetails, back;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
-    JSONObject user_chat_list_object;
-    String Url;
-
-    Context con = this;
-    RelativeLayout Rel;
     ListView chat_history;
-    MessageChatAdapter chatAdapter;
-    public boolean loading = false;
-    ProgressBar pbar1;
-    //LinkedList<ProfileViewDataType> user_data;
+    MessageChatAdapter messageChatAdapter;
+    ProgressBar pbar1, pbarChat;
 
-    LinkedList<ChatDataType> all_user_data = new LinkedList<ChatDataType>();
-    LinkedList<SendDataType> all_chat_data = new LinkedList<SendDataType>();
+    LinkedList<UserRespectiveMSGDatatype> userRespectiveMSGDatatypeLinkedList;
+    UserRespectiveMSGDatatype userRespectiveMSGDatatype;
 
     ImageView ed;
-    String id, name;
     TitilliumSemiBold titleChatDetails;
-    SendDataType send_data;
     EditText etSendMsg;
-    String text_data;
 
-    String msgUserName = "", msgUserId = "";
+    String msgUserName = "", msgUserId = "", exception = "", urlResponse = "", exceptionError = "";
+    ConnectionDetector cd;
+    TitilliumSemiBold txtError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +68,19 @@ public class ChatDetailsFragment extends FragmentActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         setContentView(R.layout.msg_history);
+
+        cd = new ConnectionDetector(ChatDetailsFragment.this);
+
         titleChatDetails = (TitilliumSemiBold) findViewById(R.id.title_chat_details);
-        Rel = (RelativeLayout) findViewById(R.id.msg_hstry);
-        Rel.setVisibility(View.VISIBLE);
-        chat_history = (ListView) findViewById(R.id.listviewchat);
         pbar1 = (ProgressBar) findViewById(R.id.progbar1);
         pbar1.setVisibility(View.GONE);
+
+        pbarChat = (ProgressBar) findViewById(R.id.pbar_chat);
+        chat_history = (ListView) findViewById(R.id.listviewchat);
+        txtError = (TitilliumSemiBold) findViewById(R.id.txt_error);
+        txtError.setVisibility(View.GONE);
+        pbarChat.setVisibility(View.GONE);
+        chat_history.setVisibility(View.GONE);
 
         llViewDetails = (LinearLayout) findViewById(R.id.ll_viewdetails);
         back = (LinearLayout) findViewById(R.id.back);
@@ -106,6 +99,12 @@ public class ChatDetailsFragment extends FragmentActivity {
             titleChatDetails.setText(msgUserName);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (cd.isConnectingToInternet()) {
+            getAllMessage();
+        } else {
+            Toast.makeText(ChatDetailsFragment.this, "No internet connection", Toast.LENGTH_SHORT).show();
         }
 
         llViewDetails.setOnClickListener(new OnClickListener() {
@@ -135,10 +134,10 @@ public class ChatDetailsFragment extends FragmentActivity {
 //            @Override
 //            public void onClick(View v) {
 //
-//                //Toast.makeText(ChatDetailsFragment.this, etSendMsg.getText().toString(), Toast.LENGTH_LONG).show();
-//
-//                //sendMessageToServer(utils.getSendMessageJSON(etSendMsg.getText()
-//                //.toString()));
+////                Toast.makeText(ChatDetailsFragment.this, etSendMsg.getText().toString(), Toast.LENGTH_LONG).show();
+////
+////                sendMessageToServer(utils.getSendMessageJSON(etSendMsg.getText()
+////                .toString()));
 //
 //
 //                // Clearing the input filed once message was sent
@@ -147,7 +146,7 @@ public class ChatDetailsFragment extends FragmentActivity {
 //
 //                //method
 //
-//                //chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
+//                chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
 //
 //                new GetData().execute();
 //            }
@@ -156,242 +155,103 @@ public class ChatDetailsFragment extends FragmentActivity {
 
     }
 
-    //*************Edit_chat
+    public void getAllMessage() {
 
-    //
-    class GetData extends AsyncTask<Void, Void, Void> {
-
-        InputStream is;
-        String json;
-        JSONArray json_arr;
-
-        JSONObject all_news_list_object;
-
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-
-                DefaultHttpClient httClient = new DefaultHttpClient();
-                // HttpClient client = HttpClientBuilder.create().build();
-
-                HttpGet http_get = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?" +
-                        "sent_to=1&sent_by=14&message=loremipsum%20dolor%20sitamet" + text_data);
-
-                HttpResponse response = httClient.execute(http_get);
-
-                HttpEntity httpEntity = response.getEntity();
-
-                is = httpEntity.getContent();
-
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(is));
-
-                StringBuilder sb = new StringBuilder();
-
-                String line = null;
-
-                while ((line = reader.readLine()) != null) {
-
-                    sb.append(line + "\n");
-                }
-                is.close();
-
-                json = sb.toString();
-                all_news_list_object = new JSONObject(json);
-
-
-                //data = new LinkedList<MsgDataType>();
-                //String total_data = all_news_list_object.getString("all_user");
-                //json_arr = all_news_list_object.getJSONArray("all_user");
-
-                send_data = new SendDataType(all_news_list_object.getString("id"), all_news_list_object.getString("sender"), all_news_list_object.getString("receiver"), all_news_list_object.getString("sender_image"), all_news_list_object.getString("receiver_image"), all_news_list_object.getString("message"), all_news_list_object.getString("send_time"), all_news_list_object.getString("status"));
-
-                //SendAdapter.add(new SendDataType(chat_history, text_data));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //pbar1.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-
-            super.onPostExecute(aVoid);
-            chat_history.setAdapter(new SendAdapter(con, 0, all_chat_data));
-            etSendMsg.setText("");
-
-            new SendAdapter(con, 0).notifyDataSetChanged();
-
-            //pbar1.setVisibility(View.GONE);
-        }
-
-    }
-
-
-    //*******************Lazzy loading
-
-
-    public void loadMore(int position) {
-
-
-        final int pos = position;
-        if (position == 0) {
-
-            Url = "http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" + id + "&logged_in_user=15&start=0";
-
-        } else {
-            Url = "http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" + id + "&logged_in_user=15&start=" + pos;
-        }
-
-
-        //public void asyntask_for_listview(Context context) {
-
-
-        //public void asyntask_for_listview(final ListView chat_history, Context context) {
-
-        final Context cont = con;
-        //TAKING  LIST VIEW DATA FROM JSON
-        //SETTING UP LIST VIEW ITEMS FROM JSON.. WHILE TAKING ID FROM THE VIEW PAGER ELEMENT..
-        //SETTING ASYNTASK CLASS
-        new AsyncTask<Void, Void, Void>() {
-            //ProgressDialog pg;
-            InputStream is_lv;
-            String json_lv;
-            JSONArray json_arr_lv;
-            //Context cont = con;
-            //ProgressDialog dialog;
-            //JSONObject all_news_list_object;
-
+        AsyncTask<Void, Void, Void> allMSG = new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected void onPreExecute() {
-                pbar1.setVisibility(View.VISIBLE);
-
-
+                // TODO Auto-generated method stub
                 super.onPreExecute();
-                //   pg.setMessage("Please wait while retrieving chat details..");
-                // pg.show();
-
-
+                pbarChat.setVisibility(View.VISIBLE);
+                chat_history.setVisibility(View.GONE);
+                txtError.setVisibility(View.GONE);
             }
 
             @Override
-            protected Void doInBackground(Void... voids) {
-
-                loading = true;
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
                 try {
-
-                    DefaultHttpClient httClient = new DefaultHttpClient();
-
-                    HttpGet http_get = new HttpGet(Url);
-
-                    HttpResponse response = httClient.execute(http_get);
-
-                    HttpEntity httpEntity = response.getEntity();
-
-                    is_lv = httpEntity.getContent();
-
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-
+                    exception = "";
+                    exceptionError = "";
+                    urlResponse = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" +
+                            msgUserId + "&logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() +
+                            "&start=0");
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
                     BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(is_lv));
-
+                            new InputStreamReader(is, "iso-8859-1"), 8);
                     StringBuilder sb = new StringBuilder();
-
                     String line = null;
-
                     while ((line = reader.readLine()) != null) {
-
                         sb.append(line + "\n");
                     }
-
-                    is_lv.close();
-
-                    json_lv = sb.toString();
-                    System.out.print("!! Response : " + json_lv);
-
-                } catch (Exception e) {
-                    Log.e("Buffer Error", "Error converting result " + e.toString());
-                }
-
-                // try parse the string to a JSON object
-                try {
-                    user_chat_list_object = new JSONObject(json_lv);
-                } catch (JSONException e) {
-                    Log.e("JSON Parser", "Error parsing data in chat details " + e.toString());
-                }
-
-                try {
-
-
-                    json_arr_lv = user_chat_list_object.getJSONArray("all_message");
-
-
-                    //getting details of array
-                    if (json_arr_lv.length() != 0) {
-
-                        for (int i = 0; i < json_arr_lv.length(); i++) {
-                            JSONObject Json_Obj_temp;
-
-                            Json_Obj_temp = json_arr_lv.getJSONObject(i);
-
-                            //JSONObject Json_Obj_temp;
-
-
-                            ChatDataType obj = new ChatDataType(Json_Obj_temp.getString("id"), Json_Obj_temp.getString("sent_to"), Json_Obj_temp.getString("sent_by"), Json_Obj_temp.getString("message"), Json_Obj_temp.getString("read_status"), Json_Obj_temp.getString("send_time"), Json_Obj_temp.getString("sender"), Json_Obj_temp.getString("receiver"), Json_Obj_temp.getString("sender_image"), Json_Obj_temp.getString("receiver_image"), Json_Obj_temp.getString("status"));
-                            //obj.setTotal_data(json_lv);
-                            obj.setIs_added(true);
-                            all_user_data.add(obj);
-
-
+                    is.close();
+                    urlResponse = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponse);
+                    try {
+                        userRespectiveMSGDatatypeLinkedList = new LinkedList<UserRespectiveMSGDatatype>();
+                        JSONArray jsonArray = jOBJ.getJSONArray("all_message");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                                    true,
+                                    jsonObject.getString("id"),
+                                    jsonObject.getString("sent_to"),
+                                    jsonObject.getString("sent_by"),
+                                    jsonObject.getString("message"),
+                                    jsonObject.getString("read_status"),
+                                    jsonObject.getString("send_time"),
+                                    jsonObject.getString("sender"),
+                                    jsonObject.getString("receiver"),
+                                    jsonObject.getString("sender_image"),
+                                    jsonObject.getString("receiver_image"),
+                                    jsonObject.getString("status"),
+                                    jOBJ.getInt("next_start")
+                            );
+                            userRespectiveMSGDatatypeLinkedList.add(userRespectiveMSGDatatype);
                         }
+                    } catch (Exception ex) {
+                        exceptionError = ex.toString();
                     }
+                    Log.i("RESPONSE", jOBJ.toString());
+                    Log.i("URL", "http://esolz.co.in/lab6/ptplanner/dashboard/get_user_respective_messages?user_id=" +
+                            msgUserId + "&logged_in_user=" +
+                            AppConfig.loginDatatype.getSiteUserId() +
+                            "&start=0");
                 } catch (Exception e) {
+                    exception = e.toString();
                 }
                 return null;
             }
 
-
             @Override
-            protected void onPostExecute(Void aVoid) {
-
-                //super.onPostExecute(aVoid);
-                if (pos == 0) {
-                    pbar1.setVisibility(View.GONE);
-
-                    chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                pbarChat.setVisibility(View.GONE);
+                if (exception.equals("")) {
+                    chat_history.setVisibility(View.VISIBLE);
+                    if (exceptionError.equals("")) {
+                        messageChatAdapter = new MessageChatAdapter(ChatDetailsFragment.this, 0, userRespectiveMSGDatatypeLinkedList);
+                        chat_history.setAdapter(messageChatAdapter);
+                    } else {
+                        txtError.setVisibility(View.VISIBLE);
+                    }
                 } else {
-
-
-                    new MessageChatAdapter(con, 0, all_user_data).notifyDataSetChanged();
+                    Log.d("Exception : ", exception);
+                    Toast.makeText(ChatDetailsFragment.this, "Server not responding....", Toast.LENGTH_LONG)
+                            .show();
                 }
-
-
-                loading = false;
-
-                //Toast.makeText(getApplicationContext(),""+,Toast.LENGTH_SHORT).show();
             }
-        }.execute();
+
+        };
+        allMSG.execute();
 
     }
 }
