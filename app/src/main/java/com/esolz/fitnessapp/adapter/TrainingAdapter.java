@@ -5,13 +5,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.inputmethodservice.Keyboard;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,6 +29,8 @@ import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBoldEdit;
 import com.esolz.fitnessapp.datatype.TrainingPerticularExerciseSetsDatatype;
+import com.esolz.fitnessapp.fitnesscustomkeyboard.BasicOnKeyboardActionListener;
+import com.esolz.fitnessapp.fitnesscustomkeyboard.CustomKeyboardView;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
 
@@ -39,13 +48,22 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
     ViewHolder holder;
     ConnectionDetector cd;
     String exceptionFinish = "", urlResponseFinish = "", statusFinish = "";
+    String trainingID, userProgramID, updatedSetReps = "", updatedSetKg = "";
+    ArrayList<String> setREPS, setKG;
+
+    ProgressDialog prgDialog;
+    EditText weight;
+    Boolean isWeightEdit = false;
 
     public TrainingAdapter(Context context, int resource,
-                           ArrayList<TrainingPerticularExerciseSetsDatatype> trainingPerticularExerciseSetsDatatypeArrayList) {
+                           ArrayList<TrainingPerticularExerciseSetsDatatype> trainingPerticularExerciseSetsDatatypeArrayList,
+                           String trainingID, String userProgramID) {
         super(context, resource, trainingPerticularExerciseSetsDatatypeArrayList);
         // TODO Auto-generated constructor stub
         this.context = context;
         this.trainingPerticularExerciseSetsDatatypeArrayList = trainingPerticularExerciseSetsDatatypeArrayList;
+        this.trainingID = trainingID;
+        this.userProgramID = userProgramID;
         inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         cd = new ConnectionDetector(context);
     }
@@ -75,10 +93,26 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
             holder = (ViewHolder) convertView.getTag();
         }
 
+        setREPS = new ArrayList<String>();
+        for (int i = 0; i < trainingPerticularExerciseSetsDatatypeArrayList.size(); i++) {
+            setREPS.add(trainingPerticularExerciseSetsDatatypeArrayList.get(i).getREPS());
+        }
+        updatedSetReps = TextUtils.join(",", setREPS);
+        Log.d("@@@REPS  :  ", updatedSetReps);
+
         holder.txtSet.setText("set " + (position + 1));
         holder.txtReps.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getREPS());
         holder.etWeight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
-
+        holder.etWeight.setId(position);
+        holder.etWeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    weight = (EditText) v;
+                    isWeightEdit = true;
+                    //weight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
+                }
+            }
+        });
 
         if (trainingPerticularExerciseSetsDatatypeArrayList.get(position).getIsEditable()) {
             holder.etWeight.setClickable(true);
@@ -135,7 +169,32 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
             @Override
             public void onClick(View v) {
                 if (cd.isConnectingToInternet()) {
-                    Toast.makeText(context, "" + position, Toast.LENGTH_SHORT).show();
+                    setKG = new ArrayList<String>();
+                    if (isWeightEdit) {
+                        if (weight.getText().toString().equals("")) {
+                            Toast.makeText(context, "Please enter weight.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            trainingPerticularExerciseSetsDatatypeArrayList.get(position).setKg(weight.getText().toString());
+                            notifyDataSetChanged();
+                            for (int i = 0; i < trainingPerticularExerciseSetsDatatypeArrayList.size(); i++) {
+                                setKG.add(trainingPerticularExerciseSetsDatatypeArrayList.get(i).getKg());
+                            }
+                            updatedSetKg = TextUtils.join(",", setKG);
+                            Log.d("@@@KG  :  ", updatedSetKg);
+                            editExcercise(userProgramID, trainingID, updatedSetReps, updatedSetKg, position);
+                            weight.setText("");
+                        }
+                    } else {
+                        trainingPerticularExerciseSetsDatatypeArrayList.get(position)
+                                .setKg(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
+                        notifyDataSetChanged();
+                        for (int i = 0; i < trainingPerticularExerciseSetsDatatypeArrayList.size(); i++) {
+                            setKG.add(trainingPerticularExerciseSetsDatatypeArrayList.get(i).getKg());
+                        }
+                        updatedSetKg = TextUtils.join(",", setKG);
+                        Log.d("@@@KG  :  ", updatedSetKg);
+                        editExcercise(userProgramID, trainingID, updatedSetReps, updatedSetKg, position);
+                    }
                 } else {
                     Toast.makeText(context, "No internet connection.", Toast.LENGTH_SHORT).show();
                 }
@@ -152,14 +211,18 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
         LinearLayout llCheck, llChange, llSet, llReps, llKG;
     }
 
-    public void editExcercise(final String userProgramId, final String excerciseId) {
+    public void editExcercise(final String userProgramId, final String excerciseId, final String updatedSetsReps,
+                              final String updatedSetsKG, final int position) {
 
-        AsyncTask<Void, Void, Void> excerciseFinish = new AsyncTask<Void, Void, Void>() {
+        AsyncTask<Void, Void, Void> excerciseEdit = new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected void onPreExecute() {
                 // TODO Auto-generated method stub
                 super.onPreExecute();
+                prgDialog = new ProgressDialog(context);
+                prgDialog.setMessage("Please wait...");
+                prgDialog.show();
             }
 
             @Override
@@ -170,8 +233,11 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
                     urlResponseFinish = "";
                     statusFinish = "";
                     DefaultHttpClient httpclient = new DefaultHttpClient();
-                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/update_finish_status?user_program_id=" +
-                            userProgramId + "&client_id=" + AppConfig.loginDatatype.getSiteUserId() + "&exercise_id=" + excerciseId);
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/update_sets_value?user_program_id=" + userProgramId +
+                            "&client_id=" + AppConfig.loginDatatype.getSiteUserId() +
+                            "&exercise_id=" + excerciseId +
+                            "&updated_sets_reps=" + updatedSetsReps +
+                            "&updated_sets_kg=" + updatedSetsKG);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();
@@ -186,15 +252,18 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
                     is.close();
                     urlResponseFinish = sb.toString();
                     JSONObject jOBJ = new JSONObject(urlResponseFinish);
-                    statusFinish = jOBJ.getString("finished");
+                    statusFinish = jOBJ.getString("response");
                     Log.d("RESPONSE", jOBJ.toString());
 
                 } catch (Exception e) {
                     exceptionFinish = e.toString();
                 }
 
-                Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/update_finish_status?user_program_id=" +
-                        userProgramId + "&client_id=" + AppConfig.loginDatatype.getSiteUserId() + "&exercise_id=" + excerciseId);
+                Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/update_sets_value?user_program_id=" + userProgramId +
+                        "&client_id=" + AppConfig.loginDatatype.getSiteUserId() +
+                        "&exercise_id=" + excerciseId +
+                        "&updated_sets_reps=" + updatedSetsReps +
+                        "&updated_sets_kg=" + updatedSetsKG);
                 return null;
             }
 
@@ -202,8 +271,16 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
             protected void onPostExecute(Void result) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(result);
+                prgDialog.dismiss();
                 if (exceptionFinish.equals("")) {
-
+                    if (statusFinish.equals("success")) {
+                        trainingPerticularExerciseSetsDatatypeArrayList.get(position).setIsEditable(false);
+                        notifyDataSetChanged();
+                        isWeightEdit = false;
+                        Toast.makeText(context, "Update successfull....", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context, "Not updated....", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Log.d("@  Exception Finish ", exceptionFinish);
                     Toast.makeText(context, "Server not responding....", Toast.LENGTH_LONG).show();
@@ -211,7 +288,7 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
             }
 
         };
-        excerciseFinish.execute();
+        excerciseEdit.execute();
 
     }
 

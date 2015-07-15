@@ -310,7 +310,7 @@ public class TrainingFragment extends Fragment {
                 llFinish.setClickable(false);
                 if (exceptionFinish.equals("")) {
                     if (statusFinish.equals("TRUE")) {
-                        if (t == exerciseTitleArr.size()) {
+                        if (t == (exerciseTitleArr.size() - 1)) {
                             rlLeftClick.performClick();
                         } else {
                             rlRightClick.performClick();
@@ -434,7 +434,8 @@ public class TrainingFragment extends Fragment {
                     txtExerciseTitle.setText(perParticularExerciseDetailsDataType.getExercise_title());
 
                     trainingAdapter = new TrainingAdapter(getActivity(), 0,
-                            particularExerciseDetailsDataTypeArrayList.get(0).getTrainingPerticularExerciseSetsDatatypeArrayList());
+                            particularExerciseDetailsDataTypeArrayList.get(0).getTrainingPerticularExerciseSetsDatatypeArrayList(),
+                            perParticularExerciseDetailsDataType.getExercise_id(), userProgramId);
                     traingList.setAdapter(trainingAdapter);
 
                     trainingViewPagerAdapter = new TrainingViewPagerAdapter(getActivity(), 0,
