@@ -40,7 +40,6 @@ public class AllTrainerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        //Size=tariner.size();
         return altrainerDataTypeArrayList.size();
     }
 

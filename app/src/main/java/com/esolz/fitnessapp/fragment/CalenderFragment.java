@@ -32,6 +32,8 @@ import com.esolz.fitnessapp.customviews.HelveticaHeavy;
 import com.esolz.fitnessapp.customviews.TitilliumLight;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.AllEventsDatatype;
+import com.esolz.fitnessapp.datatype.AllExercisesDataType;
+import com.esolz.fitnessapp.datatype.ExerciseSetsDataype;
 import com.esolz.fitnessapp.dialog.ShowCalendarPopUp;
 import com.esolz.fitnessapp.fitness.CustomCalendarView;
 import com.esolz.fitnessapp.helper.AppConfig;
@@ -42,12 +44,14 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -429,6 +433,30 @@ public class CalenderFragment extends Fragment {
                             jOBJ.getString("total_training_programs"),
                             jOBJ.getString("total_training_programs_finished"));
 
+                    JSONArray jsonArray = jOBJ.getJSONArray("all_exercises");
+                    AppConfig.allExercisesDataTypeArrayList = new ArrayList<AllExercisesDataType>();
+                    AppConfig.exerciseSetsDataypeArrayList = new ArrayList<ExerciseSetsDataype>();
+                    for (int j = 0; j < jsonArray.length(); j++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(j);
+                        JSONArray jArr = jsonObject.getJSONArray("exercise_sets");
+                        for (int k = 0; k < jArr.length(); k++) {
+                            JSONObject jObject = jArr.getJSONObject(k);
+                            ExerciseSetsDataype exerciseSetsDataype = new ExerciseSetsDataype(
+                                    jObject.getString("reps"),
+                                    jObject.getString("kg")
+                            );
+                            AppConfig.exerciseSetsDataypeArrayList.add(exerciseSetsDataype);
+                        }
+                        AllExercisesDataType allExercisesDataType = new AllExercisesDataType(
+                                jsonObject.getString("user_program_id"),
+                                jsonObject.getString("exercise_id"),
+                                jsonObject.getString("exercise_title"),
+                                jsonObject.getString("instruction"),
+                                AppConfig.exerciseSetsDataypeArrayList
+                        );
+                        AppConfig.allExercisesDataTypeArrayList.add(allExercisesDataType);
+                    }
+
                     Log.d("RESPONSE", jOBJ.toString());
 
                 } catch (Exception e) {
@@ -465,9 +493,8 @@ public class CalenderFragment extends Fragment {
                     txtDiary.setText(allEventsDatatype.getDiary_text());
 
                 } else {
-                    Toast.makeText(getActivity(),
-                            "Server not responding....", Toast.LENGTH_LONG)
-                            .show();
+                    Log.d("@  Exception ", exception);
+                    Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();
                 }
             }
 

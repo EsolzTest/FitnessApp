@@ -12,7 +12,8 @@ public class TrainingDataType {
     String exercise_description;
     String instruction;
 
-    public TrainingDataType(String reps, String kg, String exercise_id, String exercise_title, String exercise_description, String instruction) {
+    public TrainingDataType(String reps, String kg, String exercise_id, String exercise_title,
+                            String exercise_description, String instruction) {
         this.reps = reps;
         this.kg = kg;
         this.exercise_id = exercise_id;

@@ -10,6 +10,7 @@ import android.widget.PopupWindow;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.TitilliumRegular;
+import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.TrainingDataType;
 
 import org.apache.http.HttpEntity;
@@ -33,125 +34,39 @@ public class ShowMorePopUp extends PopupWindow {
     Context context;
     View popupView;
     LinearLayout llHide;
-    LinkedList<TrainingDataType>moredata;
-    TrainingDataType kk;
-    TitilliumRegular title;
-    TitilliumRegular desc;
-    TitilliumRegular instruction;
+    TitilliumSemiBold txtTitle;
+    TitilliumRegular txtDescription, txtInstruction;
 
+    String title, description, instruction;
 
-    public ShowMorePopUp(final Context context) {
+    public ShowMorePopUp(final Context context, String title, String description, String instruction) {
         super(context);
 
         this.context = context;
+        this.title = title;
+        this.description = description;
+        this.instruction = instruction;
 
-        setContentView(LayoutInflater.from(context).inflate(
-                R.layout.frag_more, null));
+        setContentView(LayoutInflater.from(context).inflate(R.layout.frag_more, null));
         setHeight(WindowManager.LayoutParams.MATCH_PARENT);
         setWidth(WindowManager.LayoutParams.MATCH_PARENT);
         popupView = getContentView();
         setFocusable(true);
-        title=(TitilliumRegular)popupView.findViewById(R.id.title_desc);
-        desc=(TitilliumRegular)popupView.findViewById(R.id.detail);
-        instruction=(TitilliumRegular)popupView.findViewById(R.id.instruction);
+
         llHide = (LinearLayout) popupView.findViewById(R.id.ll_hide);
+        txtTitle = (TitilliumSemiBold) popupView.findViewById(R.id.txt_title);
+        txtDescription = (TitilliumRegular) popupView.findViewById(R.id.txt_description);
+        txtInstruction = (TitilliumRegular) popupView.findViewById(R.id.instruction);
 
-        getmoreLayouts();
+        txtTitle.setText(title);
+        txtDescription.setText(description);
+        txtInstruction.setText(instruction);
 
-
-
-    }
-
-    public void getmoreLayouts () {
-
-        (new GetMoreDetail()).execute();
-    }
-
-
-
-    class GetMoreDetail extends AsyncTask<Void,Void,Void>{
-
-        InputStream is;
-        String json;
-
-
-        JSONObject more_detail;
-
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-
-            try {
-
-
-                DefaultHttpClient httClient = new DefaultHttpClient();
-                // HttpClient client = HttpClientBuilder.create().build();
-
-                HttpGet http_get = new HttpGet("http://esolz.co.in/lab6/ptplanner/app_control/get_particular_exercise_details?user_program_id=5&client_id=15&exercise_id=2091");
-
-                HttpResponse response = httClient.execute(http_get);
-
-                HttpEntity httpEntity = response.getEntity();
-
-                is = httpEntity.getContent();
-
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(is));
-
-                StringBuilder sb = new StringBuilder();
-
-                String line = null;
-
-                while ((line = reader.readLine()) != null) {
-
-                    sb.append(line + "\n");
-                }
-
-                is.close();
-
-                json = sb.toString();
-                more_detail = new JSONObject(json);
-
-
-
-
-                kk = new TrainingDataType(more_detail.getString("reps"),more_detail.getString("kg"), more_detail.getString("exercise_id"), more_detail.getString("exercise_title"),more_detail.getString("exercise_description"),more_detail.getString("instruction"));
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
+        llHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
-
-            return null;
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            try {
-
-                title.setText("" + kk.getExercise_title());
-                desc.setText("" + kk.getExercise_description());
-                instruction.setText("" + kk.getInstruction());
-
-            } catch (Exception e) {
-
-            }
-
-
-
-        }
+        });
     }
-
-
 }

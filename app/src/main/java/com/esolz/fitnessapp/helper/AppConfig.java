@@ -2,8 +2,10 @@ package com.esolz.fitnessapp.helper;
 
 import android.content.SharedPreferences;
 
+import com.esolz.fitnessapp.datatype.AllExercisesDataType;
 import com.esolz.fitnessapp.datatype.AppointDataType;
 import com.esolz.fitnessapp.datatype.DiaryDataType;
+import com.esolz.fitnessapp.datatype.ExerciseSetsDataype;
 import com.esolz.fitnessapp.datatype.LoginDataType;
 import com.esolz.fitnessapp.datatype.MealDateDataType;
 import com.esolz.fitnessapp.datatype.ProgramDateDataType;
@@ -27,7 +29,13 @@ public class AppConfig {
     public static ArrayList<MealDateDataType> mealArrayList = new ArrayList<MealDateDataType>();
     public static ArrayList<DiaryDataType> diaryArrayList = new ArrayList<DiaryDataType>();
 
-    public static  String PT_NAME = "";
-    public static  String PT_ID = "";
+    public static String PT_NAME = "";
+    public static String PT_ID = "";
+
+
+    public static ArrayList<AllExercisesDataType> allExercisesDataTypeArrayList/* = new ArrayList<AllExercisesDataType>()*/;
+    public static AllExercisesDataType allExercisesDataType;
+    public static ArrayList<ExerciseSetsDataype> exerciseSetsDataypeArrayList/* = new ArrayList<ExerciseSetsDataype>()*/;
+    public static ExerciseSetsDataype exerciseSetsDataype;
 
 }

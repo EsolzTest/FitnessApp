@@ -65,7 +65,7 @@
                         android:padding="10dp" >
 
                         <ImageView
-                            android:id="@+id/imageView1"
+                            android:id="@+id/img_rightarrow"
                             android:layout_width="8dp"
                             android:layout_height="16dp"
                             android:background="@drawable/arrow2"
