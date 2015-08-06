@@ -68,12 +68,6 @@ public class DietAdapter extends ArrayAdapter<DietDataType> {
         holder.dietTitle.setText(data.get(position).getMeal_title());
         holder.dietSubTitle.setText(data.get(position).getMeal_description());
 
-//		holder.mealtitle.setText(obj.getMeal_title());
-//		holder.mealdescription.setText(obj.getMeal_description());
-//		Picasso.with(context).load(obj.getMeal_image()).transform(new Trns
-//				()).resize(400, 400).centerInside().placeholder(R.drawable.abc_dialog_material_background_dark) // optional
-//				.error(R.drawable.abc_dialog_material_background_light)  .into(holder.mealimage);
-
         holder.listitemContainer.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -82,7 +76,7 @@ public class DietAdapter extends ArrayAdapter<DietDataType> {
                 bundle = new Bundle();
                 bundle.putString("CustomMealID", data.get(position).getCustom_meal_id());
                 bundle.putString("MealID", data.get(position).getMeal_id());
-                
+
                 fragmentTransaction = fragmentManager.beginTransaction();
                 DietListDetailsFragment dietList_fragment = new DietListDetailsFragment();
                 dietList_fragment.setArguments(bundle);

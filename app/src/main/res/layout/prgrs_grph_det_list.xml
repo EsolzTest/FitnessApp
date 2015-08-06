@@ -1,59 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:weightSum="3" >
+        android:weightSum="3">
 
-        <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+        <com.esolz.fitnessapp.customviews.TitilliumRegular
+            android:id="@+id/type_progrss_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
             android:text="Bodyweight"
-            android:id="@+id/type_progrss_1"
             android:textColor="#282828"
-            android:textSize="17sp" >
-        </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+            android:textSize="17sp">
+        </com.esolz.fitnessapp.customviews.TitilliumRegular>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
-            <com.esolz.fitnessapp.customviews.HelveticaSemiBold
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+                android:id="@+id/goal_progress_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="80"
-                android:id="@+id/goal_progress_1"
                 android:textColor="#22A7F0"
-                android:textSize="17sp" >
-            </com.esolz.fitnessapp.customviews.HelveticaSemiBold>
+                android:textSize="17sp">
+            </com.esolz.fitnessapp.customviews.TitilliumSemiBold>
 
-            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:id="@+id/goal_progress_measure_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" kg"
-                android:id="@+id/goal_progress_measure_1"
                 android:textColor="#282828"
-                android:textSize="17sp" >
-            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+                android:textSize="17sp">
+            </com.esolz.fitnessapp.customviews.TitilliumRegular>
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingRight="10dp" >
+            android:paddingRight="10dp">
 
-            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+            <com.esolz.fitnessapp.customviews.TitilliumSemiBold
                 android:id="@+id/goal_progress_date1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,16 +63,23 @@
                 android:singleLine="true"
                 android:text="2015-12-31"
                 android:textColor="#22A7F0"
-                android:textSize="17sp" >
-            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+                android:textSize="17sp">
+            </com.esolz.fitnessapp.customviews.TitilliumSemiBold>
 
             <ImageView
                 android:layout_width="8dp"
                 android:layout_height="13dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/arrow" >
+                android:background="@drawable/arrow">
             </ImageView>
         </RelativeLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#E9F3F9"
+        ></LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="#22A7F0"
+    android:padding="6dp">
+
+    <com.esolz.fitnessapp.customviews.TitilliumBold
+        android:id="@+id/selecttion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Do you want to logout"
+        android:textColor="#ffffff"
+        android:textSize="17sp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selecttion"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:id="@+id/ll_yes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/chat_footer"
+            android:gravity="center"
+            android:padding="10dp">
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YES"
+                android:clickable="false"
+                android:gravity="center"
+                android:textColor="#22A7F0"
+                android:textSize="17sp">
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_no"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chat_footer"
+            android:gravity="center"
+            android:padding="10dp">
+
+            <com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NO"
+                android:clickable="false"
+                android:gravity="center"
+                android:textColor="#22A7F0"
+                android:textSize="17sp">
+            </com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

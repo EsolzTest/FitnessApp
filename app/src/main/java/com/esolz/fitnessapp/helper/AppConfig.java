@@ -6,6 +6,8 @@ import com.esolz.fitnessapp.datatype.AllExercisesDataType;
 import com.esolz.fitnessapp.datatype.AppointDataType;
 import com.esolz.fitnessapp.datatype.DiaryDataType;
 import com.esolz.fitnessapp.datatype.ExerciseSetsDataype;
+import com.esolz.fitnessapp.datatype.GraphDetailsDataType;
+import com.esolz.fitnessapp.datatype.GraphDetailsPointDataType;
 import com.esolz.fitnessapp.datatype.LoginDataType;
 import com.esolz.fitnessapp.datatype.MealDateDataType;
 import com.esolz.fitnessapp.datatype.ProgramDateDataType;
@@ -37,5 +39,10 @@ public class AppConfig {
     public static AllExercisesDataType allExercisesDataType;
     public static ArrayList<ExerciseSetsDataype> exerciseSetsDataypeArrayList/* = new ArrayList<ExerciseSetsDataype>()*/;
     public static ExerciseSetsDataype exerciseSetsDataype;
+
+    public static ArrayList<GraphDetailsDataType> graphDetailsDataTypeArrayList;
+    public static GraphDetailsDataType graphDetailsDataType;
+    public static ArrayList<GraphDetailsPointDataType> graphDetailsPointDataTypeArrayList;
+    public static GraphDetailsPointDataType graphDetailsPointDataType;
 
 }

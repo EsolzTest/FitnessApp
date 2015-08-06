@@ -32,28 +32,11 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="DIET"
+            android:text="ALL GRAPH"
             android:textColor="#ffffff"
             android:textSize="20sp"/>
 
-        <LinearLayout
-            android:id="@+id/show_cal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/selector_default"
-            android:padding="5dp">
 
-            <com.esolz.fitnessapp.customviews.TitilliumRegular
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Calendar"
-                android:textColor="#ffffff"
-                android:textSize="18sp"/>
-        </LinearLayout>
     </RelativeLayout>
 
     <RelativeLayout
@@ -61,7 +44,7 @@
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@+id/diet_list"
+            android:id="@+id/list_allgraph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none">
@@ -77,10 +60,10 @@
             android:id="@+id/txt_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No data found"
-            android:textSize="20sp"
             android:layout_centerInParent="true"
-            android:textColor="#282828"/>
+            android:text="No data found"
+            android:textColor="#282828"
+            android:textSize="20sp"/>
 
     </RelativeLayout>
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="600dp"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="600dp"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="15dp">
 
     <LinearLayout
         android:id="@+id/reminder_dialog_container"
@@ -10,33 +11,35 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        android:weightSum="6" >
+        android:weightSum="6">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="#22A7F0"
             android:orientation="vertical"
-            android:padding="8dp" >
+            android:padding="8dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/ll_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
                 android:background="@drawable/selector_default"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="5dp" >
+                android:padding="4dp">
 
-                <com.esolz.fitnessapp.customviews.TitilliumRegular
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CANCEL"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="@dimen/appointment_back_width"
+                    android:layout_height="@dimen/appointment_back_height"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/appback"
+                    android:clickable="false"/>
+            </RelativeLayout>
+
 
             <com.esolz.fitnessapp.customviews.TitilliumSemiBold
                 android:id="@+id/txt_header"
@@ -45,79 +48,86 @@
                 android:layout_centerInParent="true"
                 android:text="ADD MEASUREMENT"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
 
             <LinearLayout
                 android:id="@+id/ll_done"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/selector_default"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="5dp" >
+                android:padding="5dp">>
 
                 <com.esolz.fitnessapp.customviews.TitilliumRegular
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:text="DONE"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
+                    android:textSize="19sp"/>
             </LinearLayout>
+
+
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:weightSum="2" >
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
-                <com.esolz.fitnessapp.customviews.TitilliumRegular
+                <com.esolz.fitnessapp.customviews.TitilliumSemiBold
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="KILOGRAM"
+                    android:text="MEASURE UNIT"
                     android:textColor="#22A7F0"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:layout_marginTop="13dp"
+                    android:orientation="horizontal">
 
                     <com.esolz.fitnessapp.customviews.TitilliumSemiBold
-                        android:id="@+id/kilo"
+                        android:id="@+id/txt_measurement"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:text="80"
+                        android:text="1"
                         android:textColor="#333333"
-                        android:textSize="28sp" />
+                        android:textSize="28sp"/>
 
                     <LinearLayout
                         android:id="@+id/ll_plus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="36dp"
-                        android:layout_toLeftOf="@+id/kilo"
+                        android:layout_marginLeft="36dp"
+                        android:layout_toRightOf="@+id/txt_measurement"
                         android:background="@drawable/selector_default"
                         android:orientation="vertical"
-                        android:padding="10dp" >
+                        android:padding="10dp">
 
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:background="@drawable/plus" />
+                            android:background="@drawable/plus"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -125,48 +135,57 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="36dp"
-                        android:layout_toRightOf="@+id/kilo"
+                        android:layout_marginRight="36dp"
+                        android:layout_toLeftOf="@+id/txt_measurement"
                         android:background="@drawable/selector_default"
                         android:orientation="vertical"
-                        android:padding="10dp" >
+                        android:padding="10dp">
 
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:background="@drawable/minus" />
+                            android:background="@drawable/minus"/>
                     </LinearLayout>
                 </RelativeLayout>
 
-                <TimePicker
-                    android:id="@+id/time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <!--<TimePicker-->
+                <!--android:id="@+id/time"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:background="#E6E6E6"></LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
-                <com.esolz.fitnessapp.customviews.TitilliumRegular
+                <com.esolz.fitnessapp.customviews.TitilliumSemiBold
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="DATE"
                     android:textColor="#22A7F0"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
                 <DatePicker
-                    android:id="@+id/date"
+                    android:id="@+id/picker_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:calendarViewShown="false" />
+                    android:layout_marginTop="10dp"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner"/>
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

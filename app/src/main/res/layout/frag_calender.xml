@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/header"
@@ -12,6 +12,23 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
 
+        <LinearLayout
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_default"
+            android:padding="5dp">
+
+            <com.esolz.fitnessapp.customviews.TitilliumRegular
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textColor="#ffffff"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
         <com.esolz.fitnessapp.customviews.TitilliumSemiBold
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +36,7 @@
             android:layout_centerVertical="true"
             android:text="TODAY"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <LinearLayout
             android:id="@+id/show_cal"
@@ -33,9 +50,9 @@
             <com.esolz.fitnessapp.customviews.TitilliumRegular
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calender"
+                android:text="Calendar"
                 android:textColor="#ffffff"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -71,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:text="Power Chest"
                     android:textColor="#ffffff"
-                    android:textSize="22sp" />
+                    android:textSize="22sp"/>
 
                 <com.esolz.fitnessapp.customviews.HelveticaHeavy
                     android:id="@+id/txt_day"
@@ -82,7 +99,7 @@
                     android:text="14"
                     android:textColor="#ffffff"
                     android:textSize="100sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <com.esolz.fitnessapp.customviews.TitilliumSemiBold
                     android:id="@+id/txt_month"
@@ -108,13 +125,13 @@
                         android:layout_centerInParent="true"
                         android:text="1 APPOINTMENT "
                         android:textColor="#FFFFFF"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"/>
 
                     <ProgressBar
                         android:id="@+id/prg_appointent"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_centerInParent="true" />
+                        android:layout_centerInParent="true"/>
 
                 </RelativeLayout>
 
@@ -133,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:text="Remind me"
                         android:textColor="#FFFFFF"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"/>
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
@@ -156,8 +173,8 @@
                 android:id="@+id/ll_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_centerInParent="true">
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/rl_training"
@@ -252,7 +269,7 @@
                             android:singleLine="true"
                             android:text=""
                             android:textColor="#282828"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"/>
 
                         <ImageView
                             android:id="@+id/diet_arr"
@@ -304,8 +321,8 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="15dp"
                             android:layout_toLeftOf="@+id/diary_arr"
-                            android:singleLine="true"
                             android:gravity="right|center"
+                            android:singleLine="true"
                             android:text=""
                             android:textColor="#282828"
                             android:textSize="17sp"></com.esolz.fitnessapp.customviews.TitilliumLight>

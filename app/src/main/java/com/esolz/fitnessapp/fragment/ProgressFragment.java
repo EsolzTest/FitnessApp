@@ -11,6 +11,8 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +32,8 @@ import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.HelveticaSemiBold;
 import com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight;
+import com.esolz.fitnessapp.customviews.TitilliumRegular;
+import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.GraphClientAllDataType;
 import com.esolz.fitnessapp.datatype.GraphClientDetailsDataType;
 import com.esolz.fitnessapp.datatype.GraphClientGoalImages;
@@ -70,7 +74,8 @@ public class ProgressFragment extends Fragment {
 
     RelativeLayout uploadCurrentImg, uploadGoalImg;
 
-    String exception = "", urlResponse = "", exceptionImg = "", urlResponseImg = "", exceptionGraph = "", urlResponseGraph = "";
+    String exception = "", urlResponse = "", exceptionImg = "", urlResponseImg = "",
+            exceptionGraph = "", urlResponseGraph = "", exceptionGraphDetails = "", getUrlResponseGraphDetails = "";
     GraphClientDetailsDataType graphClientDetailsDataType;
     GraphClientImagesDataType graphClientImagesDataType;
     GraphClientGoalImages graphClientGoalImages;
@@ -90,11 +95,18 @@ public class ProgressFragment extends Fragment {
     private static final int ACTION_TAKE_GALLERY = 2;
     // --- End ---
 
+    FragmentTransaction fragmentTransaction;
+    FragmentManager fragmentManager;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         fView = inflater.inflate(R.layout.frag_progress, container, false);
+
         connectionDetector = new ConnectionDetector(getActivity());
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         allGraph = (LinearLayout) fView.findViewById(R.id.all_graph);
@@ -181,9 +193,10 @@ public class ProgressFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(getActivity(), ProgressGraphView.class);
-                startActivity(intent);
+                fragmentTransaction = fragmentManager.beginTransaction();
+                AllGraphFragment allGraphFragment = new AllGraphFragment();
+                fragmentTransaction.replace(R.id.fragment_container, allGraphFragment);
+                fragmentTransaction.commit();
             }
         });
 
@@ -542,7 +555,7 @@ public class ProgressFragment extends Fragment {
                     }
 
                     Log.d("RESPONSE", jOBJ.toString());
-                    Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/all_graphs?client_id=" + AppConfig.loginDatatype.getSiteUserId());
+                    Log.d("!! GRAPH URL", "http://esolz.co.in/lab6/ptplanner/app_control/all_graphs?client_id=" + AppConfig.loginDatatype.getSiteUserId());
                 } catch (Exception e) {
                     exceptionGraph = e.toString();
                 }
@@ -557,13 +570,12 @@ public class ProgressFragment extends Fragment {
                 scrollView.setVisibility(View.VISIBLE);
                 if (exceptionGraph.equals("")) {
                     for (int i = 0; i < graphClientAllDataTypeLinkedList.size(); i++) {
-
-                        GraphClientAllDataType temp_one = graphClientAllDataTypeLinkedList.get(i);
+                        final GraphClientAllDataType temp_one = graphClientAllDataTypeLinkedList.get(i);
                         View view = inflator.inflate(R.layout.prgrs_grph_det_list, null);
-                        HelveticaSemiBoldLight text_type = (HelveticaSemiBoldLight) view.findViewById(R.id.type_progrss_1);
-                        HelveticaSemiBold goal_progress = (HelveticaSemiBold) view.findViewById(R.id.goal_progress_1);
-                        HelveticaSemiBoldLight goal_progress_measure = (HelveticaSemiBoldLight) view.findViewById(R.id.goal_progress_measure_1);
-                        HelveticaSemiBoldLight goal_progress_date = (HelveticaSemiBoldLight) view.findViewById(R.id.goal_progress_date1);
+                        TitilliumRegular text_type = (TitilliumRegular) view.findViewById(R.id.type_progrss_1);
+                        TitilliumSemiBold goal_progress = (TitilliumSemiBold) view.findViewById(R.id.goal_progress_1);
+                        TitilliumRegular goal_progress_measure = (TitilliumRegular) view.findViewById(R.id.goal_progress_measure_1);
+                        TitilliumSemiBold goal_progress_date = (TitilliumSemiBold) view.findViewById(R.id.goal_progress_date1);
                         text_type.setText(temp_one.getGraph_for());
                         int pos = 0;
                         String w8 = temp_one.getY_axis_point();
@@ -577,6 +589,18 @@ public class ProgressFragment extends Fragment {
                         goal_progress_measure.setText(" " + temp_one.getMeasure_unit());
                         goal_progress_date.setText(temp_one.getX_axis_point());
 
+
+                        view.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getActivity(), "GRAPH ID" + v.getTag().toString(), Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(getActivity(), ProgressGraphView.class);
+                                intent.putExtra("GRAPH_ID", v.getTag().toString());
+                                startActivity(intent);
+                            }
+                        });
+
+                        view.setTag(graphClientAllDataTypeLinkedList.get(i).getGraph_id());
                         llGrphdetailsList.addView(view);
                     }
                 } else {
@@ -589,4 +613,5 @@ public class ProgressFragment extends Fragment {
         clientGraph.execute();
 
     }
+
 }

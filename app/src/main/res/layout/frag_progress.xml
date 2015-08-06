@@ -375,16 +375,17 @@
                         </com.esolz.fitnessapp.customviews.TitilliumSemiBold>
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#E9F3F9">
-                    </LinearLayout>
+                    <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:background="#E9F3F9">-->
+                    <!--</LinearLayout>-->
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
                         android:background="#E9F3F9">
                     </LinearLayout>
 
@@ -400,7 +401,7 @@
                     android:orientation="vertical"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
-                    android:paddingTop="5dp">
+                    android:paddingTop="8dp">
 
                 </LinearLayout>
             </LinearLayout>

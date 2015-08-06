@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
+import com.esolz.fitnessapp.customviews.TitilliumLight;
 import com.esolz.fitnessapp.datatype.LoginDataType;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
@@ -44,7 +45,7 @@ public class LoginActivity extends Activity {
     LinearLayout llRememberMe, llForgotPass;
     ImageView imgChkbox;
     ProgressBar pBar;
-    TextView txtErrorMSG;
+    TitilliumLight txtErrorMSG;
     String responseMSG = "", exception = "", urlResponse = "", message = "", siteUserId = "";
     SharedPreferences loginPreferences;
 
@@ -73,7 +74,7 @@ public class LoginActivity extends Activity {
 
         pBar = (ProgressBar) findViewById(R.id.prgbar);
         pBar.setVisibility(View.GONE);
-        txtErrorMSG = (TextView) findViewById(R.id.txt_error);
+        txtErrorMSG = (TitilliumLight) findViewById(R.id.txt_error);
         txtErrorMSG.setVisibility(View.GONE);
 
         cd = new ConnectionDetector(LoginActivity.this);
@@ -87,20 +88,25 @@ public class LoginActivity extends Activity {
                 // TODO Auto-generated method stub
                 if (cd.isConnectingToInternet()) {
                     if (!etEmail.getText().toString().trim().equals("")) {
-
-                        if (!etPass.getText().toString().equals("")) {
-                            userLogin(etEmail.getText().toString().trim(),
-                                    etPass.getText().toString().trim(),
-                                    AppConfig.strRemember);
-
+                        if (isEmailValid(etEmail.getText().toString().trim())) {
+                            if (!etPass.getText().toString().equals("")) {
+                                userLogin(
+                                        etEmail.getText().toString().trim(),
+                                        etPass.getText().toString().trim(),
+                                        AppConfig.strRemember
+                                );
+                            } else {
+                                etPass.setError("Password is blank");
+                                etPass.requestFocus();
+                            }
                         } else {
-                            etPass.setError("Password is blank");
+                            etEmail.requestFocus();
+                            etEmail.setError("Please enter valid email id.");
                         }
-
                     } else {
                         etEmail.setError("Email is blank");
+                        etEmail.requestFocus();
                     }
-
                 } else {
                     Toast.makeText(getApplicationContext(),
                             "No Internet Connection", Toast.LENGTH_LONG).show();
@@ -129,14 +135,18 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
 
-    public void userLogin(final String email, final String password,
-                          final String remember) {
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public void userLogin(final String email, final String password, final String remember) {
 
         AsyncTask<Void, Void, Void> login = new AsyncTask<Void, Void, Void>() {
 
@@ -173,9 +183,22 @@ public class LoginActivity extends Activity {
                     is.close();
                     urlResponse = sb.toString();
                     JSONObject jOBJ = new JSONObject(urlResponse);
-                    siteUserId = jOBJ.getString("site_user_id");
-                    responseMSG = jOBJ.getString("response");
-                    message = jOBJ.getString("message");
+
+                    try {
+                        siteUserId = jOBJ.getString("site_user_id");
+                        responseMSG = jOBJ.getString("response");
+                        message = jOBJ.getString("message");
+
+                        AppConfig.loginDatatype = new LoginDataType(
+                                siteUserId,
+                                email,
+                                password);
+                    } catch (Exception ex) {
+                        Log.i("Site : ", ex.toString());
+
+                        responseMSG = jOBJ.getString("response");
+                        message = jOBJ.getString("message");
+                    }
 
                 } catch (Exception e) {
                     exception = e.toString();
@@ -195,6 +218,7 @@ public class LoginActivity extends Activity {
                 if (exception.equals("")) {
                     if (responseMSG.equals("success")) {
                         if (AppConfig.strRemember.equals("Y")) {
+
                             Editor editor = loginPreferences.edit();
                             editor.putString("Remember", "remember");
                             editor.putString("UserId", siteUserId);
@@ -203,16 +227,21 @@ public class LoginActivity extends Activity {
                             editor.putString("Password", etPass.getText()
                                     .toString().trim());
                             editor.commit();
-                            AppConfig.loginDatatype = new LoginDataType(siteUserId, etEmail.getText().toString().trim(), etPass.getText().toString().trim());
 
                             Intent intent = new Intent(LoginActivity.this, LandScreenActivity.class);
                             startActivity(intent);
+                            finish();
+
                         } else {
+
                             Editor editor = loginPreferences.edit();
                             editor.clear();
                             editor.commit();
+
                             Intent intent = new Intent(LoginActivity.this, LandScreenActivity.class);
                             startActivity(intent);
+                            finish();
+
                         }
                     } else if (responseMSG.equals("Error")) {
                         txtErrorMSG.setVisibility(View.VISIBLE);
@@ -222,6 +251,7 @@ public class LoginActivity extends Activity {
                                 Toast.LENGTH_LONG).show();
                     }
                 } else {
+                    Log.i(" SerVer Error : ", exception);
                     Toast.makeText(LoginActivity.this,
                             "Server not responding....", Toast.LENGTH_LONG)
                             .show();
@@ -231,5 +261,10 @@ public class LoginActivity extends Activity {
         };
         login.execute();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

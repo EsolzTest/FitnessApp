@@ -54,7 +54,7 @@
                     android:id="@+id/txt_cal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calender"
+                    android:text="Calendar"
                     android:textColor="#A4A4A5"
                     android:textSize="12sp" />
             </LinearLayout>

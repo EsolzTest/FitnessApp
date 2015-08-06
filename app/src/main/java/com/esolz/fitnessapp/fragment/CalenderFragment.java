@@ -35,7 +35,8 @@ import com.esolz.fitnessapp.datatype.AllEventsDatatype;
 import com.esolz.fitnessapp.datatype.AllExercisesDataType;
 import com.esolz.fitnessapp.datatype.ExerciseSetsDataype;
 import com.esolz.fitnessapp.dialog.ShowCalendarPopUp;
-import com.esolz.fitnessapp.fitness.CustomCalendarView;
+import com.esolz.fitnessapp.fitness.LandScreenActivity;
+import com.esolz.fitnessapp.fitness.LoginActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
 import com.esolz.fitnessapp.helper.ReturnCalendarDetails;
@@ -60,7 +61,7 @@ import java.util.Locale;
 @SuppressLint("NewApi")
 public class CalenderFragment extends Fragment {
 
-    LinearLayout rlTraining, rlDiet, rlDiary, showCalender, llList;
+    LinearLayout rlTraining, rlDiet, rlDiary, showCalender, llList, logOut;
     LinearLayout llCalenderButton, llBlockAppoinmentButton, llProgressButton;
     RelativeLayout llMessagebutton, appointment, rlContent;
     Dialog dialog;
@@ -97,6 +98,11 @@ public class CalenderFragment extends Fragment {
     ConnectionDetector connectionDetector;
     AllEventsDatatype allEventsDatatype;
 
+    Dialog logoutChooser;
+    LinearLayout llYes, llNo;
+
+    SharedPreferences loginPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
@@ -113,6 +119,7 @@ public class CalenderFragment extends Fragment {
         dialogRemindme = (LinearLayout) fView.findViewById(R.id.remindme);
         txtRemindme = (TitilliumLight) fView.findViewById(R.id.txt_remindme);
         showCalender = (LinearLayout) fView.findViewById(R.id.show_cal);
+        logOut = (LinearLayout) fView.findViewById(R.id.logout);
 
         txtDay = (HelveticaHeavy) fView.findViewById(R.id.txt_day);
         txtMonth = (TitilliumSemiBold) fView.findViewById(R.id.txt_month);
@@ -174,6 +181,46 @@ public class CalenderFragment extends Fragment {
 
             }
             //------getting date
+        });
+
+        logoutChooser = new Dialog(getActivity(), R.style.DialogSlideAnim);
+        logoutChooser.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        logoutChooser.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        logoutChooser.getWindow().setGravity(Gravity.CENTER);
+        logoutChooser.setContentView(R.layout.dialog_logout_option);
+        logoutChooser.setCanceledOnTouchOutside(true);
+
+        llYes = (LinearLayout) logoutChooser.findViewById(R.id.ll_yes);
+        llNo = (LinearLayout) logoutChooser.findViewById(R.id.ll_no);
+
+        loginPreferences = getActivity().getSharedPreferences("Login", Context.MODE_PRIVATE);
+
+        logOut.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutChooser.show();
+            }
+        });
+
+        llYes.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutChooser.dismiss();
+
+                Editor editor = loginPreferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                getActivity().finish();
+                startActivity(intent);
+            }
+        });
+
+        llNo.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutChooser.dismiss();
+            }
         });
 
         if (connectionDetector.isConnectingToInternet()) {
@@ -362,10 +409,11 @@ public class CalenderFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(getActivity(),
-                        CustomCalendarView.class);
-                startActivity(intent);
+                fragmentTransaction = fragmentManager.beginTransaction();
+                DiaryFragment diary_fragment = new DiaryFragment();
+                fragmentTransaction.replace(R.id.fragment_container,
+                        diary_fragment);
+                fragmentTransaction.commit();
             }
         });
 

@@ -17,60 +17,59 @@ import com.esolz.fitnessapp.helper.ConnectionDetector;
 
 public class SplashActivity extends Activity {
 
-	SharedPreferences loginPreferences;
-	ConnectionDetector cd;
+    SharedPreferences loginPreferences;
+    ConnectionDetector cd;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash);
 
-		cd = new ConnectionDetector(SplashActivity.this);
+        cd = new ConnectionDetector(SplashActivity.this);
 
-		loginPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+        loginPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
 
-		System.out.println("!! " + loginPreferences.getString("Remember", ""));
+        System.out.println("!! " + loginPreferences.getString("Remember", ""));
 
-		new Handler().postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
-				try {
+                try {
 
-					if (cd.isConnectingToInternet()) {
+                    if (cd.isConnectingToInternet()) {
 
-						if (loginPreferences.getString("Remember", "").equals(
-								"remember")) {
+                        if (loginPreferences.getString("Remember", "").equals("remember")) {
 
-							AppConfig.loginDatatype = new LoginDataType(loginPreferences.getString("UserId", ""),
-									loginPreferences.getString("Username", ""), loginPreferences.getString("Password", ""));
-							Intent intent = new Intent(SplashActivity.this,
-									LandScreenActivity.class);
-							startActivity(intent);
-						} else {
-							Intent intent = new Intent(SplashActivity.this,
-									LoginActivity.class);
-							startActivity(intent);
-							finish();
-						}
-					} else {
-						Toast.makeText(getApplicationContext(),
-								"No Internet Connection", Toast.LENGTH_LONG)
-								.show();
-					}
+                            AppConfig.loginDatatype = new LoginDataType(
+                                    loginPreferences.getString("UserId", ""),
+                                    loginPreferences.getString("Username", ""),
+                                    loginPreferences.getString("Password", ""));
+                            Intent intent = new Intent(SplashActivity.this,
+                                    LandScreenActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+                    }
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-			}
-		}, 2000);
-	}
+            }
+        }, 1000);
+    }
 
 }

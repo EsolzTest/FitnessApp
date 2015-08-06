@@ -1,0 +1,66 @@
+<html>
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+      // Create the data table.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'ITEM');
+      data.addColumn('number', 'VALUE');
+      data.addColumn({type: 'number', role: 'annotation'});
+      data.addRows([
+        [AndroidXAxis.getNumYax1(), Android.getNum1(), Android.getNum1()],
+        [AndroidXAxis.getNumYax2(), Android.getNum2(), Android.getNum2()],
+        [AndroidXAxis.getNumYax3(), Android.getNum3(), Android.getNum3()],
+        [AndroidXAxis.getNumYax4(), Android.getNum4(), Android.getNum4()],
+        [AndroidXAxis.getNumYax5(), Android.getNum5(), Android.getNum5()],
+        [AndroidXAxis.getNumYax6(), Android.getNum6(), Android.getNum6()],
+        [AndroidXAxis.getNumYax7(), Android.getNum7(), Android.getNum7()],
+        [AndroidXAxis.getNumYax8(), Android.getNum8(), Android.getNum8()],
+        [AndroidXAxis.getNumYax9(), Android.getNum9(), Android.getNum9()],
+        [AndroidXAxis.getNumYax10(), Android.getNum10(), Android.getNum10()]
+      ]);
+
+      // Set chart options
+      var options = {
+          legend: 'none',
+          colors: ['#2DB3FF'],
+          pointSize: 8,
+          displayAnnotations: true,
+          pointShape: { type: 'circle', rotation: 180 },
+          lineWidth: 2,
+          vAxis:{
+             baselineColor: '#2DB3FF',
+             gridlineColor: '#FFFFFF',
+             textPosition : 'none'
+          },
+          tooltip: {textStyle:  {fontName: 'TimesNewRoman',fontSize: 10,bold: true, visible: 'true'}},
+          is3D: true,
+        };
+
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+
+    </script>
+</head>
+
+<body>
+<!--Div that will hold the pie chart-->
+<div id="chart_div" style="width:580px; height:100%"></div>
+</body>
+</html>
