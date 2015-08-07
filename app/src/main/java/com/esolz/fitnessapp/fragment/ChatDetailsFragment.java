@@ -11,15 +11,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.MessageChatAdapter;
+import com.esolz.fitnessapp.customviews.TitilliumRegularEdit;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.UserRespectiveMSGDatatype;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
@@ -36,6 +40,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class ChatDetailsFragment extends FragmentActivity {
@@ -45,7 +51,7 @@ public class ChatDetailsFragment extends FragmentActivity {
     FragmentManager fragmentManager;
     ListView chat_history;
     MessageChatAdapter messageChatAdapter;
-    ProgressBar pbar1, pbarChat;
+    ProgressBar pbarChat;
 
     LinkedList<UserRespectiveMSGDatatype> userRespectiveMSGDatatypeLinkedList;
     UserRespectiveMSGDatatype userRespectiveMSGDatatype;
@@ -54,9 +60,19 @@ public class ChatDetailsFragment extends FragmentActivity {
     TitilliumSemiBold titleChatDetails;
     EditText etSendMsg;
 
-    String msgUserName = "", msgUserId = "", exception = "", urlResponse = "", exceptionError = "";
+    String msgUserName = "", msgUserId = "",
+            exception = "", urlResponse = "", exceptionError = "",
+            exceptionSend = "", urlResponseSend = "";
     ConnectionDetector cd;
     TitilliumSemiBold txtError;
+
+    int nextChatStart = 0;
+
+    RelativeLayout rlSendMsg, rlLoader, rlBlank;
+
+    TitilliumRegularEdit etSendMSG;
+
+    boolean isBlankVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +88,6 @@ public class ChatDetailsFragment extends FragmentActivity {
         cd = new ConnectionDetector(ChatDetailsFragment.this);
 
         titleChatDetails = (TitilliumSemiBold) findViewById(R.id.title_chat_details);
-        pbar1 = (ProgressBar) findViewById(R.id.progbar1);
-        pbar1.setVisibility(View.GONE);
 
         pbarChat = (ProgressBar) findViewById(R.id.pbar_chat);
         chat_history = (ListView) findViewById(R.id.listviewchat);
@@ -85,9 +99,14 @@ public class ChatDetailsFragment extends FragmentActivity {
         llViewDetails = (LinearLayout) findViewById(R.id.ll_viewdetails);
         back = (LinearLayout) findViewById(R.id.back);
 
-        etSendMsg = (EditText) findViewById(R.id.et_send_msg);
+        etSendMsg = (TitilliumRegularEdit) findViewById(R.id.et_send_msg);
 
         ed = (ImageView) findViewById(R.id.send_msg);
+
+        rlSendMsg = (RelativeLayout) findViewById(R.id.rl_send_msg);
+        rlLoader = (RelativeLayout) findViewById(R.id.rl_loader);
+        rlBlank = (RelativeLayout) findViewById(R.id.rl_blank);
+        rlBlank.setVisibility(View.GONE);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -106,6 +125,31 @@ public class ChatDetailsFragment extends FragmentActivity {
         } else {
             Toast.makeText(ChatDetailsFragment.this, "No internet connection", Toast.LENGTH_SHORT).show();
         }
+
+        rlSendMsg.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cd.isConnectingToInternet()) {
+                    if (etSendMsg.getText().toString().equals("")) {
+                        rlBlank.setVisibility(View.VISIBLE);
+                    } else {
+                        try {
+                            sendMessage(
+                                    msgUserId,
+                                    AppConfig.loginDatatype.getSiteUserId(),
+                                    URLEncoder.encode(etSendMsg.getText().toString(), "UTF-8")
+                            );
+                        } catch (Exception e) {
+                            Log.i("Send ex : ", e.toString());
+                        }
+                        Log.i("Send To ID : ", msgUserId);
+                        Log.i("Send To BY : ", AppConfig.loginDatatype.getSiteUserId());
+                    }
+                } else {
+                    Toast.makeText(ChatDetailsFragment.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         llViewDetails.setOnClickListener(new OnClickListener() {
 
@@ -129,29 +173,87 @@ public class ChatDetailsFragment extends FragmentActivity {
             }
         });
 
+    }
 
-//        ed.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-////                Toast.makeText(ChatDetailsFragment.this, etSendMsg.getText().toString(), Toast.LENGTH_LONG).show();
-////
-////                sendMessageToServer(utils.getSendMessageJSON(etSendMsg.getText()
-////                .toString()));
-//
-//
-//                // Clearing the input filed once message was sent
-//                //text_data.setText("");
-//                text_data = etSendMsg.getText().toString();
-//
-//                //method
-//
-//                chat_history.setAdapter(new MessageChatAdapter(con, 0, all_user_data));
-//
-//                new GetData().execute();
-//            }
-//        });
+    public void sendMessage(final String sendTo, final String sendFrom, final String MSG) {
 
+        AsyncTask<Void, Void, Void> sendMSG = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPreExecute() {
+                // TODO Auto-generated method stub
+                super.onPreExecute();
+                rlLoader.setVisibility(View.VISIBLE);
+                rlBlank.setVisibility(View.GONE);
+                rlSendMsg.setClickable(false);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // TODO Auto-generated method stub
+                try {
+                    exceptionSend = "";
+                    urlResponseSend = "";
+                    DefaultHttpClient httpclient = new DefaultHttpClient();
+                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
+                            + "&sent_by=" + sendFrom + "&message=" + MSG);
+                    HttpResponse response;
+                    response = httpclient.execute(httpget);
+                    HttpEntity httpentity = response.getEntity();
+                    InputStream is = httpentity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, "iso-8859-1"), 8);
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    is.close();
+                    urlResponseSend = sb.toString();
+                    JSONObject jOBJ = new JSONObject(urlResponseSend);
+
+                    userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                            true,
+                            jOBJ.getString("id"),
+                            sendTo,
+                            sendFrom,
+                            jOBJ.getString("message"),
+                            "",
+                            jOBJ.getString("send_time"),
+                            jOBJ.getString("sender"),
+                            jOBJ.getString("receiver"),
+                            jOBJ.getString("sender_image"),
+                            jOBJ.getString("receiver_image"),
+                            jOBJ.getString("status"),
+                            0
+                    );
+
+                } catch (Exception e) {
+                    exceptionSend = e.toString();
+                }
+
+                Log.i("RESPONSE", urlResponseSend);
+                Log.i("URL", "http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
+                        + "&sent_by=" + sendFrom + "&message=" + MSG);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                rlLoader.setVisibility(View.GONE);
+                rlSendMsg.setClickable(true);
+                if (exceptionSend.equals("")) {
+                    messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                    etSendMsg.setText("");
+                } else {
+                    Log.i("exceptionSend : ", exceptionSend);
+                    Toast.makeText(ChatDetailsFragment.this, "Server not responding...." + exceptionSend, Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        sendMSG.execute();
 
     }
 
@@ -194,11 +296,15 @@ public class ChatDetailsFragment extends FragmentActivity {
                     is.close();
                     urlResponse = sb.toString();
                     JSONObject jOBJ = new JSONObject(urlResponse);
+
+                    nextChatStart = jOBJ.getInt("next_start");
+
                     try {
                         userRespectiveMSGDatatypeLinkedList = new LinkedList<UserRespectiveMSGDatatype>();
                         JSONArray jsonArray = jOBJ.getJSONArray("all_message");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                             userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
                                     true,
                                     jsonObject.getString("id"),
@@ -238,7 +344,13 @@ public class ChatDetailsFragment extends FragmentActivity {
                 if (exception.equals("")) {
                     chat_history.setVisibility(View.VISIBLE);
                     if (exceptionError.equals("")) {
-                        messageChatAdapter = new MessageChatAdapter(ChatDetailsFragment.this, 0, userRespectiveMSGDatatypeLinkedList);
+                        Collections.reverse(userRespectiveMSGDatatypeLinkedList);
+                        messageChatAdapter = new MessageChatAdapter(ChatDetailsFragment.this, 0,
+                                userRespectiveMSGDatatypeLinkedList,
+                                pbarChat,
+                                nextChatStart,
+                                msgUserId,
+                                chat_history);
                         chat_history.setAdapter(messageChatAdapter);
                     } else {
                         txtError.setVisibility(View.VISIBLE);
@@ -249,10 +361,8 @@ public class ChatDetailsFragment extends FragmentActivity {
                             .show();
                 }
             }
-
         };
         allMSG.execute();
-
     }
 }
 

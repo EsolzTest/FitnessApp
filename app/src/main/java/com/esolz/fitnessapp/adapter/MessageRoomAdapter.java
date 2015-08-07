@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
+import com.esolz.fitnessapp.customviews.HelveticaSemiBoldLight;
 import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.MsgDataType;
@@ -53,6 +54,7 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         TitilliumRegular usermessage;
         ImageView image;
         LinearLayout listItemContainer;
+        HelveticaSemiBoldLight chatCounter;
     }
 
     public MessageRoomAdapter(Context context, int resource, LinkedList<MsgDataType> msgDataTypeLinkedList) {
@@ -80,6 +82,9 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
             holder.currenttime = (TitilliumSemiBold) convertView.findViewById(R.id.current_time);
             holder.usermessage = (TitilliumRegular) convertView.findViewById(R.id.user_message);
             holder.image = (ImageView) convertView.findViewById(R.id.imageview);
+
+            holder.chatCounter = (HelveticaSemiBoldLight) convertView.findViewById(R.id.imageviewreddotnumberofchat);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -95,12 +100,25 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         targetFormat = new SimpleDateFormat("hh:mm a");
         jsonDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+        Date dateCheck  = null;
+
         try {
+            dateCheck = new Date();
             date = jsonDateFormat.parse(msgDataTypeLinkedList.get(position).getLast_send_time());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.currenttime.setText(dateFormat.format(date));
+
+        try {
+            if (jsonDateFormat.format(dateCheck)
+                    .equals(jsonDateFormat.parse(msgDataTypeLinkedList.get(position).getLast_send_time()))) {
+                holder.currenttime.setText(targetFormat.format(date));
+            } else {
+                holder.currenttime.setText(dateFormat.format(date));
+            }
+        } catch (Exception e) {
+            Log.i("Date exception : ", e.toString());
+        }
 
         holder.listItemContainer.setOnClickListener(new OnClickListener() {
 
@@ -111,15 +129,10 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
                 i.putExtra("msgUserName", msgDataTypeLinkedList.get(position).getUser_name());
                 i.putExtra("msgUserId", msgDataTypeLinkedList.get(position).getUser_id());
                 context.startActivity(i);
-
-//                Toast.makeText(context,
-//                        msgDataTypeLinkedList.get(position).getUser_name()
-//                        + "\n " +
-//                        msgDataTypeLinkedList.get(position).getUser_id(),
-//                        Toast.LENGTH_LONG).show();
             }
         });
 
+        holder.chatCounter.setVisibility(View.GONE);
 
         return convertView;
     }

@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#C8C8CD"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -84,15 +85,9 @@
             android:background="@color/primary_text_default_material_dark"
             android:divider="@drawable/list_view_divider"
             android:dividerHeight="0dp"
-            android:scrollbars="none"
-            android:stackFromBottom="true">
+            android:rotationX="180"
+            android:scrollbars="none">
         </ListView>
-
-        <ProgressBar
-            android:id="@+id/pbar_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
 
         <com.esolz.fitnessapp.customviews.TitilliumSemiBold
             android:id="@+id/txt_error"
@@ -102,19 +97,80 @@
             android:text="No Data Found"
             android:textSize="20sp"/>
 
+        <ProgressBar
+            android:id="@+id/pbar_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_loader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_footer"
+        android:background="#FFFFFF"
+        android:padding="2dp"
+        android:visibility="gone">
+
+        <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clickable="false"
+            android:text="Sending Message ...."
+            android:textColor="#22A7F0"
+            android:textSize="14sp"/>
+
+        <ProgressBar
+            android:id="@+id/pbar_chat_send"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_footer"
+        android:background="#FFFFFF"
+        android:padding="2dp"
+        android:visibility="visible">
+
+        <com.esolz.fitnessapp.customviews.TitilliumSemiBold
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clickable="false"
+            android:text="Please write your message."
+            android:textColor="#22A7F0"
+            android:textSize="14sp"/>
+
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ll_footer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:padding="5dp">
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp">
 
         <LinearLayout
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/chat_footer"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/chat_footernew"
             android:orientation="horizontal"
             android:weightSum="10">
 
@@ -134,42 +190,38 @@
             </LinearLayout>
 
 
-            <EditText
-
+            <com.esolz.fitnessapp.customviews.TitilliumRegularEdit
                 android:id="@+id/et_send_msg"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
                 android:background="#FFFFFF"
                 android:hint="Write a message..."
-                android:inputType="none"
-                android:maxLines="2"
+                android:inputType="textMultiLine"
+                android:padding="4dp"
                 android:textColorHint="#C7C7CC"
                 android:textSize="18sp"/>
 
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/rl_send_msg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/round"
+            android:padding="4dp">
 
-        <ImageView
-            android:id="@+id/send_msg"
-            android:layout_width="200dp"
-            android:layout_height="80dp"
-            android:layout_marginLeft="310dp"
-
-
-            android:background="@drawable/images"/>
-
-        <ProgressBar
-            android:id="@+id/progbar1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20sp"
-            android:layout_marginLeft="150dp"
-
-            />
-
+            <ImageView
+                android:id="@+id/send_msg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/chatsend"
+                android:clickable="false"/>
+        </RelativeLayout>
 
     </RelativeLayout>
 
