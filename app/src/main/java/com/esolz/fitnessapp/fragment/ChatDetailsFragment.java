@@ -21,6 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.MessageChatAdapter;
 import com.esolz.fitnessapp.customviews.TitilliumRegularEdit;
@@ -28,12 +34,18 @@ import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.UserRespectiveMSGDatatype;
 import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.AppController;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -41,8 +53,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ChatDetailsFragment extends FragmentActivity {
 
@@ -134,10 +150,11 @@ public class ChatDetailsFragment extends FragmentActivity {
                         rlBlank.setVisibility(View.VISIBLE);
                     } else {
                         try {
+                            String msgText = URLEncoder.encode(etSendMsg.getText().toString(), "UTF-8");
                             sendMessage(
                                     msgUserId,
                                     AppConfig.loginDatatype.getSiteUserId(),
-                                    URLEncoder.encode(etSendMsg.getText().toString(), "UTF-8")
+                                    msgText.replace("+", "%20")
                             );
                         } catch (Exception e) {
                             Log.i("Send ex : ", e.toString());
@@ -177,83 +194,177 @@ public class ChatDetailsFragment extends FragmentActivity {
 
     public void sendMessage(final String sendTo, final String sendFrom, final String MSG) {
 
-        AsyncTask<Void, Void, Void> sendMSG = new AsyncTask<Void, Void, Void>() {
+        String postURL = "http://esolz.co.in/lab6/ptplanner/app_control/send_message_through_app?sent_to=" + sendTo + "&sent_by=" + sendFrom;
 
-            @Override
-            protected void onPreExecute() {
-                // TODO Auto-generated method stub
-                super.onPreExecute();
-                rlLoader.setVisibility(View.VISIBLE);
-                rlBlank.setVisibility(View.GONE);
-                rlSendMsg.setClickable(false);
-            }
+        rlLoader.setVisibility(View.VISIBLE);
+        rlBlank.setVisibility(View.GONE);
+        rlSendMsg.setClickable(false);
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                // TODO Auto-generated method stub
-                try {
-                    exceptionSend = "";
-                    urlResponseSend = "";
-                    DefaultHttpClient httpclient = new DefaultHttpClient();
-                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
-                            + "&sent_by=" + sendFrom + "&message=" + MSG);
-                    HttpResponse response;
-                    response = httpclient.execute(httpget);
-                    HttpEntity httpentity = response.getEntity();
-                    InputStream is = httpentity.getContent();
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(is, "iso-8859-1"), 8);
-                    StringBuilder sb = new StringBuilder();
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
+        final StringRequest sr = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String stringResponse) {
+                        Log.i("CHAT RES @@@", stringResponse);
+                        rlLoader.setVisibility(View.GONE);
+                        rlSendMsg.setClickable(true);
+                        try {
+                            JSONObject response = new JSONObject(stringResponse);
+                            userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                                    true,
+                                    response.getString("id"),
+                                    sendTo,
+                                    sendFrom,
+                                    response.getString("message"),
+                                    "",
+                                    response.getString("send_time"),
+                                    response.getString("sender"),
+                                    response.getString("receiver"),
+                                    response.getString("sender_image"),
+                                    response.getString("receiver_image"),
+                                    response.getString("status"),
+                                    0
+                            );
+                            messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                            etSendMsg.setText("");
+                            Toast.makeText(ChatDetailsFragment.this, "Message send.", Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("CHAT RES SAKU", e.toString());
+                        }
                     }
-                    is.close();
-                    urlResponseSend = sb.toString();
-                    JSONObject jOBJ = new JSONObject(urlResponseSend);
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Output : ", "Error: " + error.getMessage());
+                Toast.makeText(ChatDetailsFragment.this, "Server not responding...!", Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("message", MSG);
 
-                    userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
-                            true,
-                            jOBJ.getString("id"),
-                            sendTo,
-                            sendFrom,
-                            jOBJ.getString("message"),
-                            "",
-                            jOBJ.getString("send_time"),
-                            jOBJ.getString("sender"),
-                            jOBJ.getString("receiver"),
-                            jOBJ.getString("sender_image"),
-                            jOBJ.getString("receiver_image"),
-                            jOBJ.getString("status"),
-                            0
-                    );
+                Log.d("MSG", MSG);
 
-                } catch (Exception e) {
-                    exceptionSend = e.toString();
-                }
-
-                Log.i("RESPONSE", urlResponseSend);
                 Log.i("URL", "http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
                         + "&sent_by=" + sendFrom + "&message=" + MSG);
-                return null;
+
+                return params;
             }
 
             @Override
-            protected void onPostExecute(Void result) {
-                // TODO Auto-generated method stub
-                super.onPostExecute(result);
-                rlLoader.setVisibility(View.GONE);
-                rlSendMsg.setClickable(true);
-                if (exceptionSend.equals("")) {
-                    messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
-                    etSendMsg.setText("");
-                } else {
-                    Log.i("exceptionSend : ", exceptionSend);
-                    Toast.makeText(ChatDetailsFragment.this, "Server not responding...." + exceptionSend, Toast.LENGTH_LONG).show();
-                }
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+                return params;
             }
         };
-        sendMSG.execute();
+
+        AppController.getInstance().addToRequestQueue(sr);
+
+
+//        AsyncTask<Void, Void, Void> sendMSG = new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            protected void onPreExecute() {
+//                // TODO Auto-generated method stub
+//                super.onPreExecute();
+//                rlLoader.setVisibility(View.VISIBLE);
+//                rlBlank.setVisibility(View.GONE);
+//                rlSendMsg.setClickable(false);
+//            }
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                // TODO Auto-generated method stub
+//                try {
+//                    exceptionSend = "";
+//                    urlResponseSend = "";
+//
+//                    String postURL = "http://esolz.co.in/lab6/ptplanner/app_control/send_message_through_app?sent_to="+sendTo+"1&sent_by="+sendFrom;
+//
+//
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    // Creating HTTP Post
+//                    HttpPost httpPost = new HttpPost(postURL);
+//
+//                    // Building post parameters
+//                    // key and value pair
+//                    List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+//                    nameValuePair.add(new BasicNameValuePair("message",MSG));
+//
+//                    Log.i("MSG : ", MSG);
+//
+//                    // Url Encoding the POST parameters
+//
+//                        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+//
+//                    // Making HTTP Request
+//                        HttpResponse response = httpClient.execute(httpPost);
+//
+//                        // writing response to log
+//                        Log.d("Http Response:", response.toString());
+//
+//
+////                    DefaultHttpClient httpclient = new DefaultHttpClient();
+////                    HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
+////                            + "&sent_by=" + sendFrom + "&message=" + MSG);
+////                    HttpResponse response;
+////                    response = httpclient.execute(httpget);
+////                    HttpEntity httpentity = response.getEntity();
+////                    InputStream is = httpentity.getContent();
+////                    BufferedReader reader = new BufferedReader(
+////                            new InputStreamReader(is, "iso-8859-1"), 8);
+////                    StringBuilder sb = new StringBuilder();
+////                    String line = null;
+////                    while ((line = reader.readLine()) != null) {
+////                        sb.append(line + "\n");
+////                    }
+////                    is.close();
+////                    urlResponseSend = sb.toString();
+////                    JSONObject jOBJ = new JSONObject(urlResponseSend);
+////
+////                    userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+////                            true,
+////                            jOBJ.getString("id"),
+////                            sendTo,
+////                            sendFrom,
+////                            jOBJ.getString("message"),
+////                            "",
+////                            jOBJ.getString("send_time"),
+////                            jOBJ.getString("sender"),
+////                            jOBJ.getString("receiver"),
+////                            jOBJ.getString("sender_image"),
+////                            jOBJ.getString("receiver_image"),
+////                            jOBJ.getString("status"),
+////                            0
+////                    );
+//
+//                } catch (Exception e) {
+//                    exceptionSend = e.toString();
+//                }
+//
+//                Log.i("RESPONSE", urlResponseSend);
+//                Log.i("URL", "http://esolz.co.in/lab6/ptplanner/dashboard/send_message_through_app?sent_to=" + sendTo
+//                        + "&sent_by=" + sendFrom + "&message=" + MSG);
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void result) {
+//                // TODO Auto-generated method stub
+//                super.onPostExecute(result);
+//                rlLoader.setVisibility(View.GONE);
+//                rlSendMsg.setClickable(true);
+//                if (exceptionSend.equals("")) {
+//                    messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+//                    etSendMsg.setText("");
+//                } else {
+//                    Log.i("exceptionSend : ", exceptionSend);
+//                    Toast.makeText(ChatDetailsFragment.this, "Server not responding...." + exceptionSend, Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        };
+//        sendMSG.execute();
 
     }
 

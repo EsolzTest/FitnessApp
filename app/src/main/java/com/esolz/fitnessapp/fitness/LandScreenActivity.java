@@ -59,8 +59,6 @@ public class LandScreenActivity extends FragmentActivity {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     String getIntentValue = "", getIntentValueMSG = "";
-    //18th june - code changed by Bodhidipta Bhattacharjee
-    //layout id has been changed by id
     View VPage;
     CalenderFragmentDatatype calDtype;
 
@@ -70,8 +68,7 @@ public class LandScreenActivity extends FragmentActivity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_landipage);
 
@@ -132,7 +129,7 @@ public class LandScreenActivity extends FragmentActivity {
                 imgCal.setBackgroundResource(R.drawable.cal);
                 imgApnt.setBackgroundResource(R.drawable.apnt);
                 imgPrg.setBackgroundResource(R.drawable.prg);
-                imgMsg.setBackgroundResource(R.drawable.msgclick);
+                imgMsg.setBackgroundResource(R.drawable.msgfill);
 
                 fragmentTransaction = fragmentManager.beginTransaction();
                 Messagefragment msg_fragment = new Messagefragment();
@@ -250,7 +247,7 @@ public class LandScreenActivity extends FragmentActivity {
                 imgCal.setBackgroundResource(R.drawable.cal);
                 imgApnt.setBackgroundResource(R.drawable.apnt);
                 imgPrg.setBackgroundResource(R.drawable.prg);
-                imgMsg.setBackgroundResource(R.drawable.msgclick);
+                imgMsg.setBackgroundResource(R.drawable.msgfill);
 
                 fragmentTransaction = fragmentManager.beginTransaction();
                 Messagefragment msg_fragment = new Messagefragment();
@@ -356,10 +353,6 @@ public class LandScreenActivity extends FragmentActivity {
 
 
     }
-
-
-    //18th june - code changed by Bodhidipta Bhattacharjee
-    //layout id has been changed by id
 
     public void Show_FullScreen_ViewPager(Context con, ArrayList<String> obj) {
         if (obj.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.esolz.fitnessapp.adapter;
 
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -91,7 +92,13 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         }
 
         holder.username.setText(msgDataTypeLinkedList.get(position).getUser_name());
-        holder.usermessage.setText(msgDataTypeLinkedList.get(position).getLast_message());
+        try {
+            holder.usermessage.setText((URLDecoder.decode(msgDataTypeLinkedList.get(position).getLast_message(), "UTF-8")));
+        } catch (Exception e) {
+            Log.i("Receiver MSG : ", e.toString());
+        }
+        //holder.usermessage.setText(msgDataTypeLinkedList.get(position).getLast_message());
+
         Picasso.with(context).load(msgDataTypeLinkedList.get(position).getUser_image()).transform(new Trns()).resize(400, 400).centerInside().placeholder(R.drawable.abc_dialog_material_background_dark) // optional
                 .error(R.drawable.abc_dialog_material_background_light).into(holder.image);
 

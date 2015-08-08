@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -110,7 +111,11 @@ public class MessageChatAdapter extends ArrayAdapter<UserRespectiveMSGDatatype> 
             Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getReceiver_image())
                     .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgReceiver);
 
-            holder.chatSendMSG.setText(userRespectiveMSGDatatypes.get(position).getMessage());
+            try {
+                holder.chatSendMSG.setText((URLDecoder.decode(userRespectiveMSGDatatypes.get(position).getMessage(), "UTF-8")));
+            } catch (Exception e) {
+                Log.i("Sender MSG : ", e.toString());
+            }
         } else {
             holder.receiver.setVisibility(View.VISIBLE);
             holder.sender.setVisibility(View.GONE);
@@ -121,7 +126,11 @@ public class MessageChatAdapter extends ArrayAdapter<UserRespectiveMSGDatatype> 
             Picasso.with(context).load(userRespectiveMSGDatatypes.get(position).getSender_image())
                     .transform(new Trns()).resize(400, 400).centerInside().into(holder.imgReceiver);
 
-            holder.chatRecMSG.setText(userRespectiveMSGDatatypes.get(position).getMessage());
+            try {
+                holder.chatRecMSG.setText((URLDecoder.decode(userRespectiveMSGDatatypes.get(position).getMessage(), "UTF-8")));
+            } catch (Exception e) {
+                Log.i("Receiver MSG : ", e.toString());
+            }
         }
 
         if (nextChatStart > 0) {

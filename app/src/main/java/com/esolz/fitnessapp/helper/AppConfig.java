@@ -45,4 +45,6 @@ public class AppConfig {
     public static ArrayList<GraphDetailsPointDataType> graphDetailsPointDataTypeArrayList;
     public static GraphDetailsPointDataType graphDetailsPointDataType;
 
+    public static String appRegId = "";
+
 }

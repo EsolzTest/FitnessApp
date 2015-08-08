@@ -168,7 +168,8 @@ public class LoginActivity extends Activity {
                     DefaultHttpClient httpclient = new DefaultHttpClient();
                     HttpGet httpget = new HttpGet("http://esolz.co.in/lab6/ptplanner/login/verify_app_login?email="
                             + email + "&password=" + password
-                            + "&remember_me=" + remember);
+                            + "&remember_me=" + remember
+                            + "&device_token=" + AppConfig.appRegId);
                     HttpResponse response;
                     response = httpclient.execute(httpget);
                     HttpEntity httpentity = response.getEntity();
