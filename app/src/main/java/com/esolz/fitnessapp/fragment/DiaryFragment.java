@@ -109,7 +109,7 @@ public class DiaryFragment extends Fragment {
     ScrollView scrView;
 
     ConnectionDetector cd;
-
+    String dateChange = "", formattedDate = "";
     DateRespectiveDiaryDataType dateRespectiveDiaryDataType;
     String exception = "", urlResponse = "";
 
@@ -231,19 +231,19 @@ public class DiaryFragment extends Fragment {
         llEditDiary.setVisibility(View.GONE);
 
         etDetails = (TitilliumRegularEdit) fView.findViewById(R.id.et_details);
-        etDetails.setEnabled(true);
-       // etDetails.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+        etDetails.setEnabled(false);
+        // etDetails.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 
-        etDetails.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
-                    return true;
-                }
-                return false;
-            }
-        });
+//        etDetails.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         pBar = (ProgressBar) fView.findViewById(R.id.pbar);
         pBar.setVisibility(View.GONE);
@@ -506,6 +506,8 @@ public class DiaryFragment extends Fragment {
                 super.onPreExecute();
                 pBar.setVisibility(View.VISIBLE);
                 scrView.setVisibility(View.GONE);
+
+                etDetails.setEnabled(false);
             }
 
             @Override
@@ -648,6 +650,66 @@ public class DiaryFragment extends Fragment {
                             .setTextColor(Color.parseColor("#22A7F0"));
                 }
             }
+
+            textViewArray[i].setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dateChange = txt_currentyear.getText().toString() + "-"
+                            + txt_currentdatemonth.getText().toString() + "-"
+                            + view.getTag();
+                    DateFormat originalFormat = new SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH);
+                    DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        date = originalFormat.parse(dateChange);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    formattedDate = targetFormat.format(date);
+                    Toast.makeText(getActivity(), formattedDate, Toast.LENGTH_LONG).show();
+//                    getDiaryDetails(formattedDate);
+
+                    llCoverLayout.clearAnimation();
+                    TranslateAnimation tAnim = new TranslateAnimation(0.0f, 0.0f,
+                            (llCoverLayout.getY()), 0.0f);
+                    tAnim.setDuration(500);
+                    tAnim.setFillAfter(true);
+                    tAnim.setInterpolator(new AnticipateOvershootInterpolator(1.0f, 1.0f));
+                    llCoverLayout.startAnimation(tAnim);
+                    tAnim.setAnimationListener(new
+                                                       Animation.AnimationListener() {
+
+                                                           @Override
+                                                           public void onAnimationEnd(Animation arg0) {
+
+                                                               llCoverLayout.clearAnimation();
+                                                               llCoverLayout.setY(ll_header.getHeight());
+
+                                                               txtView.setText("Calendar");
+                                                               isBottom = false;
+
+                                                               params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+                                                               llCoverLayout.setLayoutParams(params);
+
+                                                               getDiaryDetails(formattedDate);
+                                                           }
+
+                                                           @Override
+                                                           public void onAnimationRepeat(Animation arg0) { // TODO
+
+
+                                                           }
+
+                                                           @Override
+                                                           public void onAnimationStart(Animation arg0) { // TODO
+
+
+                                                           }
+
+                                                       });
+
+                }
+            });
         }
         day = 1;
 

@@ -206,7 +206,8 @@ public class LoginActivity extends Activity {
                 }
                 Log.d("LOGIN", "http://esolz.co.in/lab6/ptplanner/login/verify_app_login?email="
                         + email + "&password=" + password
-                        + "&remember_me=" + remember);
+                        + "&remember_me=" + remember
+                        + "&device_token=" + AppConfig.appRegId);
                 return null;
             }
 

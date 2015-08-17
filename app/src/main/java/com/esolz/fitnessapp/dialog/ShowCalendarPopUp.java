@@ -225,6 +225,8 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
             textViewArray[i].setTextColor(Color.BLACK);
             day++;
 
+            textViewArray[i].setOnClickListener(this);
+
             if (currentMonthLength > today) {
 
                 if (textViewArray[(today + indexOfDayOne) - 1].getText()
@@ -409,7 +411,7 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                 .findViewById(R.id.txt48);
 
         for (int i = 0; i < textViewArray.length; i++) {
-            textViewArray[i].setOnClickListener(this);
+            //textViewArray[i].setOnClickListener(this);
         }
 
         eventViewArr = new LinearLayout[42];

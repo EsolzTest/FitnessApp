@@ -133,20 +133,32 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.esolz.fitnessapp.customviews.TitilliumLight
-                    android:id="@+id/txt_msgcount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <!--<com.esolz.fitnessapp.customviews.TitilliumLight-->
+                    <!--android:id="@+id/txt_msgcount"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_alignParentTop="true"-->
+                    <!--android:layout_marginRight="18dp"-->
+                    <!--android:layout_marginTop="5dp"-->
+                    <!--android:background="@drawable/numberbg"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text=""-->
+                    <!--android:textColor="#FFFFFF"-->
+                    <!--android:textSize="8sp"-->
+                    <!--android:visibility="visible" />-->
+                <LinearLayout
+                    android:id="@+id/ll_msgcount"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginRight="18dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/numberbg"
                     android:gravity="center"
-                    android:text="1"
-                    android:textColor="#FFFFFF"
-                    android:textSize="8sp"
-                    android:visibility="gone" />
+                    android:orientation="horizontal"
+                    android:visibility="visible" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

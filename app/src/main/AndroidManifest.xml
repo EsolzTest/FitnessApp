@@ -18,10 +18,10 @@
 
     <!-- Creates a custom permission so only this app can receive its messages. -->
     <permission
-        android:name="com.esolz.aicafeapp.permission.C2D_MESSAGE"
+        android:name="com.esolz.fitnessapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.esolz.aicafeapp.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.esolz.fitnessapp.permission.C2D_MESSAGE"/>
 
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -33,16 +33,15 @@
     <application
         android:name="com.esolz.fitnessapp.helper.AppController"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">>
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.esolz.fitnessapp.fitness.SplashActivity"
+            android:name="com.esolz.fitnessapp.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -88,8 +87,59 @@
         <activity
             android:name="com.esolz.fitnessapp.fitness.PreviewUploadImageActivity"
             android:label="@string/app_name"></activity>
-
     </application>
 
-</manifest>
+    <!--<receiver-->
+    <!--android:name="com.esolz.fitnessapp.gcmnotification.GCMBroadCastReceiver"-->
+    <!--android:permission="com.google.android.c2dm.permission.SEND">-->
+    <!--<intent-filter>-->
+    <!--<action android:name="com.google.android.c2dm.intent.RECEIVE"/>-->
+    <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION"/>-->
 
+    <!--<category android:name="com.esolz.fitnessapp.gcmnotification.GCMIntentService"/>-->
+    <!--</intent-filter>-->
+    <!--</receiver>-->
+
+
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version"/>
+
+    <receiver
+        android:name="com.esolz.fitnessapp.fitness.GCMBroadCastReceiver"
+        android:permission="com.google.android.c2dm.permission.SEND">
+        <intent-filter>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+
+            <category android:name="com.app"/>
+        </intent-filter>
+    </receiver>
+
+    <service android:name="com.esolz.fitnessapp.fitness.GCMIntentService"/>
+
+
+    <!--<receiver-->
+        <!--android:name="com.esolz.fitnessapp.fitness.GCMBroadCastReceiver"-->
+        <!--android:permission="com.google.android.c2dm.permission.SEND">-->
+        <!--<intent-filter>-->
+            <!--<action android:name="com.google.android.c2dm.intent.RECEIVE"/>-->
+            <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION"/>-->
+
+            <!--<category android:name="com.esolz.fitnessapp"/>-->
+        <!--</intent-filter>-->
+    <!--</receiver>-->
+
+    <!--<service android:name="com.esolz.fitnessapp.fitness.GCMIntentService"/>-->
+
+    <!--<receiver-->
+    <!--android:name="com.google.android.gcm.GCMBroadcastReceiver"-->
+    <!--android:permission="com.google.android.c2dm.permission.SEND" >-->
+    <!--<intent-filter>-->
+    <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
+    <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
+
+    <!--<category android:name="com.esolz.fitnessapp" />-->
+    <!--</intent-filter>-->
+    <!--</receiver>-->
+
+</manifest>

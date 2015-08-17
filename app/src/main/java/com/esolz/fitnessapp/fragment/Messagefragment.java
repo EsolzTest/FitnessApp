@@ -3,6 +3,9 @@ package com.esolz.fitnessapp.fragment;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 
 import android.os.AsyncTask;
@@ -24,7 +27,14 @@ import com.esolz.fitnessapp.adapter.MessageRoomAdapter;
 import com.esolz.fitnessapp.customviews.TitilliumBold;
 import com.esolz.fitnessapp.datatype.MsgDataType;
 import com.esolz.fitnessapp.helper.AppConfig;
+import com.esolz.fitnessapp.helper.AppController;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -51,6 +61,11 @@ public class Messagefragment extends Fragment {
 
     View fView;
 
+    public String PUSHER_API_KEY = "676b2632a600d73a2182";
+    public String PUSHER_CHANNEL = "test_channel";
+    public String PUSHER_EVENT = "my_event";
+
+    SimpleDateFormat targetFormat, dateFormat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,31 +102,70 @@ public class Messagefragment extends Fragment {
         llProgressButton.setClickable(true);
         llMessagebutton.setClickable(false);
 
-
-//
-//		messageRoomList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//				TitilliumBold username=(TitilliumBold)view.findViewById(R.id.user_name);
-//				String txt=username.getText().toString();
-//
-//				user_name=txt;
-//				Intent intent=new Intent(getActivity(),ChatDetailsFragment.class);
-//				intent.putExtra("username",txt);
-//				intent.putExtra("id",id);
-//				startActivity(intent);
-//
-//
-//
-//	}
-//		});
-
-
-//        new Getmessage().execute();
-
         return fView;
 
+    }
+
+    public void refreshMSGFragment(final String sendBy, final String msg, final String dateTime) {
+        try {
+            for (int i = 0; i < msgDataTypeLinkedList.size(); i++) {
+                if (msgDataTypeLinkedList.get(i).getUser_id().toString().equals(sendBy)) {
+//                    Calendar c = Calendar.getInstance();
+//
+//                    targetFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//                    dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+//
+//                    Date dateCheck = null;
+//
+//                    try {
+//                        dateCheck = new Date();
+//                        dateCheck = dateFormat.parse("" + c.getTime());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+
+                    msgDataTypeLinkedList.get(i).setLast_message("" + msg);
+                    msgDataTypeLinkedList.get(i).setLast_send_time("" + dateTime);
+                    msgAdapter.notifyDataSetChanged();
+
+                   // Log.i("00000 Date : ", targetFormat.format(c.getTime()));
+                } else {
+                    // Toast.makeText(getActivity(), "Problem  ", Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (Exception e) {
+            Log.i("REFRESH EXC : ", e.toString());
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.setIsAppRunning("NO");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppController.setIsAppRunning("NO");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppController.setIsAppRunning("NO");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppController.setIsAppRunning("YES");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AppController.setIsAppRunning("YES");
     }
 
     public void getMSGLis() {

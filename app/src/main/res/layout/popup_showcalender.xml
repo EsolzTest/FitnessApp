@@ -43,6 +43,84 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/top"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:padding="10dp">-->
+
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/btn_pre"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentLeft="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:background="@drawable/selector_default"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:padding="10dp">-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/img_rightarrow"-->
+                        <!--android:layout_width="8dp"-->
+                        <!--android:layout_height="18dp"-->
+                        <!--android:background="@drawable/arrow2"-->
+                        <!--android:clickable="false"/>-->
+                <!--</LinearLayout>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_centerInParent="true"-->
+                    <!--android:layout_marginLeft="10dp"-->
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:paddingLeft="10dp"-->
+                    <!--android:paddingRight="10dp">-->
+
+                    <!--<com.esolz.fitnessapp.customviews.TitilliumRegular-->
+                        <!--android:id="@+id/txt_currentdatemonth"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:clickable="false"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="APRIL"-->
+                        <!--android:textColor="#22A7F0"-->
+                        <!--android:textSize="24sp"/>-->
+
+                    <!--<com.esolz.fitnessapp.customviews.TitilliumRegular-->
+                        <!--android:id="@+id/txt_currentyear"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="8dp"-->
+                        <!--android:clickable="false"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="2015"-->
+                        <!--android:textColor="#22A7F0"-->
+                        <!--android:textSize="24sp"/>-->
+                <!--</LinearLayout>-->
+
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/btn_next"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:background="@drawable/selector_default"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:padding="10dp">-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/imageView2"-->
+                        <!--android:layout_width="8dp"-->
+                        <!--android:layout_height="18dp"-->
+                        <!--android:background="@drawable/arrow"-->
+                        <!--android:clickable="false"/>-->
+                <!--</LinearLayout>-->
+            <!--</RelativeLayout>-->
+
             <RelativeLayout
                 android:id="@+id/top"
                 android:layout_width="match_parent"
@@ -58,12 +136,12 @@
                     android:background="@drawable/selector_default"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="7dp">
 
                     <ImageView
                         android:id="@+id/img_rightarrow"
                         android:layout_width="8dp"
-                        android:layout_height="18dp"
+                        android:layout_height="20dp"
                         android:background="@drawable/arrow2"
                         android:clickable="false"/>
                 </LinearLayout>
@@ -74,7 +152,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp">
@@ -87,7 +165,7 @@
                         android:gravity="center"
                         android:text="APRIL"
                         android:textColor="#22A7F0"
-                        android:textSize="24sp"/>
+                        android:textSize="22sp"/>
 
                     <com.esolz.fitnessapp.customviews.TitilliumRegular
                         android:id="@+id/txt_currentyear"
@@ -98,7 +176,7 @@
                         android:gravity="center"
                         android:text="2015"
                         android:textColor="#22A7F0"
-                        android:textSize="24sp"/>
+                        android:textSize="22sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -110,12 +188,12 @@
                     android:background="@drawable/selector_default"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="7dp">
 
                     <ImageView
                         android:id="@+id/imageView2"
                         android:layout_width="8dp"
-                        android:layout_height="18dp"
+                        android:layout_height="20dp"
                         android:background="@drawable/arrow"
                         android:clickable="false"/>
                 </LinearLayout>

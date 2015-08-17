@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -135,16 +137,42 @@ public class TrainingFragment extends Fragment {
         }
 
         if (cd.isConnectingToInternet()) {
-            getExerCiseDetails(userProgramIdArr.get(0), exerciseIDArr.get(0));
+            try {
+                getExerCiseDetails(userProgramIdArr.get(0), exerciseIDArr.get(0));
+                txtRight.setText(exerciseTitleArr.get(0));
+                txtExerciseTitle.setText(exerciseTitleArr.get(0));
+
+                rlRightClick.setVisibility(View.VISIBLE);
+                rlLeftClick.setVisibility(View.GONE);
+            } catch (Exception e) {
+                Log.i("Excep Training : ", "No Data........");
+
+                more.setClickable(false);
+                llFinish.setVisibility(View.GONE);
+
+                rlRightClick.setVisibility(View.GONE);
+                rlLeftClick.setVisibility(View.GONE);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder
+                        .setMessage("You gotta ask your personal trainer for some workouts!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
         } else {
             Toast.makeText(getActivity(), "No internet connection.", Toast.LENGTH_SHORT).show();
         }
+        try {
 
-        txtExerciseTitle.setText(exerciseTitleArr.get(0));
-
-        rlLeftClick.setVisibility(View.GONE);
-        txtRight.setText(exerciseTitleArr.get(0));
-        rlRightClick.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            Log.i("Excep Training : ", "No Data........");
+        }
 
         rlLeftClick.setOnClickListener(new OnClickListener() {
             @Override
@@ -166,7 +194,11 @@ public class TrainingFragment extends Fragment {
                         rlRightClick.setVisibility(View.VISIBLE);
                     }
                     if (cd.isConnectingToInternet()) {
-                        getExerCiseDetails(userProgramIdArr.get(t), exerciseIDArr.get(t));
+                        try {
+                            getExerCiseDetails(userProgramIdArr.get(t), exerciseIDArr.get(t));
+                        } catch (Exception e) {
+                            Log.i("Excep Training : ", "No Data........");
+                        }
                     } else {
                         Toast.makeText(getActivity(), "No internet connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -194,7 +226,11 @@ public class TrainingFragment extends Fragment {
                         rlRightClick.setVisibility(View.VISIBLE);
                     }
                     if (cd.isConnectingToInternet()) {
-                        getExerCiseDetails(userProgramIdArr.get(t), exerciseIDArr.get(t));
+                        try {
+                            getExerCiseDetails(userProgramIdArr.get(t), exerciseIDArr.get(t));
+                        } catch (Exception e) {
+                            Log.i("Excep Training : ", "No Data........");
+                        }
                     } else {
                         Toast.makeText(getActivity(), "No internet connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -224,7 +260,11 @@ public class TrainingFragment extends Fragment {
         more.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                showmorePopup.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, -20);
+                try {
+                    showmorePopup.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, -20);
+                } catch (Exception e) {
+                    Log.i("More exception : ", "" + e.toString());
+                }
             }
         });
 
@@ -395,12 +435,12 @@ public class TrainingFragment extends Fragment {
                             trainingPerticularExerciseSetsDatatypeArrayList
                     );
                     particularExerciseDetailsDataTypeArrayList.add(perParticularExerciseDetailsDataType);
-                    Log.d("RESPONSE", jOBJ.toString());
+
 
                 } catch (Exception e) {
                     exception = e.toString();
                 }
-
+                Log.d("Get Ex RESPONSE", urlResponse);
                 Log.d("URL", "http://esolz.co.in/lab6/ptplanner/app_control/get_particular_exercise_details?user_program_id=" +
                         userProgramId + "&client_id=" + AppConfig.loginDatatype.getSiteUserId() + "&exercise_id=" + excerciseId);
                 return null;

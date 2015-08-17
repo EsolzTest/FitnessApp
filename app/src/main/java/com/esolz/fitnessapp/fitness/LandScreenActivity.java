@@ -28,9 +28,17 @@ import com.esolz.fitnessapp.datatype.CalenderFrgmentAllexercises;
 import com.esolz.fitnessapp.datatype.CalenderPageExSets;
 import com.esolz.fitnessapp.fragment.BookAppointmentFragment;
 import com.esolz.fitnessapp.fragment.CalenderFragment;
+import com.esolz.fitnessapp.fragment.ChatDetailsFragment;
 import com.esolz.fitnessapp.fragment.Messagefragment;
 import com.esolz.fitnessapp.fragment.ProfileFragment;
 import com.esolz.fitnessapp.fragment.ProgressFragment;
+import com.esolz.fitnessapp.helper.AppController;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -62,6 +70,16 @@ public class LandScreenActivity extends FragmentActivity {
     View VPage;
     CalenderFragmentDatatype calDtype;
 
+    public String PUSHER_API_KEY = "676b2632a600d73a2182";
+    public String PUSHER_CHANNEL = "test_channel";
+    public String PUSHER_EVENT = "my_event";
+
+    LinearLayout llMsgcount;
+    boolean isMSGCountVisible = false;
+    Messagefragment msg_fragment;
+
+    public Pusher mPusher;
+
     //end
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +100,6 @@ public class LandScreenActivity extends FragmentActivity {
         llProgressButton = (LinearLayout) findViewById(R.id.progressbutton);
         llMessagebutton = (RelativeLayout) findViewById(R.id.messagebutton);
 
-        txtMSGCount = (TextView) findViewById(R.id.txt_msgcount);
-        txtMSGCount.setVisibility(View.GONE);
-
         txtCal = (TextView) findViewById(R.id.txt_cal);
         txtApnt = (TextView) findViewById(R.id.txt_apnt);
         txtPrg = (TextView) findViewById(R.id.txt_prg);
@@ -94,6 +109,9 @@ public class LandScreenActivity extends FragmentActivity {
         imgApnt = (ImageView) findViewById(R.id.img_apnt);
         imgPrg = (ImageView) findViewById(R.id.img_prg);
         imgMsg = (ImageView) findViewById(R.id.img_msg);
+
+        llMsgcount = (LinearLayout) findViewById(R.id.ll_msgcount);
+        llMsgcount.setVisibility(View.GONE);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -132,7 +150,7 @@ public class LandScreenActivity extends FragmentActivity {
                 imgMsg.setBackgroundResource(R.drawable.msgfill);
 
                 fragmentTransaction = fragmentManager.beginTransaction();
-                Messagefragment msg_fragment = new Messagefragment();
+                msg_fragment = new Messagefragment();
                 fragmentTransaction.replace(R.id.fragment_container, msg_fragment);
                 fragmentTransaction.commit();
             } else {
@@ -249,8 +267,10 @@ public class LandScreenActivity extends FragmentActivity {
                 imgPrg.setBackgroundResource(R.drawable.prg);
                 imgMsg.setBackgroundResource(R.drawable.msgfill);
 
+                llMsgcount.setVisibility(View.GONE);
+
                 fragmentTransaction = fragmentManager.beginTransaction();
-                Messagefragment msg_fragment = new Messagefragment();
+                msg_fragment = new Messagefragment();
 
                 fragmentTransaction.replace(R.id.fragment_container,
                         msg_fragment);
@@ -258,8 +278,93 @@ public class LandScreenActivity extends FragmentActivity {
 
             }
         });
+
+        mPusher = new Pusher(PUSHER_API_KEY);
+        mPusher.connect(new ConnectionEventListener() {
+
+            //@Override
+            public void onError(String message, String code, Exception e) {
+                Log.i("---->>On Error : : ", "message :" + message + "\n code :" + code + "\n Exception :" + e.toString());
+            }
+
+            //@Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+
+            }
+        }, ConnectionState.ALL);
+
+        Channel mPuserChannel = mPusher.subscribe(PUSHER_CHANNEL);
+        mPuserChannel.bind(PUSHER_EVENT, new SubscriptionEventListener() {
+
+            //@Override
+            public void onEvent(String channelName, String eventName, String data) {
+                Log.i("---->>On Event : : ", "channelName :" + channelName + "\n eventName :" + eventName + "\n data :" + data);
+
+                try {
+                    JSONObject jObject = new JSONObject(data.toString());
+                    final String sendTo = jObject.getString("sent_to");
+                    final String sendBy = jObject.getString("sent_by");
+                    final String msg = jObject.getString("message");
+                    final String dateTime = jObject.getString("send_time"); /*"2015-08-17 17:20:20"*/
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (AppController.isAppRunning().equals("YES")) {
+                                llMsgcount.setVisibility(View.VISIBLE);
+                            } else {
+                                llMsgcount.setVisibility(View.GONE);
+                                msg_fragment.refreshMSGFragment(sendBy, msg, dateTime);
+                            }
+                        }
+                    });
+
+                    Log.i("-->>MSG : ", jObject.getString("message"));
+                    Log.i("-->>Send to : ", jObject.getString("sent_to"));
+                    Log.i("-->>Send By : ", jObject.getString("sent_by"));
+                    Log.i("-->>Date : ", jObject.getString("send_time"));
+                } catch (Exception e) {
+                    Log.i("Pusher Exception : ", e.toString());
+                }
+            }
+
+        });
+
+        mPusher.connect();
+
+        mPusher.disconnect();
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AppController.setIsAppRunning("YES");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppController.setIsAppRunning("YES");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppController.setIsAppRunning("YES");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AppController.setIsAppRunning("NO");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppController.setIsAppRunning("NO");
+    }
 
     public class FetchData extends AsyncTask<Void, Void, Void> {
 

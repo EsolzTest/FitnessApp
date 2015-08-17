@@ -51,11 +51,14 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @SuppressLint("NewApi")
@@ -82,7 +85,7 @@ public class CalenderFragment extends Fragment {
     // -- Calendar Instance
     Calendar calendar;
     int currentYear, currentMonth, currentDay, currentDate, firstDayPosition;
-    SimpleDateFormat dayFormat, monthFormat, dateFormat;
+    SimpleDateFormat dayFormat, monthFormat, dateFormat, dateFormatDialog, targetDateFormat;
     Date dateChange;
     String date = "";
     String[] positionPre = {};
@@ -103,6 +106,13 @@ public class CalenderFragment extends Fragment {
 
     SharedPreferences loginPreferences;
 
+    Timer timer;
+    FitnessTimerTask fitnessTimerTask;
+
+    LinearLayout llRemindMe;
+
+    String compareDate = "";
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
@@ -116,6 +126,9 @@ public class CalenderFragment extends Fragment {
         rlDiet = (LinearLayout) fView.findViewById(R.id.rl_diet);
         rlDiary = (LinearLayout) fView.findViewById(R.id.rl_diary);
         appointment = (RelativeLayout) fView.findViewById(R.id.appointment);
+
+        llRemindMe = (LinearLayout) fView.findViewById(R.id.remindme);
+
         dialogRemindme = (LinearLayout) fView.findViewById(R.id.remindme);
         txtRemindme = (TitilliumLight) fView.findViewById(R.id.txt_remindme);
         showCalender = (LinearLayout) fView.findViewById(R.id.show_cal);
@@ -153,6 +166,12 @@ public class CalenderFragment extends Fragment {
         dayFormat = new SimpleDateFormat("dd");
         monthFormat = new SimpleDateFormat("EEEE");
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        dateFormatDialog = new SimpleDateFormat("dd/MM hh:mm");
+        targetDateFormat = new SimpleDateFormat("dd/MM hh:mm aa");
+
+//        timer = new Timer();
+//        fitnessTimerTask = new FitnessTimerTask();
 
         // -- Show Calendar
         showCalPopup = new ShowCalendarPopUp(getActivity(), "program");
@@ -253,14 +272,48 @@ public class CalenderFragment extends Fragment {
         }
 
         // -- Shared Preference
-        sharedPreferences = getActivity().getSharedPreferences("DateTime",
-                Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("DateTime", Context.MODE_PRIVATE);
 
         if (sharedPreferences.getString("dateTime", "").equals("")) {
-            txtRemindme.setText("Remind me");
+//            txtRemindme.setText("Remind me");
+            //timer = new Timer();
+            try {
+                timer.cancel();
+                timer = null;
+            } catch (Exception timerEx) {
+                Log.i("Timer Excep :", timerEx.toString());
+            }
         } else {
-            txtRemindme.setText(sharedPreferences.getString("dateTime", ""));
+            //txtRemindme.setText(sharedPreferences.getString("dateTime", ""));
+            Date convertedDate = new Date();
+            try {
+                convertedDate = dateFormatDialog.parse(sharedPreferences.getString("dateTime", ""));
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try {
+
+                timer = new Timer();
+                fitnessTimerTask = new FitnessTimerTask();
+
+                timer.schedule(fitnessTimerTask, convertedDate, 1000);
+
+            } catch (Exception extimer) {
+                Log.i("Timer Task : ", extimer.toString());
+            }
         }
+
+//        if (AppConfig.remindMe) {
+//            Toast.makeText(getActivity(), "Reminder on", Toast.LENGTH_SHORT).show();
+//            AppConfig.remindMe = false;
+//            llRemindMe.setBackgroundResource(R.drawable.remindme_btn);
+//        } else {
+//            Toast.makeText(getActivity(), "Reminder off", Toast.LENGTH_SHORT).show();
+//           // AppConfig.remindMe = false;
+//            llRemindMe.setBackgroundResource(R.drawable.calbtnbg1);
+//        }
+
         // -- END
 
         // ---------- Reminder Dialog
@@ -317,13 +370,41 @@ public class CalenderFragment extends Fragment {
                             type = "am";
                         }
 
-                        String dateAndTime = day + "/" + month + "  " + hour + ":" + mMinute + " " + type;
+                        String dateAndTime = mDay + "/" + mMonth + "  " + mHour + ":" + mMinute;
 
-                        txtRemindme.setText("" + dateAndTime);
+                        Date convertedDate = new Date();
+
+
+                        try {
+                            convertedDate = dateFormatDialog.parse(dateAndTime);
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        Log.i("Target Date : ", "" + targetDateFormat.format(new Date()));
+                        try {
+
+                            timer = new Timer();
+                            fitnessTimerTask = new FitnessTimerTask();
+
+                            timer.schedule(fitnessTimerTask, 30000);
+
+                            //compareDate = targetDateFormat.format(convertedDate);
+
+                            txtRemindme.setText("" + targetDateFormat.format(convertedDate));
+
+
+                        } catch (Exception extimer) {
+                            Log.i("Timer Task : ", extimer.toString());
+                        }
+
 
                         Editor editor = sharedPreferences.edit();
-                        editor.putString("dateTime", dateAndTime);
+                        editor.putString("dateTime", "" + convertedDate);
                         editor.commit();
+
+//                        AppConfig.remindMe = false;
 
                         dialog.dismiss();
                     }
@@ -339,6 +420,13 @@ public class CalenderFragment extends Fragment {
                         editor.clear();
                         editor.commit();
                         dialog.dismiss();
+
+                        try {
+                            timer.cancel();
+                            timer = null;
+                        } catch (Exception timerEx) {
+                            Log.i("Timer Cancel Excep :", timerEx.toString());
+                        }
                     }
                 });
             }
@@ -482,6 +570,7 @@ public class CalenderFragment extends Fragment {
                             jOBJ.getString("total_training_programs_finished"));
 
                     JSONArray jsonArray = jOBJ.getJSONArray("all_exercises");
+                    // if(jsonArray.length() > 0) {
                     AppConfig.allExercisesDataTypeArrayList = new ArrayList<AllExercisesDataType>();
                     AppConfig.exerciseSetsDataypeArrayList = new ArrayList<ExerciseSetsDataype>();
                     for (int j = 0; j < jsonArray.length(); j++) {
@@ -504,6 +593,9 @@ public class CalenderFragment extends Fragment {
                         );
                         AppConfig.allExercisesDataTypeArrayList.add(allExercisesDataType);
                     }
+//                    } else {
+//                        Toast.makeText(getActivity(), "jsonArray length : " +jsonArray.length(), Toast.LENGTH_SHORT ).show();
+//                    }
 
                     Log.d("RESPONSE", jOBJ.toString());
 
@@ -550,5 +642,87 @@ public class CalenderFragment extends Fragment {
         allEvents.execute();
 
     }
+
+    class FitnessTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            final String strDate = targetDateFormat.format(new Date());
+
+            try {
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        //Log.i("Date Format : ", "" + strDate);
+
+                        Toast.makeText(getActivity(),
+                                "Done...",
+                                Toast.LENGTH_SHORT).show();
+
+
+                        try {
+                            Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.commit();
+                            dialog.dismiss();
+
+                            txtRemindme.setText("Remind me");
+                            timer.cancel();
+                            timer = null;
+                        } catch (Exception timerEx) {
+                            Log.i("Timer Cancel Excep :", timerEx.toString());
+                        }
+
+                        //timer.cancel();
+//                        Calendar calendar = Calendar.getInstance();
+//
+//                        Date dateCompare = null, dateSelected = null;
+//
+//                        try {
+//                            dateCompare = targetDateFormat.parse(compareDate);
+//                            calendar.setTime(dateCompare);
+//                            calendar.add(Calendar.MINUTE, 1);
+//
+//                            dateSelected = targetDateFormat.parse(strDate);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        try {
+//                            if (dateSelected.compareTo(dateCompare) == 0) {
+////                            Toast.makeText(getActivity(),
+////                                    "" + strDate + "  After add 1 min : " + calendar.getTime(),
+////                                    Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity(),
+//                                        "If Done...",
+//                                        Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Toast.makeText(getActivity(),
+//                                        "Else Done...",
+//                                        Toast.LENGTH_SHORT).show();
+//                            }
+//                        } catch (Exception ex) {
+//                            ex.printStackTrace();
+//                        }
+
+
+//                        if (!sharedPreferences.getString("dateTime", "").equals("")) {
+////                            AppConfig.remindMe = true;
+//                            txtRemindme.setText("" + strDate);
+//                        } else {
+//                            txtRemindme.setText("Remind me");
+////                            AppConfig.remindMe = false;
+//                        }
+                    }
+                });
+            } catch (Exception exhandler) {
+                Log.i("Handler exception : ", exhandler.toString());
+            }
+
+        }
+
+    }
+
 
 }

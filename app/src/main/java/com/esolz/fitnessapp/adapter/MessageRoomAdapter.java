@@ -99,15 +99,16 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         }
         //holder.usermessage.setText(msgDataTypeLinkedList.get(position).getLast_message());
 
-        Picasso.with(context).load(msgDataTypeLinkedList.get(position).getUser_image()).transform(new Trns()).resize(400, 400).centerInside().placeholder(R.drawable.abc_dialog_material_background_dark) // optional
-                .error(R.drawable.abc_dialog_material_background_light).into(holder.image);
+        Picasso.with(context).load(msgDataTypeLinkedList.get(position).getUser_image()).transform(new Trns())
+                .resize(400, 400).centerInside().into(holder.image);
 
         dateFormatCurrentDate = new SimpleDateFormat("dd-MM-yyyy");
-        dateFormat = new SimpleDateFormat("MMM dd, yyyy  hh:mm a");
-        targetFormat = new SimpleDateFormat("hh:mm a");
+//        dateFormat = new SimpleDateFormat("MMM dd, yyyy  hh:mm a");
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        targetFormat = new SimpleDateFormat("HH:mm");
         jsonDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        Date dateCheck  = null;
+        Date dateCheck = null;
 
         try {
             dateCheck = new Date();
@@ -117,8 +118,7 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         }
 
         try {
-            if (jsonDateFormat.format(dateCheck)
-                    .equals(jsonDateFormat.parse(msgDataTypeLinkedList.get(position).getLast_send_time()))) {
+            if (dateFormat.format(date).equalsIgnoreCase(dateFormat.format(dateCheck))) {
                 holder.currenttime.setText(targetFormat.format(date));
             } else {
                 holder.currenttime.setText(dateFormat.format(date));
@@ -126,6 +126,18 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
         } catch (Exception e) {
             Log.i("Date exception : ", e.toString());
         }
+
+//        try {
+//            if (dateCheck.after(date)) {
+//                holder.currenttime.setText(targetFormat.format(date));
+//            } else if (dateCheck.before(date)) {
+//                holder.currenttime.setText(targetFormat.format(date));
+//            } else {
+//                holder.currenttime.setText(dateFormat.format(date));
+//            }
+//        } catch (Exception e) {
+//            Log.i("Date exception : ", e.toString());
+//        }
 
         holder.listItemContainer.setOnClickListener(new OnClickListener() {
 
@@ -145,3 +157,22 @@ public class MessageRoomAdapter extends ArrayAdapter<MsgDataType> {
     }
 
 }
+
+//    private void setDateTimeField()
+//    {
+//        Calendar newCalendar = Calendar.getInstance();
+//        toDatePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+//
+//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                Calendar newDate = Calendar.getInstance();
+//                newDate.set(year, monthOfYear, dayOfMonth);
+//                SimpleDateFormat dateFormatter2=new SimpleDateFormat("yyyy-mm-dd", Locale.US);
+//                avtime=dateFormatter2.format(newDate.getTime());
+//                Log.d("DAteformat==",avtime);
+//                txttime.setText("I'm Avialable On or after "+dateFormatter.format(newDate.getTime()));
+//            }
+//
+//        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+//        toDatePickerDialog.getDatePicker().setMinDate(newCalendar.getTimeInMillis());
+//        toDatePickerDialog.show();
+//    }

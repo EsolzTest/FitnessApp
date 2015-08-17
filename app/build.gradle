@@ -16,6 +16,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    repositories {
+        maven { url 'http://clojars.org/repo' }
+    }
     productFlavors {
     }
     packagingOptions {
@@ -34,7 +37,8 @@ dependencies {
     compile files('libs/httpclient-4.5.jar')
     compile files('libs/httpcore-4.4.1.jar')
     compile files('libs/httpmime-4.3.6.jar')
-    compile 'com.google.android.gms:play-services-wearable:7.5.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile files('libs/volley.jar')
+    compile files('libs/json.jar')
+    compile files('libs/pusher-java-client-0.3.3-jar-with-dependencies.jar')
 }

@@ -47,4 +47,6 @@ public class AppConfig {
 
     public static String appRegId = "";
 
+    public static boolean remindMe = false;
+
 }

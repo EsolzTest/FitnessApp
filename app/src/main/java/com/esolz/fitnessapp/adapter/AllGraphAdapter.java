@@ -49,6 +49,8 @@ public class AllGraphAdapter extends ArrayAdapter<ClientAllGraphDataType> {
         this.clientAllGraphDataTypeLinkedList = clientAllGraphDataTypeLinkedList;
         inflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         fragmentManager = ((FragmentActivity) this.context).getSupportFragmentManager();
+
+
     }
 
     @Override

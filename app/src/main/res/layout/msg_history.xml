@@ -30,7 +30,6 @@
                 android:layout_height="25dp"
                 android:background="@drawable/back_message"/>
         </LinearLayout>
-        <!--  -->
 
         <com.esolz.fitnessapp.customviews.TitilliumSemiBold
             android:id="@+id/title_chat_details"
@@ -74,13 +73,22 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_footer"
         android:layout_below="@+id/ll_header"
-        android:background="#E9F3F9"
+        android:background="#FFFFFF"
         android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/pbar_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
 
         <ListView
             android:id="@+id/listviewchat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/pbar_chat"
             android:layout_centerInParent="true"
             android:background="@color/primary_text_default_material_dark"
             android:divider="@drawable/list_view_divider"
@@ -96,14 +104,6 @@
             android:layout_centerInParent="true"
             android:text="No Data Found"
             android:textSize="20sp"/>
-
-        <ProgressBar
-            android:id="@+id/pbar_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"/>
 
     </RelativeLayout>
 

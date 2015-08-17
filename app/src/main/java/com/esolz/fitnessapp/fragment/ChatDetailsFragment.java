@@ -36,6 +36,12 @@ import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.AppController;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -89,6 +95,10 @@ public class ChatDetailsFragment extends FragmentActivity {
     TitilliumRegularEdit etSendMSG;
 
     boolean isBlankVisible = false;
+
+    public String PUSHER_API_KEY = "676b2632a600d73a2182";
+    public String PUSHER_CHANNEL = "test_channel";
+    public String PUSHER_EVENT = "my_event";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +200,71 @@ public class ChatDetailsFragment extends FragmentActivity {
             }
         });
 
+        Pusher mPusher = new Pusher(PUSHER_API_KEY);
+        mPusher.connect(new ConnectionEventListener() {
+
+            //@Override
+            public void onError(String message, String code, Exception e) {
+                Log.i("---->>On Error : : ", "message :" + message + "\n code :" + code + "\n Exception :" + e.toString());
+            }
+
+            //@Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+
+            }
+        }, ConnectionState.ALL);
+
+        Channel mPuserChannel = mPusher.subscribe(PUSHER_CHANNEL);
+        mPuserChannel.bind(PUSHER_EVENT, new SubscriptionEventListener() {
+
+            //@Override
+            public void onEvent(String channelName, String eventName, String data) {
+                Log.i("---->>On Event : : ", "channelName :" + channelName + "\n eventName :" + eventName + "\n data :" + data);
+
+                try {
+                    JSONObject jObject = new JSONObject(data.toString());
+                    final String sendTo = jObject.getString("sent_to");
+                    final String sendBy = jObject.getString("sent_by");
+                    final String msg = jObject.getString("message");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                                        true,
+                                        "",
+                                        sendTo,
+                                        sendBy,
+                                        msg,
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        userRespectiveMSGDatatype.getSender_image(),
+                                        userRespectiveMSGDatatype.getReceiver_image(),
+                                        "",
+                                        0
+                                );
+                                messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                            } catch (Exception e) {
+                                Log.i("CHAT exception: ", e.toString());
+                            }
+                        }
+                    });
+
+                    Log.i("-->>MSG : ", jObject.getString("message"));
+                    Log.i("-->>Send to : ", jObject.getString("sent_to"));
+                    Log.i("-->>Send By : ", jObject.getString("sent_by"));
+                } catch (Exception e) {
+                    Log.i("Pusher Exception : ", e.toString());
+                }
+            }
+
+        });
+
+        mPusher.connect();
+
     }
 
     public void sendMessage(final String sendTo, final String sendFrom, final String MSG) {
@@ -201,37 +276,37 @@ public class ChatDetailsFragment extends FragmentActivity {
         rlSendMsg.setClickable(false);
 
         final StringRequest sr = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String stringResponse) {
-                        Log.i("CHAT RES @@@", stringResponse);
-                        rlLoader.setVisibility(View.GONE);
-                        rlSendMsg.setClickable(true);
-                        try {
-                            JSONObject response = new JSONObject(stringResponse);
-                            userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
-                                    true,
-                                    response.getString("id"),
-                                    sendTo,
-                                    sendFrom,
-                                    response.getString("message"),
-                                    "",
-                                    response.getString("send_time"),
-                                    response.getString("sender"),
-                                    response.getString("receiver"),
-                                    response.getString("sender_image"),
-                                    response.getString("receiver_image"),
-                                    response.getString("status"),
-                                    0
-                            );
-                            messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
-                            etSendMsg.setText("");
-                            Toast.makeText(ChatDetailsFragment.this, "Message send.", Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.i("CHAT RES SAKU", e.toString());
-                        }
-                    }
-                }, new Response.ErrorListener() {
+            @Override
+            public void onResponse(String stringResponse) {
+                Log.i("CHAT RES @@@", stringResponse);
+                rlLoader.setVisibility(View.GONE);
+                rlSendMsg.setClickable(true);
+                try {
+                    JSONObject response = new JSONObject(stringResponse);
+                    userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                            true,
+                            response.getString("id"),
+                            sendTo,
+                            sendFrom,
+                            response.getString("message"),
+                            "",
+                            response.getString("send_time"),
+                            response.getString("sender"),
+                            response.getString("receiver"),
+                            response.getString("sender_image"),
+                            response.getString("receiver_image"),
+                            response.getString("status"),
+                            0
+                    );
+                    messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                    etSendMsg.setText("");
+                    Toast.makeText(ChatDetailsFragment.this, "Message send.", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i("CHAT RES SAKU", e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("Output : ", "Error: " + error.getMessage());
