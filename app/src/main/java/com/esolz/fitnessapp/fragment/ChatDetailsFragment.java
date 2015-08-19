@@ -186,6 +186,7 @@ public class ChatDetailsFragment extends FragmentActivity {
                 Intent intent = new Intent(ChatDetailsFragment.this, LandScreenActivity.class);
                 intent.putExtra("MSG", "ChatDetailsFragment");
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -197,6 +198,7 @@ public class ChatDetailsFragment extends FragmentActivity {
                 Intent intent = new Intent(ChatDetailsFragment.this, LandScreenActivity.class);
                 intent.putExtra("MSG", "MSGFragment");
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -549,6 +551,11 @@ public class ChatDetailsFragment extends FragmentActivity {
             }
         };
         allMSG.execute();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
     }
 }
 
