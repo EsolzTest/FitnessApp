@@ -39,6 +39,7 @@ import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.datatype.AppointDataType;
 import com.esolz.fitnessapp.datatype.CalendarEventDataType;
+import com.esolz.fitnessapp.datatype.ClickDateDataType;
 import com.esolz.fitnessapp.datatype.DiaryDataType;
 import com.esolz.fitnessapp.datatype.EventDataType;
 import com.esolz.fitnessapp.datatype.MealDateDataType;
@@ -85,8 +86,10 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
     MealDateDataType mealDateDataType;
     DiaryDataType diaryDataType;
     ArrayList<EventDataType> arrDay;
+    ArrayList<EventDataType> appDay;
     EventDataType eventDataType;
     String[] AppointmentData, ProgramData, MealData, DiaryData;
+    ClickDateDataType clickDateDataType;
 
     public ShowCalendarPopUp(final Context context, final String TYPE) {
         super(context);
@@ -227,14 +230,30 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
 
             textViewArray[i].setOnClickListener(this);
 
+            String textValue = "";
+
+//            if (textViewArray[i].getText().toString().length() < 2) {
+//                textValue = "0" + textViewArray[i].getText().toString();
+//            } else {
+//                textValue = textViewArray[i].getText().toString();
+//            }
+//
+//            try {
+//                if (textValue.equals(clickDateDataType.getDay())) {
+//                    textViewArray[i].setTextColor(Color.parseColor("#FAAC58"));
+//                    textViewArray[i].setBackgroundResource(R.drawable.selected_day);
+//                }
+//            } catch (Exception e) {
+//                Log.i("ex tag : ", e.toString());
+//            }
+
+
             if (currentMonthLength > today) {
 
                 if (textViewArray[(today + indexOfDayOne) - 1].getText()
                         .toString().equals("" + today)) {
-                    llArray[(today + indexOfDayOne) - 1]
-                            .setBackgroundResource(R.drawable.selected_day);
                     textViewArray[(today + indexOfDayOne) - 1]
-                            .setTextColor(Color.parseColor("#22A7F0"));
+                            .setTextColor(Color.parseColor("#FF0000"));
                 }
             } else {
 
@@ -574,11 +593,17 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
         bundle.putString("DateChange", formattedDate);
         bundle.putString("MONTH", txt_currentdatemonth.getText().toString());
         bundle.putString("DAY", view.getTag().toString());
-        fragmentManager = ((FragmentActivity) context)
-                .getSupportFragmentManager();
+        fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+
+        clickDateDataType = new ClickDateDataType(
+                view.getTag().toString(),
+                txt_currentdatemonth.getText().toString(),
+                txt_currentyear.getText().toString(),
+                true
+        );
+        view.setBackgroundResource(R.drawable.selected_day);
 
         if (TYPE.equals("program")) {
-            // -- change
             fragmentTransaction = fragmentManager.beginTransaction();
             CalenderFragment cal_fragment = new CalenderFragment();
             cal_fragment.setArguments(bundle);
@@ -605,9 +630,13 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
 
     public void drawEvent(int indexOfDayOne) {
         arrDay = new ArrayList<EventDataType>();
+        appDay = new ArrayList<EventDataType>();
+
 
         if (TYPE.equals("program")) {
             for (int i = 0; i < AppConfig.programArrayList.size(); i++) {
+                //for (int j = 0; j < AppConfig.appointmentArrayList.size(); j++) {
+
                 if (AppConfig.programArrayList.get(i).getYear()
                         .equals(txt_currentyear.getText().toString())) {
                     DateFormat originalFormat = new SimpleDateFormat("MM");
@@ -623,13 +652,38 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                             .toString())) {
                         eventDataType = new EventDataType(
                                 AppConfig.programArrayList.get(i).getDay(),
-                                TYPE);
+                                TYPE, false);
                         arrDay.add(eventDataType);
+                    }
+                    // }
+                }
+
+                for (int j = 0; j < AppConfig.appointmentArrayList.size(); j++) {
+                    if (AppConfig.appointmentArrayList.get(j).getYear().equals(txt_currentyear.getText().toString())) {
+                        DateFormat originalFormat = new SimpleDateFormat("MM");
+                        DateFormat targetFormat = new SimpleDateFormat("MMMM");
+                        try {
+                            date = originalFormat.parse(AppConfig.appointmentArrayList.get(j).getMonth());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        String formattedMonth = targetFormat.format(date);
+                        if (formattedMonth.equals(txt_currentdatemonth.getText().toString())) {
+                            eventDataType = new EventDataType(
+                                    AppConfig.appointmentArrayList.get(j).getDay(),
+                                    TYPE, true);
+                            arrDay.add(eventDataType);
+                        }
                     }
                 }
             }
-        } else if (TYPE.equals("appointment")) {
+        } else if (TYPE.equals("appointment"))
+
+        {
             for (int i = 0; i < AppConfig.appointmentArrayList.size(); i++) {
+
+                //Log.i("-->> App : ArrLi : ", AppConfig.appointmentArrayList.get(i).getDay());
+
                 if (AppConfig.appointmentArrayList.get(i).getYear()
                         .equals(txt_currentyear.getText().toString())) {
                     DateFormat originalFormat = new SimpleDateFormat("MM");
@@ -646,12 +700,14 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                             .toString())) {
                         eventDataType = new EventDataType(
                                 AppConfig.appointmentArrayList.get(i).getDay(),
-                                TYPE);
+                                TYPE, false);
                         arrDay.add(eventDataType);
                     }
                 }
             }
-        } else {
+        } else
+
+        {
             for (int i = 0; i < AppConfig.mealArrayList.size(); i++) {
                 if (AppConfig.mealArrayList.get(i).getYear()
                         .equals(txt_currentyear.getText().toString())) {
@@ -667,7 +723,7 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                     if (formattedMonth.equals(txt_currentdatemonth.getText()
                             .toString())) {
                         eventDataType = new EventDataType(
-                                AppConfig.mealArrayList.get(i).getDay(), TYPE);
+                                AppConfig.mealArrayList.get(i).getDay(), TYPE, false);
                         arrDay.add(eventDataType);
                     }
                 }
@@ -675,12 +731,25 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
         }
 
 
-        for (int j = 0; j < textViewArray.length; j++) {
+        for (
+                int j = 0;
+                j < textViewArray.length; j++)
+
+        {
             for (int i = 0; i < arrDay.size(); i++) {
-                if (textViewArray[j].getText().toString()
-                        .equals(arrDay.get(i).getMarkedDay())) {
+
+                String textValue = "";
+
+                if (textViewArray[j].getText().toString().length() < 2) {
+                    textValue = "0" + textViewArray[j].getText().toString();
+                } else {
+                    textValue = textViewArray[j].getText().toString();
+                }
+
+                if (textValue.equals(arrDay.get(i).getMarkedDay())) {
 
                     if (arrDay.get(i).getTypeEvent().equals("appointment")) {
+
                         eventViewArr[(indexOfDayOne - 1)
                                 + Integer
                                 .parseInt(arrDay.get(i).getMarkedDay())]
@@ -690,14 +759,27 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                                 .parseInt(arrDay.get(i).getMarkedDay())]
                                 .setVisibility(View.VISIBLE);
                     } else if (arrDay.get(i).getTypeEvent().equals("program")) {
-                        eventViewArr[(indexOfDayOne - 1)
-                                + Integer
-                                .parseInt(arrDay.get(i).getMarkedDay())]
-                                .setVisibility(View.VISIBLE);
-                        txtApp[(indexOfDayOne - 1)
-                                + Integer
-                                .parseInt(arrDay.get(i).getMarkedDay())]
-                                .setVisibility(View.GONE);
+
+                        if (arrDay.get(i).isSelected()) {
+                            eventViewArr[(indexOfDayOne - 1)
+                                    + Integer
+                                    .parseInt(arrDay.get(i).getMarkedDay())]
+                                    .setVisibility(View.VISIBLE);
+                            txtApp[(indexOfDayOne - 1)
+                                    + Integer
+                                    .parseInt(arrDay.get(i).getMarkedDay())]
+                                    .setVisibility(View.VISIBLE);
+                        } else {
+                            eventViewArr[(indexOfDayOne - 1)
+                                    + Integer
+                                    .parseInt(arrDay.get(i).getMarkedDay())]
+                                    .setVisibility(View.VISIBLE);
+                            txtApp[(indexOfDayOne - 1)
+                                    + Integer
+                                    .parseInt(arrDay.get(i).getMarkedDay())]
+                                    .setVisibility(View.GONE);
+                        }
+
                     } else {
                         eventViewArr[(indexOfDayOne - 1)
                                 + Integer
@@ -711,6 +793,7 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                 }
             }
         }
+
     }
 
     public void getAllEvent() {
@@ -781,11 +864,12 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                         AppConfig.diaryArrayList.add(diaryDataType);
                     }
                     for (int l = 0; l < jArrAppointment.length(); l++) {
-                        calEventData.setAppointment_date(jArrAppointment
-                                .getString(l));
 
-                        AppointmentData = jArrAppointment.getString(l).split(
-                                "-");
+                        String[] appDate = jArrAppointment.getString(l).split(" ");
+
+                        calEventData.setAppointment_date(appDate[0]);
+
+                        AppointmentData = appDate[0].split("-");
                         appointDataType = new AppointDataType(
                                 AppointmentData[2], AppointmentData[1],
                                 AppointmentData[0]);
@@ -797,7 +881,7 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                     exception = e.toString();
                 }
 
-                Log.d("@@ Url : ", AppConfig.HOST
+                Log.i("@@MArk Cal Url : ", AppConfig.HOST
                         + "app_control/mark_calender?client_id="
                         + AppConfig.loginDatatype.getSiteUserId());
 
@@ -810,8 +894,7 @@ public class ShowCalendarPopUp extends PopupWindow implements OnClickListener {
                 if (exception.equals("")) {
                 } else {
                     System.out.println("@@ Exception: " + exception);
-                    Toast.makeText(context, "Server not responding....",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Server not responding....", Toast.LENGTH_LONG).show();
                 }
             }
 

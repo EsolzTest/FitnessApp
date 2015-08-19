@@ -18,6 +18,7 @@
             android:id="@+id/ll_header"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginBottom="14dp"
             android:background="#ffffff">
 
             <com.esolz.fitnessapp.customviews.TitilliumSemiBold
@@ -83,7 +84,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="tronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                        android:text=""
                         android:textColor="#333333"
                         android:textSize="17sp"/>
 
@@ -104,7 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="1914 translation by H. Rackham"
+                        android:text=""
                         android:textColor="#333333"
                         android:textSize="17sp"/>
 

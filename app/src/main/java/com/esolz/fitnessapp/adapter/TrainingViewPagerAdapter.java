@@ -50,7 +50,7 @@ public class TrainingViewPagerAdapter extends PagerAdapter {
         if (position == 0) {
             itemview = inflater.inflate(R.layout.training_viewpager_adapter, container, false);
             imgExercise = (ImageView) itemview.findViewById(R.id.img_exercise);
-            Picasso.with(context).load(imgURL).fit().into(imgExercise);
+            Picasso.with(context).load(imgURL).centerCrop().fit().into(imgExercise);
         } else {
             itemview = inflater.inflate(R.layout.training_view_pager_adaper_webview, container, false);
             webView = (WebView) itemview.findViewById(R.id.webview);

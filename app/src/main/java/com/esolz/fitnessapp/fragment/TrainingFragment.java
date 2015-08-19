@@ -46,6 +46,7 @@ import com.esolz.fitnessapp.datatype.ParticularExerciseDetailsDataType;
 import com.esolz.fitnessapp.datatype.TrainingDataType;
 import com.esolz.fitnessapp.datatype.TrainingPerticularExerciseSetsDatatype;
 import com.esolz.fitnessapp.dialog.ShowMorePopUp;
+import com.esolz.fitnessapp.fitness.LandScreenActivity;
 import com.esolz.fitnessapp.helper.AppConfig;
 import com.esolz.fitnessapp.helper.ConnectionDetector;
 
@@ -139,7 +140,7 @@ public class TrainingFragment extends Fragment {
         if (cd.isConnectingToInternet()) {
             try {
                 getExerCiseDetails(userProgramIdArr.get(0), exerciseIDArr.get(0));
-                txtRight.setText(exerciseTitleArr.get(0));
+                txtRight.setText(exerciseTitleArr.get(1));
                 txtExerciseTitle.setText(exerciseTitleArr.get(0));
 
                 rlRightClick.setVisibility(View.VISIBLE);
@@ -351,7 +352,9 @@ public class TrainingFragment extends Fragment {
                 if (exceptionFinish.equals("")) {
                     if (statusFinish.equals("TRUE")) {
                         if (t == (exerciseTitleArr.size() - 1)) {
-                            rlLeftClick.performClick();
+                            // rlLeftClick.performClick();
+                            Intent intent = new Intent(getActivity(), LandScreenActivity.class);
+                            startActivity(intent);
                         } else {
                             rlRightClick.performClick();
                         }
@@ -487,6 +490,8 @@ public class TrainingFragment extends Fragment {
                             perParticularExerciseDetailsDataType.getExercise_title(),
                             perParticularExerciseDetailsDataType.getExercise_description(),
                             perParticularExerciseDetailsDataType.getInstruction());
+
+
                 } else {
                     Log.d("@  Exception ", exception);
                     Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();

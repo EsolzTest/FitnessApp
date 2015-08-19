@@ -216,6 +216,7 @@ public class ChatDetailsFragment extends FragmentActivity {
             }
         }, ConnectionState.ALL);
 
+
         Channel mPuserChannel = mPusher.subscribe(PUSHER_CHANNEL);
         mPuserChannel.bind(PUSHER_EVENT, new SubscriptionEventListener() {
 
@@ -228,27 +229,29 @@ public class ChatDetailsFragment extends FragmentActivity {
                     final String sendTo = jObject.getString("sent_to");
                     final String sendBy = jObject.getString("sent_by");
                     final String msg = jObject.getString("message");
-
+                    Log.i("-->> SenderId : ", AppConfig.loginDatatype.getSiteUserId() + "   :   " + sendTo);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
-                                        true,
-                                        "",
-                                        sendTo,
-                                        sendBy,
-                                        msg,
-                                        "",
-                                        "",
-                                        "",
-                                        "",
-                                        userRespectiveMSGDatatype.getSender_image(),
-                                        userRespectiveMSGDatatype.getReceiver_image(),
-                                        "",
-                                        0
-                                );
-                                messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                                if (AppConfig.loginDatatype.getSiteUserId().equalsIgnoreCase(sendTo)) {
+                                    userRespectiveMSGDatatype = new UserRespectiveMSGDatatype(
+                                            true,
+                                            "",
+                                            sendTo,
+                                            sendBy,
+                                            msg,
+                                            "",
+                                            "",
+                                            "",
+                                            "",
+                                            userRespectiveMSGDatatype.getSender_image(),
+                                            userRespectiveMSGDatatype.getReceiver_image(),
+                                            "",
+                                            0
+                                    );
+                                    messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
+                                }
                             } catch (Exception e) {
                                 Log.i("CHAT exception: ", e.toString());
                             }
@@ -302,7 +305,7 @@ public class ChatDetailsFragment extends FragmentActivity {
                     );
                     messageChatAdapter.addFromReceiver(userRespectiveMSGDatatype);
                     etSendMsg.setText("");
-                    Toast.makeText(ChatDetailsFragment.this, "Message send.", Toast.LENGTH_LONG).show();
+                    // Toast.makeText(ChatDetailsFragment.this, "Message send.", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.i("CHAT RES SAKU", e.toString());

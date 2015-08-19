@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/main_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Set 1"
+                android:text=""
                 android:textColor="#333333"
                 android:textSize="18sp"/>
         </LinearLayout>
@@ -43,7 +44,7 @@
                 android:id="@+id/txt_reps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10"
+                android:text=""
                 android:textColor="#22A7F0"
                 android:textSize="18sp"/>
 

@@ -1,18 +1,26 @@
 package com.esolz.fitnessapp.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.esolz.fitnessapp.ImageTransformation.Trns;
 import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.customviews.TitilliumBold;
 import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.datatype.AltrainerDataType;
+import com.esolz.fitnessapp.fragment.ProfileFragment;
+import com.esolz.fitnessapp.helper.AppConfig;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,6 +37,10 @@ public class AllTrainerAdapter extends PagerAdapter {
     int Size;
     AltrainerDataType cust_data;
     View itemview;
+    LinearLayout main_container;
+
+    FragmentTransaction fragmentTransaction;
+    FragmentManager fragmentManager;
 
 
     public AllTrainerAdapter(Context context, int i, ArrayList<AltrainerDataType> altrainerDataTypeArrayList) {
@@ -36,6 +48,8 @@ public class AllTrainerAdapter extends PagerAdapter {
         this.context = context;
         this.altrainerDataTypeArrayList = altrainerDataTypeArrayList;
         inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
     }
 
     @Override
@@ -49,7 +63,7 @@ public class AllTrainerAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
         //super.instantiateItem(container, position);
 
         TitilliumBold t_name;
@@ -58,6 +72,7 @@ public class AllTrainerAdapter extends PagerAdapter {
 
         itemview = inflater.inflate(R.layout.k_triner_viewpager, container, false);
 
+        main_container = (LinearLayout) itemview.findViewById(R.id.main_container);
 
         t_name = (TitilliumBold) itemview.findViewById(R.id.tv_trainer_name);
         t_address = (TitilliumRegular) itemview.findViewById(R.id.tv_trainer_address);
@@ -68,6 +83,23 @@ public class AllTrainerAdapter extends PagerAdapter {
         t_address.setText(cust_data.getWorking_address());
 
         Picasso.with(context).load(cust_data.getPt_image()).transform(new Trns()).fit().error(R.drawable.placeholdericon).into(pic);
+
+        main_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppConfig.PT_ID = altrainerDataTypeArrayList.get(position).getPt_id();
+                //Toast.makeText(context, "" + AppConfig.PT_ID, Toast.LENGTH_LONG).show();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("AllTrainer", "AllTrainer");
+
+                fragmentTransaction = fragmentManager.beginTransaction();
+                ProfileFragment prl_fragment = new ProfileFragment();
+                prl_fragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.fragment_container, prl_fragment);
+                fragmentTransaction.commit();
+            }
+        });
 
         // Add viewpager_item.xml to ViewPager
 

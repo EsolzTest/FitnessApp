@@ -635,10 +635,8 @@ public class DiaryFragment extends Fragment {
 
                 if (textViewArray[(today + indexOfDayOne) - 1].getText()
                         .toString().equals("" + today)) {
-                    llArray[(today + indexOfDayOne) - 1]
-                            .setBackgroundResource(R.drawable.selected_day);
                     textViewArray[(today + indexOfDayOne) - 1]
-                            .setTextColor(Color.parseColor("#22A7F0"));
+                            .setTextColor(Color.parseColor("#FF0000"));
                 }
             } else {
 
@@ -761,7 +759,7 @@ public class DiaryFragment extends Fragment {
                 if (formattedMonth.equals(txt_currentdatemonth.getText()
                         .toString())) {
                     eventDataType = new EventDataType(AppConfig.diaryArrayList
-                            .get(i).getDay(), "diary");
+                            .get(i).getDay(), "diary", false);
                     arrDay.add(eventDataType);
                 }
             }
@@ -769,8 +767,15 @@ public class DiaryFragment extends Fragment {
 
         for (int i = 0; i < arrDay.size(); i++) {
             for (int j = 0; j < textViewArray.length; j++) {
-                if (textViewArray[j].getText().toString()
-                        .equals(arrDay.get(i).getMarkedDay())) {
+
+                String textValue = "";
+
+                if (textViewArray[j].getText().toString().length() < 2) {
+                    textValue = "0" + textViewArray[j].getText().toString();
+                } else {
+                    textValue = textViewArray[j].getText().toString();
+                }
+                if (textValue.equals(arrDay.get(i).getMarkedDay())) {
                     /*llArray[(indexOfDayOne - 1)
                             + Integer.parseInt(arrDay.get(i).getMarkedDay())]
 							.setVisibility(View.VISIBLE);*/

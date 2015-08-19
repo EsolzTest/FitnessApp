@@ -92,7 +92,7 @@ public class BookAppointAdapter extends ArrayAdapter<TimeSlotsDataType> {
             holder.txtStatus.setTextColor(Color.parseColor("#FFFFFF"));
         } else if (timeSlotsDataTypeArrayList.get(position).getStatusDependent().equals("Ex")) {
             holder.llBookingStatus.setVisibility(View.GONE);
-        } else {
+        } else if(timeSlotsDataTypeArrayList.get(position).getStatusDependent().equals("B")){
             holder.llBookingStatus.setVisibility(View.VISIBLE);
             holder.llBookingStatus.setBackgroundResource(R.drawable.booked_button);
             holder.txtStatus.setText("BOOKED");

@@ -51,16 +51,6 @@ public class ProfileFragment extends Fragment {
     ProfileViewDataType profileViewDataType;
     String url;
     View fView;
-//    FragmentTransaction fragmentTransaction;
-//    FragmentManager fragmentManager;
-//    LinearLayout linear_profile;
-//    ProgressBar pb_profile;
-//    ImageView image;
-//    TitilliumBold text_name;
-//    TitilliumBold text_sub_name;
-//    TitilliumLight about;
-//    TitilliumBold location_title;
-//    TitilliumLight address;
 
     ImageView imgPic;
     TitilliumBold txtName;
@@ -70,6 +60,9 @@ public class ProfileFragment extends Fragment {
 
     ConnectionDetector cd;
     String exception = "", urlResponse = "";
+
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,10 +105,19 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(getActivity(), ChatDetailsFragment.class);
-                intent.putExtra("msgUserName", AppConfig.PT_NAME);
-                intent.putExtra("msgUserId", AppConfig.PT_ID);
-                getActivity().startActivity(intent);
+                try {
+                    String val = getArguments().getString("AllTrainer");
+                    fragmentManager = getFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    BookAppointmentFragment bookapnt_fragment = new BookAppointmentFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, bookapnt_fragment);
+                    fragmentTransaction.commit();
+                } catch (Exception e) {
+                    Intent intent = new Intent(getActivity(), ChatDetailsFragment.class);
+                    intent.putExtra("msgUserName", AppConfig.PT_NAME);
+                    intent.putExtra("msgUserId", AppConfig.PT_ID);
+                    getActivity().startActivity(intent);
+                }
             }
         });
 

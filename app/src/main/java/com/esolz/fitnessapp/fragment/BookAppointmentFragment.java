@@ -45,6 +45,7 @@ import com.esolz.fitnessapp.R;
 import com.esolz.fitnessapp.adapter.AllTrainerAdapter;
 import com.esolz.fitnessapp.adapter.BookAppointAdapter;
 import com.esolz.fitnessapp.customviews.HelveticaHeavy;
+import com.esolz.fitnessapp.customviews.TitilliumRegular;
 import com.esolz.fitnessapp.customviews.TitilliumSemiBold;
 import com.esolz.fitnessapp.datatype.AltrainerDataType;
 import com.esolz.fitnessapp.datatype.TimeSlotsDataType;
@@ -94,6 +95,8 @@ public class BookAppointmentFragment extends Fragment {
     ArrayList<TrainerBookingDetailsDataType> trainerBookingDetailsDataTypeArrayList;
     ArrayList<TimeSlotsDataType> timeSlotsDataTypeArrayList;
 
+    TitilliumRegular ptError;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,6 +125,9 @@ public class BookAppointmentFragment extends Fragment {
         vp_prev.setVisibility(View.GONE);
         viewpagerPbar = (ProgressBar) fView.findViewById(R.id.viewpager_pbar);
         viewpagerPbar.setVisibility(View.GONE);
+
+        ptError = (TitilliumRegular) fView.findViewById(R.id.pterror);
+        ptError.setVisibility(View.GONE);
 
         bookApptList = (ListView) fView.findViewById(R.id.book_app_list);
         pbarList = (ProgressBar) fView.findViewById(R.id.pbar);
@@ -302,6 +308,7 @@ public class BookAppointmentFragment extends Fragment {
 
                 viewpagerPbar.setVisibility(View.VISIBLE);
                 trinerPageviewer.setVisibility(View.GONE);
+                ptError.setVisibility(View.GONE);
             }
 
             @Override
@@ -365,9 +372,10 @@ public class BookAppointmentFragment extends Fragment {
                 prevDate.setClickable(true);
                 nextDate.setClickable(true);
                 viewpagerPbar.setVisibility(View.GONE);
-                trinerPageviewer.setVisibility(View.VISIBLE);
                 if (exception.equals("")) {
                     if (exceptionJSON.equals("")) {
+                        trinerPageviewer.setVisibility(View.VISIBLE);
+                        ptError.setVisibility(View.GONE);
                         AllTrainerAdapter trainerAdapter = new AllTrainerAdapter(getActivity(), 0, altrainerDataTypeArrayList);
                         trinerPageviewer.setAdapter(trainerAdapter);
 
@@ -381,7 +389,9 @@ public class BookAppointmentFragment extends Fragment {
 
                         getTrainerBookingDetails(date, altrainerDataTypeArrayList.get(0).getPt_id());
                     } else {
-                        Toast.makeText(getActivity(), "No record found....", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(), "No record found....", Toast.LENGTH_LONG).show();
+                        trinerPageviewer.setVisibility(View.GONE);
+                        ptError.setVisibility(View.VISIBLE);
                     }
 
                 } else {
@@ -477,9 +487,7 @@ public class BookAppointmentFragment extends Fragment {
                     BookAppointAdapter bookAppointAdapter = new BookAppointAdapter(getActivity(), 0, timeSlotsDataTypeArrayList);
                     bookApptList.setAdapter(bookAppointAdapter);
                 } else {
-                    Toast.makeText(getActivity(),
-                            "Server not responding....", Toast.LENGTH_LONG)
-                            .show();
+                    Toast.makeText(getActivity(), "Server not responding....", Toast.LENGTH_LONG).show();
                 }
             }
 

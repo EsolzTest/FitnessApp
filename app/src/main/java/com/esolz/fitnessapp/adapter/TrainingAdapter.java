@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.esolz.fitnessapp.R;
@@ -88,6 +89,8 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
             holder.txtRP = (TitilliumRegular) convertView.findViewById(R.id.rp);
             holder.txtKG = (TitilliumRegular) convertView.findViewById(R.id.kg);
 
+            holder.main_container = (RelativeLayout) convertView.findViewById(R.id.main_container);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -100,19 +103,25 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
         updatedSetReps = TextUtils.join(",", setREPS);
         Log.d("@@@REPS  :  ", updatedSetReps);
 
-        holder.txtSet.setText("set " + (position + 1));
-        holder.txtReps.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getREPS());
-        holder.etWeight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
-        holder.etWeight.setId(position);
-        holder.etWeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    weight = (EditText) v;
-                    isWeightEdit = true;
-                    //weight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
+        if (trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg().equalsIgnoreCase("0")) {
+            holder.main_container.setVisibility(View.GONE);
+        } else {
+            holder.main_container.setVisibility(View.VISIBLE);
+
+            holder.txtSet.setText("set " + (position + 1));
+            holder.txtReps.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getREPS());
+            holder.etWeight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
+            holder.etWeight.setId(position);
+            holder.etWeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        weight = (EditText) v;
+                        isWeightEdit = true;
+                        //weight.setText(trainingPerticularExerciseSetsDatatypeArrayList.get(position).getKg());
+                    }
                 }
-            }
-        });
+            });
+        }
 
         if (trainingPerticularExerciseSetsDatatypeArrayList.get(position).getIsEditable()) {
             holder.etWeight.setClickable(true);
@@ -209,6 +218,8 @@ public class TrainingAdapter extends ArrayAdapter<TrainingPerticularExerciseSets
         TitilliumRegular txtRP, txtKG;
         /*TitilliumSemiBoldEdit*/ EditText etWeight;
         LinearLayout llCheck, llChange, llSet, llReps, llKG;
+        RelativeLayout main_container;
+
     }
 
     public void editExcercise(final String userProgramId, final String excerciseId, final String updatedSetsReps,
